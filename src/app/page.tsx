@@ -10,6 +10,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <Header />
+      <SideMenu/>
       <main className={styles.main}>
         <div className={styles.campaignContent}>
           <h1 className={styles.campaignTitle}>Campaign Title</h1>
