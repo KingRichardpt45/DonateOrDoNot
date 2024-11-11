@@ -1,0 +1,58 @@
+/*Side Menu CSS*/
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    background-color: #bc00f5;
+    color: #fff;
+   
+    transition: transform 0.3s ease; /* Smooth transition */
+    z-index: 10;
+}
+
+.side-menu-nav.open {
+    transform: translateX(0); /* Slide in when open */
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-icon .line {
+    width: 30px;
+    height: 3px;
+    background-color: white;
+    margin: 5px 0;
+}
+
+.side-menu-nav ul {
+    list-style: none;
+    padding: 20px;
+}
+
+.side-menu-nav li {
+    margin: 15px 0;
+}
+
+.side-menu-nav a {
+    color: #fff;
+    text-decoration: none;
+}
+
+
+  @media (max-width: 768px) {
+    .side-menu {
+      width: 200px;
+    }
+  
+    .menu-icon .line {
+      width: 25px;
+    }
+  }
+  
+/*----------------------------------*/
