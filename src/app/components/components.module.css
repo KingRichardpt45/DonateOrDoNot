@@ -278,3 +278,67 @@
   box-shadow: 0 5 5px rgba(255, 255, 255, 0.3);
 }
 /*---------------------------------------------*/
+/*----------------Footer.css-----------*/
+.dropdown {
+  position: relative;
+  display: inline-block;
+  z-index: 1000; /* To ensure dropdown stays on top */
+}
+
+.dropdownbutton {
+  padding: 12px 20px;
+  background-color: #7F3FBF; /* Purple background */
+  color: white;
+  border: 2px solid #6A2D99; /* Darker purple border */
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+.dropdownbutton:focus {
+  outline: none;
+}
+
+.dropdownbutton:hover {
+  background-color: #6A2D99;
+  border-color: #4A1D6C;
+}
+
+.dropdownlist {
+  position: absolute;  /* Position it relative to the parent */
+  top: 100%;  /* Position directly below the button */
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 2px solid #7F3FBF;
+  border-radius: 5px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  max-width: fit-content;
+  overflow-y: auto;
+  z-index: 1000; /* Ensure dropdown is on top of other elements */
+}
+
+.dropdownitem {
+  padding: 12px 20px;
+  color: #4A1D6C;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdownitem:hover {
+  background-color: #F4E1FF;
+  color: #6A2D99;
+}
+
+.dropdownitem:focus {
+  outline: none;
+}
+
+
+/*---------------------------------------------*/
