@@ -248,3 +248,33 @@
 }
 
 /*---------------------------------------*/
+/*----------------TextArea.css-----------*/
+.textAreaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.label {
+  font-size: 16px;
+  color: #ffffff; 
+}
+.textArea {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  font-size: 16px;
+  color: #ffffff;
+  border: 1px solid #ff00ff;
+  border-radius: 8px;
+  resize: vertical; 
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: itim;
+  background-color: rgba(127, 66, 150, 1);
+  opacity: 100%;
+}
+.textArea:focus {
+  border-color: #ffffff;
+  box-shadow: 0 5 5px rgba(255, 255, 255, 0.3);
+}
+/*---------------------------------------------*/
