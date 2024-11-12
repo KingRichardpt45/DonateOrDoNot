@@ -202,6 +202,8 @@
 
 .searchContainer {
   position: relative;
+  left: 50em;
+  top:1em;
   width: 50px;
   overflow: hidden;
   border: 2px solid #FFFFFF;
@@ -353,7 +355,7 @@
   text-align: center;
   font-size: 0.9rem;
   box-sizing: border-box;
-  margin-top: auto; /* Ensure footer stays at the bottom if the content is shorter */
+  margin-top: 0; /* Ensure footer stays at the bottom if the content is shorter */
 }
 /*------------------------------------------*/
 /*------------------Campaign.css--------------*/
@@ -365,6 +367,7 @@
   text-align: center;
   overflow: hidden;
   border-radius: 10px; /* Optional for a rounded look */
+  margin-bottom: 0;
 }
 
 .carousel {
@@ -392,14 +395,15 @@
 .navButton {
   position: absolute;
   top: 50%;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  border: none;
+  background: none;
+  color: #ad48dc;
+  border: #F4E1FF;
   padding: 0.5rem;
   cursor: pointer;
-  font-size: 2rem;
+  font-size: 3rem;
   transform: translateY(-50%);
   z-index: 1;
+  stroke: #F4E1FF;
 }
 
 .navButton:first-of-type {

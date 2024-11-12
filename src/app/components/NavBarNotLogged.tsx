@@ -25,7 +25,6 @@ export const Header: React.FC = () => {
           Donate Or Donot
         </Link>
       </div>
-      <ExpandableSearchBar/>
       <Button variant="ghost" className={styles.header__login_button}>
         Login
       </Button>
