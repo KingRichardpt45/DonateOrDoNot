@@ -9,22 +9,17 @@ export default function SignUp() {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string | null>(null);
 
-  // Handle checkbox role selection (Campaign Creator or Donor)
-  const handleRoleChange = (role: string) => {
-    if (selectedRole === role) {
-      setSelectedRole(null); // Deselect if the same checkbox is clicked
-    } else {
-      setSelectedRole(role);
-    }
+  // Handle role dropdown change (Campaign Creator or Donor)
+  const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const role = event.target.value;
+    setSelectedRole(role ? role : null); // Set role or null if empty
+    setSelectedType(null); // Reset type selection when role changes
   };
 
-  // Handle select box change (Autonomous or Institution)
-  const handleTypeChange = (role: string) => {
-    if (selectedType === role) {
-      setSelectedType(null); // Deselect if the same option is clicked
-    } else {
-      setSelectedType(role); // Set the selected option
-    }
+  // Handle type dropdown change (Autonomous or Institution)
+  const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const type = event.target.value;
+    setSelectedType(type ? type : null); // Set type or null if empty
   };
 
   return (
@@ -32,9 +27,9 @@ export default function SignUp() {
       <Header />
       <SideMenu />
       <main className={styles.main}>
-        <div className={styles.signUpContainer}>
+        <div className={styles.signContainer}>
           <h2 className={styles.heading}>Sign Up</h2>
-          <form className={styles.signUpForm}>
+          <form className={styles.signForm}>
             <input
               type="email"
               className={styles.inputField}
@@ -51,72 +46,43 @@ export default function SignUp() {
               placeholder="Confirm Password"
             />
 
-            {/* Role checkboxes */}
-            <div className={styles.checkboxContainer}>
-              <div className={styles.checkboxGroup}>
-                <input
-                  type="checkbox"
-                  id="campaignCreator"
-                  name="role"
-                  value="campaignCreator"
-                  checked={selectedRole === "campaignCreator"}
-                  onChange={() => handleRoleChange("campaignCreator")}
-                />
-                <label
-                  htmlFor="campaignCreator"
-                  className={styles.checkboxLabel}
-                >
-                  Campaign Creator
-                </label>
-              </div>
-              <div className={styles.checkboxGroup}>
-                <input
-                  type="checkbox"
-                  id="donor"
-                  name="role"
-                  value="donor"
-                  checked={selectedRole === "donor"}
-                  onChange={() => handleRoleChange("donor")}
-                />
-                <label htmlFor="donor" className={styles.checkboxLabel}>
-                  Donor
-                </label>
-              </div>
+            {/* Role selection dropdown */}
+            <div className={styles.dropdownContainer}>
+              <label htmlFor="role" className={styles.dropdownLabel}>
+                Select Role
+              </label>
+              <select
+                id="role"
+                className={styles.dropdown}
+                onChange={handleRoleChange}
+                value={selectedRole || ""}
+              >
+                <option value="">-- Select Role --</option>
+                <option value="campaignCreator">Campaign Creator</option>
+                <option value="donor">Donor</option>
+              </select>
             </div>
 
             {/* Additional fields if Campaign Creator is selected */}
             {selectedRole === "campaignCreator" && (
               <>
-                <div className={styles.checkboxTypeContainer}>
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="autonomous"
-                      name="type"
-                      value="autonomous"
-                      checked={selectedType === "autonomous"}
-                      onChange={() => handleTypeChange("autonomous")}
-                    />
-                    <label htmlFor="autonomous" className={styles.checkboxLabel}>
-                      Autonomous
-                    </label>
-                  </div>
-                  <div className={styles.checkboxGroup}>
-                    <input
-                      type="checkbox"
-                      id="institution"
-                      name="type"
-                      value="institution"
-                      checked={selectedType === "institution"}
-                      onChange={() => handleTypeChange("institution")}
-                    />
-                    <label htmlFor="institution" className={styles.checkboxLabel}>
-                      Institution
-                    </label>
-                  </div>
+                <div className={styles.dropdownContainer}>
+                  <label htmlFor="type" className={styles.dropdownLabel}>
+                    Type
+                  </label>
+                  <select
+                    id="type"
+                    className={styles.dropdown}
+                    onChange={handleTypeChange}
+                    value={selectedType || ""}
+                  >
+                    <option value="">-- Select Type --</option>
+                    <option value="autonomous">Autonomous</option>
+                    <option value="institution">Institution</option>
+                  </select>
                 </div>
 
-                {/* Display fields based on Autonomous or Institution */}
+                {/* Fields for Autonomous */}
                 {selectedType === "autonomous" && (
                   <>
                     <input
@@ -124,14 +90,32 @@ export default function SignUp() {
                       className={styles.inputField}
                       placeholder="Username"
                     />
+                    <div className={styles.addressContainer}>
+                      <input
+                        type="text"
+                        className={styles.smallInputField}
+                        placeholder="Postal Code"
+                      />
+                      <input
+                        type="text"
+                        className={styles.smallInputField}
+                        placeholder="City"
+                      />
+                    </div>
                     <input
                       type="text"
                       className={styles.inputField}
                       placeholder="Address"
                     />
+                    <input
+                      type="text"
+                      className={styles.inputField}
+                      placeholder="Address Specification"
+                    />
                   </>
                 )}
 
+                {/* Fields for Institution */}
                 {selectedType === "institution" && (
                   <>
                     <input
@@ -139,15 +123,32 @@ export default function SignUp() {
                       className={styles.inputField}
                       placeholder="Institution Name"
                     />
+                    <div className={styles.addressContainer}>
+                      <input
+                        type="text"
+                        className={styles.smallInputField}
+                        placeholder="Postal Code"
+                      />
+                      <input
+                        type="text"
+                        className={styles.smallInputField}
+                        placeholder="City"
+                      />
+                    </div>
                     <input
                       type="text"
                       className={styles.inputField}
                       placeholder="Address"
                     />
+                    <input
+                      type="text"
+                      className={styles.inputField}
+                      placeholder="Address Specification"
+                    />
                   </>
                 )}
 
-                {/* Show Confirm Identity field only if Autonomous or Institution is selected */}
+                {/* Confirm Identity file upload for Autonomous and Institution */}
                 {(selectedType === "autonomous" || selectedType === "institution") && (
                   <>
                     <label htmlFor="confirmIdentity" className={styles.fileLabel}>
@@ -173,8 +174,12 @@ export default function SignUp() {
               />
             )}
 
+            <div className={styles.signLink}>
+              I already have an account! <a href="/SignIn" className={styles.link}>Click Here!</a>
+            </div>
+
             <button type="submit" className={styles.submitButton}>
-              Submit
+              Sign Up
             </button>
           </form>
         </div>
