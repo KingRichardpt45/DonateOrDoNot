@@ -1,8 +1,7 @@
 /**
  * Enum representing the types of files or media used for identification or documentation purposes.
  */
-export enum FileType 
-{
+export enum FileType {
     /** Represents an image file, such as a photo or picture. */
     Image = 0,
 

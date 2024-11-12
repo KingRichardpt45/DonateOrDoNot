@@ -1,107 +1,69 @@
-import { IEntity } from "@/core/Repository/IEntity"
+import { IEntity } from "@/core/repository/IEntity";
 import { Address } from "./Address";
-import { NavigationKey } from "@/core/Repository/NavigationKey";
-import { File } from "@/models/File"
+import { NavigationKey } from "@/core/repository/NavigationKey";
+import { File } from "@/models/File";
 
+export class User implements IEntity {
+    [key: string]: unknown;
 
-export class User implements IEntity 
-{
-    [key: string]: any;
+    id: number | null = null;
+    address_id: number | null = null;
+    first_name: string | null = null;
+    middle_names: string | null = null;
+    last_name: string | null = null;
+    email: string = "";
+    email_confirmation_token: string | null = null;
+    email_confirmed: boolean = false;
+    phone_number: string | null = null;
+    password: string = "";
+    status: string = "";
+    type: number = 0;
 
-    id : number | null; 
-    address_id : number | null;
-    first_name : string | null; 
-    middle_names : string | null;
-    last_name : string | null;
-    email : string;
-    email_confirmation_token : string | null; 
-    email_confirmed : boolean = false; 
-    phone_number : string | null; 
-    password : string;
-    status : string;
-    type: number = 0; 
+    readonly notifications = new NavigationKey<any>("id", "Notifications", "user_id", "Notification", []);
+    readonly address = new NavigationKey<Address>("address_id", Address.getTableName(), "id", Address.getEntityName(), null);
+    readonly profileImage = new NavigationKey<File>("profile_image_id", File.getTableName(), "id", File.getEntityName(), null);
 
-    readonly notifications: NavigationKey<any>;
-    readonly address: NavigationKey<Address>;
-    readonly profileImage: NavigationKey<File>;
-
-    constructor(jsonObject?: { [key: string]: any } ) 
-    {
-        this.id = null;
-        this.address_id = null;
-        this.profile_image_id = null;
-        this.first_name = null;
-        this.middle_names = null;
-        this.last_name = null;
-        this.email = "";
-        this.email_confirmation_token = null;
-        this.email_confirmed = false;
-        this.phone_number = null;
-        this.password = "";
-        this.status = "";
-        this.type = 0;
-
-        this.notifications = new NavigationKey<any>("id","Notifications","user_id","Notification", new Array<any>() );
-        this.address = new NavigationKey<Address>("address_id","Addresses","id","Address", null );
-        this.profileImage = new NavigationKey<File>("profile_image_id","Files","id","File", null );
-
+    getEntityName(): string {
+        return User.getEntityName();
     }
 
-    getEntityName(): string 
-    {
-        return "User";    
+    getTableName(): string {
+        return User.getTableName();
     }
 
-    getTableName(): string 
-    {
-        return "Users";    
+    getClassName(): string {
+        return "User";
     }
 
-    getClassName(): string 
-    {
-        return "User";    
-    }
-
-    isCreated()
-    {
+    isCreated(): boolean {
         return this.id !== null;
     }
 
-    getPrimaryKeyParts(): string[] 
-    {
+    getPrimaryKeyParts(): string[] {
         return ["id"];
     }
 
-    getKeys(): string[] 
-    {
+    getKeys(): string[] {
         return [
-            "id",
-            "address_id",
-            "profile_image_id",
-            "first_name",
-            "middle_names",
-            "last_name",
-            "email",
-            "email_confirmation_token",
-            "email_confirmed",
-            "phone_number",
-            "password",
-            "status",
-            "type"
-        ]; 
+            "id", "address_id", "profile_image_id", "first_name", "middle_names", "last_name",
+            "email", "email_confirmation_token", "email_confirmed", "phone_number", "password",
+            "status", "type"
+        ];
     }
 
-    getNavigationKeys() : string[]
-    {
-        return ["notifications","address","profileImage"]
+    getNavigationKeys(): string[] {
+        return ["notifications", "address", "profileImage"];
     }
 
-    public equals ( object : any)
-    {
-        if (!(object instanceof User)) return false;
+    equals(object: unknown): boolean {
+        return object instanceof User && this.id === object.id;
+    }
 
-        if(object === this) return true
+    static getTableName(): string {
+        return "User";
+    }
 
-        return this.id === object.id ;
+    static getEntityName(): string {
+        return "Users";
     }
 }

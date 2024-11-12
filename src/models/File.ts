@@ -1,85 +1,56 @@
-import { IEntity } from "@/core/Repository/IEntity";
-import { NavigationKey } from "@/core/Repository/NavigationKey";
-import { User } from "./User";
+import { IEntity } from "@/core/repository/IEntity";
+import { User } from "@/models/User";
+import { NavigationKey } from "@/core/repository/NavigationKey";
 
-export class File implements IEntity
-{
-    [key: string]: any;
+export class File implements IEntity {
+    [key: string]: unknown;
 
-    id : number | null; 
-    uploaded_by_user_id : number | null;
-    campaign_id : number | null;
-    original_name : string | null;
-    file_suffix : string | null;
-    file_type : number | null;
-    file_path : string | null;
-    timestamp : Date | null;
+    id: number | null = null;
+    uploaded_by_user_id: number | null = null;
+    campaign_id: number | null = null;
+    original_name: string | null = null;
+    file_suffix: string | null = null;
+    file_type: number | null = null;
+    file_path: string | null = null;
+    timestamp: Date | null = null;
+    type: number = 0;
 
-    user : NavigationKey<User> | null; 
-    campaign : NavigationKey<any> | null; 
+    user: NavigationKey<User> = new NavigationKey<User>("user_id", User.getTableName(), "id", User.getEntityName(), null);
+    campaign: NavigationKey<any> = new NavigationKey<any>("campaign_id", "Campaigns", "id", "Campaign", null);
 
-    constructor() 
-    {
-        this.id = null;
-        this.uploaded_by_user_id = null;
-        this.campaign_id = null;
-        this.original_name = null;
-        this.file_suffix = null;
-        this.file_type = null;
-        this.file_path = null;
-        this.timestamp = null;
-
-        this.user = new NavigationKey<User>("user_id","Users","id","User", null);
-        this.campaign = new NavigationKey<any>("campaign_id","Campaigns","id","Campaign", null);
-
-        this.type = 0;
+    getEntityName(): string {
+        return File.getEntityName();
     }
 
-    isCreated(): boolean 
-    {
+    getTableName(): string {
+        return File.getTableName();
+    }
+
+    isCreated(): boolean {
         return this.id !== null;
     }
 
-    getPrimaryKeyParts(): string[] 
-    {
+    getPrimaryKeyParts(): string[] {
         return ["id"];
     }
 
     getKeys(): string[] {
-        return [
-            "id",
-            "uploaded_by_user_id",
-            "campaign_id",
-            "original_name",
-            "file_suffix",
-            "file_type",
-            "file_path",
-            "timestamp"
-        ]
+        return ["id", "uploaded_by_user_id", "campaign_id", "original_name", "file_suffix", "file_type", "file_path", "timestamp"];
     }
 
-    getNavigationKeys(): string[] 
-    {
-        return ["user","campaign"];
+    getNavigationKeys(): string[] {
+        return ["user", "campaign"];
     }
 
-    getEntityName(): string 
-    {
+    equals(object: unknown): boolean {
+        return object instanceof File && this.id === object.id;
+    }
+
+    static getTableName(): string {
         return "File";
     }
-    
-    getTableName(): string
-    {
+
+    static getEntityName(): string {
         return "Files";
     }
-
-    public equals ( object : any)
-    {
-        if (!(object instanceof File)) return false;
-
-        if(object === this) return true
-
-        return this.id === object.id ;
-    }
-    
 }
