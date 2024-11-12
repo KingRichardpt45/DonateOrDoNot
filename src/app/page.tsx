@@ -9,7 +9,6 @@ import {Header} from "./components/NavBarNotLogged";
 export default function Home() {
   return (
     <div className={styles.page}>
-      <Header />
       <main className={styles.main}>
         <div className={styles.campaignContent}>
           <h1 className={styles.campaignTitle}>Campaign Title</h1>
@@ -37,9 +36,6 @@ export default function Home() {
         <p>Be one of this campaign top Donors !</p>
         <button className={styles.donateButton}>Donate Now</button>
       </div>
-      <footer className={styles.footer}>
-        © UMa PMS Grupo 5
-      </footer>
     </div>
   );
 }

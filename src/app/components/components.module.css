@@ -278,7 +278,7 @@
   box-shadow: 0 5 5px rgba(255, 255, 255, 0.3);
 }
 /*---------------------------------------------*/
-/*----------------Footer.css-----------*/
+/*----------------Dropdown.css-----------*/
 .dropdown {
   position: relative;
   display: inline-block;
@@ -342,3 +342,16 @@
 
 
 /*---------------------------------------------*/
+/*-----------------Footer.css-----------------*/
+.footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  padding: 1rem;
+  background-color: #2a2a2b; /* You can customize the color */
+  color: white;
+  text-align: center;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  margin-top: auto; /* Ensure footer stays at the bottom if the content is shorter */
+}
