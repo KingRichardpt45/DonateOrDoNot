@@ -89,19 +89,54 @@ export interface IRepositoryAsync< Entity extends IEntity >
 
 
     /**
-     * Updates an existing entity in the repository, with optional fields to exclude from the update.
+     * Updates an existing entity in the repository. This method updates all fields
+     * of the entity and does not allow exclusion of specific fields.
+     * 
      * @param entity - The entity to be updated.
-     * @param excludedFields - Fields to exclude from the update operation.
      * @returns A promise that resolves to a boolean indicating if the update was successful.
      * 
      * @example
      * ```typescript
-     * // Update a user's phone number, excluding other fields.
+     * // Update a user's phone number.
      * user.phone_number = "925678030";
-     * const success = await userRepo.update(user, "email", "name");
+     * const success = await userRepo.update(user);
      * ```
      */
-    update(entity: Entity , ...excludedFields:string[] ) : Promise<boolean>
+    update(entity: Entity ) : Promise<boolean>
+
+    /**
+     * Updates an existing entity in the repository, excluding specified fields from the update.
+     * 
+     * @param entity - The entity to be updated.
+     * @param excludedFields - A list of field names to exclude from the update operation.
+     * @returns A promise that resolves to a boolean indicating if the update was successful.
+     * 
+     * @example
+     * ```typescript
+     * // Update a user's phone number, excluding "email" and "name" from the update.
+     * user.phone_number = "925678030";
+     * const success = await userRepo.updateExcluding(user, "email", "name");
+     * ```
+     */
+    updateExcluding(entity: Entity , ...excludedFields:string[] ) : Promise<boolean>
+
+
+    /**
+     * Updates specific fields of an entity in the repository, updating only the fields specified.
+     * 
+     * @param entity - The entity to be updated.
+     * @param fields - A list of field names to include in the update operation.
+     * @returns A promise that resolves to a boolean indicating if the update was successful.
+     * 
+     * @example
+     * ```typescript
+     * // Update only a user's "phone_number" and "address".
+     * user.phone_number = "925678030";
+     * user.address = "123 Main St";
+     * const success = await userRepo.updateFields(user, "phone_number", "address");
+     * ```
+     */
+    updateFields(entity: Entity , ...Fields:string[] ) : Promise<boolean>
 
 
 

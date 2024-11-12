@@ -51,8 +51,6 @@ export interface IEntity
 
     /**
      * Retrieves the navigation keys of the entity, which represent related entities or navigation properties.
-     * Navigation keys are typically used to include related entities in queries. 
-     * @note Collection Navigation are not sported.
      *  
      * @returns An array of strings representing the navigation keys of the entity.
      * 
@@ -65,14 +63,34 @@ export interface IEntity
     getNavigationKeys() : string[];
 
     /**
-     * Retrieves the class name of the entity.
-     * @returns A string representing the class name of the entity, typically for use in metadata or logging.
+     * Retrieves the name of the entity.
+     * @returns A string representing the name of the entity (same as the class name).
+     * 
+     * @example
+     * ```typescript
+     * // Get the name of  the entity  of a user entity.
+     * const className = user.getEntityName(); // e.g., "User"
+     * ```
+     */
+    getEntityName() : string;
+
+    /**
+     * Retrieves the table name of the entity.
+     * @returns A string representing the table name of the entity.
      * 
      * @example
      * ```typescript
      * // Get the class name of a user entity.
-     * const className = user.getClassName(); // e.g., "User"
+     * const className = user.getTableName(); // e.g., "Users"
      * ```
      */
-    getClassName() : string;
+    getTableName() : string;
+
+    /**
+     * Compares if the object are equals or referencing the same.
+     * 
+     * @param object any, the object to compare.
+     * @returns true if the object is the same by equals comparison.
+     */
+    equals ( object : any) : boolean;
 }
