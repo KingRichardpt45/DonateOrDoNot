@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import knexConfig from "@/../knexfile.js"
-import { RepositoryAsync } from '@/core/Repository/RepositoryAsync';
-import { Addresse } from '@/models/Address';
+import { RepositoryAsyncV1 } from '@/core/Repository/RepositoryAsyncV1';
+import { Address } from '@/models/Address';
 import { User } from '@/models/User';
 const knex = require('knex')(knexConfig["development"]);
 
@@ -14,7 +14,7 @@ export async function GET() {
     // myAddresse.postal_code = "9020-099"
     // // myAddresse.id = 1;
 
-      let userRepo = new RepositoryAsync<User>("Users");
+      let userRepo = new RepositoryAsyncV1<User>("Users");
       let user = new User();
       user.id = 7;
     // user.Addresse = myAddresse;

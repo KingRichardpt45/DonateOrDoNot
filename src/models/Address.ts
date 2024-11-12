@@ -1,35 +1,32 @@
 import { IEntity } from "@/core/Repository/IEntity";
 
-export class Addresse implements IEntity
+export class Address implements IEntity
 {
     [key: string]: any;
 
-    id: number | null; 
-    postal_code: string; 
-    city: string;
-    address: string;
+    id : number | null; 
+    postal_code : string | null; 
+    city : string | null;
+    address : string | null;
+    door : string | null;
 
-    constructor(jsonObject?: { [key: string]: any }, alias : string = "") {
-
-        this.id = null;
-        this.postal_code = "";
-        this.city = "";
-        this.address = "";
-        
-        if(alias !== "" )
-            alias = alias + "."
-
-        if (jsonObject) {
-            this.id = jsonObject[`${alias}id`] ?? null;
-            this.postal_code = jsonObject[`${alias}postal_code`] ?? "";
-            this.city = jsonObject[`${alias}city`] ?? "";
-            this.address = jsonObject[`${alias}address`] ?? "";
-        }
-    }
-  
-    getClassName(): string 
+    constructor(jsonObject?: { [key: string]: any }, alias : string = "") 
     {
-        return "Addresse";
+        this.id = null;
+        this.postal_code = null;
+        this.city = null;
+        this.address = null;  
+        this.door = null; 
+    }
+
+    getEntityName(): string 
+    {
+        return "Address";
+    }
+
+    getTableName(): string 
+    {
+        return "Addresses";
     }
 
     isCreated()
@@ -48,7 +45,8 @@ export class Addresse implements IEntity
             "id",
             "postal_code",
             "city",
-            "address"
+            "address",
+            "door"
         ]; 
     }
 
@@ -59,7 +57,7 @@ export class Addresse implements IEntity
 
     public equals ( object : any)
     {
-        if (!(object instanceof Addresse)) return false;
+        if (!(object instanceof Address)) return false;
 
         if(object === this) return true
 

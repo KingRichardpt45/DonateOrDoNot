@@ -1,53 +1,61 @@
 import { IEntity } from "@/core/Repository/IEntity"
-import { Addresse } from "./Address";
+import { Address } from "./Address";
+import { NavigationKey } from "@/core/Repository/NavigationKey";
+import { File } from "@/models/File"
 
 
 export class User implements IEntity 
 {
     [key: string]: any;
 
-    id: number | null; 
-    name: string | null; 
-    email: string;
-    email_confirmation_token?: string | null; 
-    email_confirmed: boolean = false; 
-    phone_number?: string | null; 
-    password: string;
-    profile_image?: number | null; 
+    id : number | null; 
+    address_id : number | null;
+    first_name : string | null; 
+    middle_names : string | null;
+    last_name : string | null;
+    email : string;
+    email_confirmation_token : string | null; 
+    email_confirmed : boolean = false; 
+    phone_number : string | null; 
+    password : string;
+    status : string;
     type: number = 0; 
-    addresse_id: number | null;
 
-    constructor(jsonObject?: { [key: string]: any } , alias: string = "" ) {
+    readonly notifications: NavigationKey<any>;
+    readonly address: NavigationKey<Address>;
+    readonly profileImage: NavigationKey<File>;
 
+    constructor(jsonObject?: { [key: string]: any } ) 
+    {
         this.id = null;
-        this.name = null;
+        this.address_id = null;
+        this.profile_image_id = null;
+        this.first_name = null;
+        this.middle_names = null;
+        this.last_name = null;
         this.email = "";
         this.email_confirmation_token = null;
         this.email_confirmed = false;
         this.phone_number = null;
         this.password = "";
-        this.profile_image = null;
+        this.status = "";
         this.type = 0;
-        this.addresse_id = null;
 
-        if(alias !== "" )
-            alias = alias + "."
+        this.notifications = new NavigationKey<any>("id","Notifications","user_id","Notification", new Array<any>() );
+        this.address = new NavigationKey<Address>("address_id","Addresses","id","Address", null );
+        this.profileImage = new NavigationKey<File>("profile_image_id","Files","id","File", null );
 
-        if (jsonObject) {
-            this.id = jsonObject[`${alias}id`] ?? null;
-            this.name = jsonObject[`${alias}name`] ?? "";
-            this.email = jsonObject[`${alias}email`] ?? "";
-            this.email_confirmation_token = jsonObject[`${alias}email_confirmation_token`] ?? null;
-            this.email_confirmed = jsonObject[`${alias}email_confirmed`] ?? false;
-            this.phone_number = jsonObject[`${alias}phone_number`] ?? null;
-            this.password = jsonObject[`${alias}password`] ?? "";
-            this.profile_image = jsonObject[`${alias}profile_image`] ?? null;
-            this.type = jsonObject[`${alias}type`] ?? 0;
-            this.addresse_id = jsonObject[`${alias}addresse_id`] ?? null;
-        }
     }
 
-    Addresse: Addresse| null = null;
+    getEntityName(): string 
+    {
+        return "User";    
+    }
+
+    getTableName(): string 
+    {
+        return "Users";    
+    }
 
     getClassName(): string 
     {
@@ -68,21 +76,24 @@ export class User implements IEntity
     {
         return [
             "id",
-            "name",
+            "address_id",
+            "profile_image_id",
+            "first_name",
+            "middle_names",
+            "last_name",
             "email",
             "email_confirmation_token",
             "email_confirmed",
             "phone_number",
             "password",
-            "profile_image",
-            "type",
-            "addresse_id"
+            "status",
+            "type"
         ]; 
     }
 
     getNavigationKeys() : string[]
     {
-        return ["Addresse"]
+        return ["notifications","address","profileImage"]
     }
 
     public equals ( object : any)
