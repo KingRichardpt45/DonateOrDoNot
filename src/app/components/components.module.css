@@ -202,6 +202,8 @@
 
 .searchContainer {
   position: relative;
+  left: 50em;
+  top:1em;
   width: 50px;
   overflow: hidden;
   border: 2px solid #FFFFFF;
@@ -248,3 +250,219 @@
 }
 
 /*---------------------------------------*/
+/*----------------TextArea.css-----------*/
+.textAreaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.label {
+  font-size: 16px;
+  color: #ffffff; 
+}
+.textArea {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  font-size: 16px;
+  color: #ffffff;
+  border: 1px solid #ff00ff;
+  border-radius: 8px;
+  resize: vertical; 
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: itim;
+  background-color: rgba(127, 66, 150, 1);
+  opacity: 100%;
+}
+.textArea:focus {
+  border-color: #ffffff;
+  box-shadow: 0 5 5px rgba(255, 255, 255, 0.3);
+}
+/*---------------------------------------------*/
+/*----------------Dropdown.css-----------*/
+.dropdown {
+  position: relative;
+  display: inline-block;
+  z-index: 1000; /* To ensure dropdown stays on top */
+}
+
+.dropdownbutton {
+  padding: 12px 20px;
+  background-color: #7F3FBF; /* Purple background */
+  color: white;
+  border: 2px solid #6A2D99; /* Darker purple border */
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+.dropdownbutton:focus {
+  outline: none;
+}
+
+.dropdownbutton:hover {
+  background-color: #6A2D99;
+  border-color: #4A1D6C;
+}
+
+.dropdownlist {
+  position: absolute;  /* Position it relative to the parent */
+  top: 100%;  /* Position directly below the button */
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 2px solid #7F3FBF;
+  border-radius: 5px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  max-width: fit-content;
+  overflow-y: auto;
+  z-index: 1000; /* Ensure dropdown is on top of other elements */
+}
+
+.dropdownitem {
+  padding: 12px 20px;
+  color: #4A1D6C;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdownitem:hover {
+  background-color: #F4E1FF;
+  color: #6A2D99;
+}
+
+.dropdownitem:focus {
+  outline: none;
+}
+
+
+/*---------------------------------------------*/
+/*-----------------Footer.css-----------------*/
+.footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  padding: 1rem;
+  background-color: #2a2a2b; /* You can customize the color */
+  color: white;
+  text-align: center;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  margin-top: 0; /* Ensure footer stays at the bottom if the content is shorter */
+}
+/*------------------------------------------*/
+/*------------------Campaign.css--------------*/
+/* Campaign.module.css */
+.campaign {
+  position: relative;
+  width: 100%; /* Ensures it takes up the full width of the screen */
+  margin: 2rem auto;
+  text-align: center;
+  overflow: hidden;
+  border-radius: 10px; /* Optional for a rounded look */
+  margin-bottom: 0;
+}
+
+.carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%; /* Make carousel container stretch to full width */
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.imageTrain {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%; /* Ensures the images stretch across the entire carousel */
+}
+
+.imageTrain img {
+  width: 100%; /* Makes each image take up 100% of the carousel width */
+  height: auto; /* Keeps image aspect ratio intact */
+  object-fit: cover;
+  flex-shrink: 0; /* Prevents images from shrinking */
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  background: none;
+  color: #ad48dc;
+  border: #F4E1FF;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 3rem;
+  transform: translateY(-50%);
+  z-index: 1;
+  stroke: #F4E1FF;
+}
+
+.navButton:first-of-type {
+  left: 10px;
+}
+
+.navButton:last-of-type {
+  right: 10px;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%; 
+  width: 60%; 
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.9)40%, rgba(0, 0, 0, 0) 100%);
+
+  color: #fff;
+  padding: 1rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: flex-start; 
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  margin-left: 1.5em;
+}
+
+.description {
+  width: fit-content;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  margin-left: 3em;
+}
+
+.donationGoals {
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  margin-left: 3em;
+}
+
+
+.donateButton {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  background-color: rgba(183, 0, 255, 1);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: 3em;
+}
+
+
+
+
+/*---------------------------------------------*/
