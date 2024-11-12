@@ -414,36 +414,47 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.6);
+  height: 100%; /* Adjust overlay to cover 50% of the height of the image */
+  width: 40%; /* Cover the left half of the image */
+  background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)); /* Black gradient */
   color: #fff;
   padding: 1rem;
   text-align: left;
+  display: flex;
+  flex-direction: column; /* Align content vertically */
+  justify-content: center; /* Vertically center the content */
+  align-items: flex-start; /* Align text to the left */
 }
 
 .title {
   font-size: 2rem;
   margin-bottom: 0.5rem;
+  margin-left: 1.5em;
 }
 
 .description {
+  width: fit-content;
   font-size: 1rem;
   margin-bottom: 1rem;
+  margin-left: 3em;
 }
 
 .donationGoals {
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
+  margin-left: 3em;
 }
+
 
 .donateButton {
   padding: 0.75rem 1.5rem;
   font-size: 1.1rem;
-  background-color: #ff4500;
+  background-color: rgba(183, 0, 255, 1);
   color: #fff;
   border: none;
   cursor: pointer;
   border-radius: 5px;
+  margin-left: 3em;
 }
 
 
