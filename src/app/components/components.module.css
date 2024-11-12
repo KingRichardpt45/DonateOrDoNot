@@ -418,16 +418,17 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 100%; /* Adjust overlay to cover 50% of the height of the image */
-  width: 40%; /* Cover the left half of the image */
-  background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)); /* Black gradient */
+  height: 100%; 
+  width: 60%; 
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.9)40%, rgba(0, 0, 0, 0) 100%);
+
   color: #fff;
   padding: 1rem;
   text-align: left;
   display: flex;
-  flex-direction: column; /* Align content vertically */
-  justify-content: center; /* Vertically center the content */
-  align-items: flex-start; /* Align text to the left */
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: flex-start; 
 }
 
 .title {
