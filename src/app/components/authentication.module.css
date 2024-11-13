@@ -1,0 +1,156 @@
+/* authentication.module.css */
+
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-image: url('/images/backgroundSigns.png'); /* Path to your page background */
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+  }
+  
+  .signContainer {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.8); /* Optional overlay for readability */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  .heading {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: white;
+  }
+  
+  .signForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .inputField {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+  }
+
+  .checkboxContainer {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .checkboxGroup {
+    display: flex;
+    align-items: center;
+  }
+  
+  .checkboxLabel {
+    color: white; /* Ensure label text is white */
+    margin-left: 0.5rem;
+  }
+  
+  /* Add this to make the "Autonomous" and "Institution" checkboxes appear side by side */
+  .checkboxTypeContainer {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .checkboxGroup input {
+    margin-right: 0.5rem;
+  }
+  
+  
+
+  .fileInput {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6); /* Optional: darken background for readability */
+  }
+  
+  .fileLabel {
+    font-size: 14px;
+    color: white;
+    margin-top: 10px;
+    font-weight: bold; /* Makes the label text bold */
+  }
+
+  .submitButton {
+    background-color: #9f00fc;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submitButton:hover {
+    background-color: #540085;
+  }
+  
+
+  .addressContainer {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .smallInputField {
+    padding: 10px;
+    font-size: 16px;
+    width: 48%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .dropdownContainer {
+    margin: 10px 0;
+  }
+  
+  .dropdownLabel {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .dropdown {
+    padding: 8px;
+    font-size: 16px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  .signLink {
+    font-size: 14px;
+    color: white;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .signLink .link {
+    color: #0070f3;
+    text-decoration: underline;
+    cursor: pointer;
+  }
