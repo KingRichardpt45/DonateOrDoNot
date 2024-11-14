@@ -28,9 +28,12 @@ export default function SignIn() {
             <div className={styles.signLink}>
             Want to create an account? <a href="/SignUp" className={styles.link}>Click Here!</a>
             </div>
+            <div className={styles.signLink}>
+            Test Campaigns remove after? <a href="/MyCampaigns" className={styles.link}>Click Here!</a>
+            </div>
 
             <button type="submit" className={styles.submitButton}>
-              Sign Up
+              Sign In
             </button>
           </form>
         </div>
