@@ -24,8 +24,6 @@ export default function SignUp() {
 
   return (
     <div className={styles.page}>
-      <Header />
-      <SideMenu />
       <main className={styles.main}>
         <div className={styles.signContainer}>
           <h2 className={styles.heading}>Sign Up</h2>
