@@ -201,9 +201,9 @@
 /*-----------SearchBar.css-----------*/
 
 .searchContainer {
-  position: relative;
-  left: 50em;
-  top:1em;
+  position: absolute;
+  left: 45%;
+  top:0.3em;
   width: 50px;
   overflow: hidden;
   border: 2px solid #FFFFFF;
