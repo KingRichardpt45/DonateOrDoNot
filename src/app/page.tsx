@@ -38,9 +38,6 @@ export default function Home() {
         <p>Be one of this campaign top Donors !</p>
         <button className={styles.donateButton}>Donate Now</button>
       </div>
-      <footer className={styles.footer}>
-        © UMa PMS Grupo 5
-      </footer>
     </div>
   );
 }
