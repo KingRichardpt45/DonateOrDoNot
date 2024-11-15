@@ -93,4 +93,12 @@ export interface IEntity
      * @returns true if the object is the same by equals comparison.
      */
     equals ( object : any) : boolean;
+
+    /**
+     * Compares if the object are equals.
+     * 
+     * @param object any, the KNEX Object to compare.
+     * @returns true if the KNEX Object is the same by PRIMARY KEYS comparison.
+     */
+    equalsToKnex ( object : any , alias?:string) : boolean;
 }

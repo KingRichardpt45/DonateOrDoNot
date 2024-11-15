@@ -14,9 +14,10 @@ export class File implements IEntity
     file_type : number | null;
     file_path : string | null;
     timestamp : Date | null;
+    size : number | null;
 
     user : NavigationKey<User> | null; 
-    campaign : NavigationKey<any> | null; 
+    campaign : NavigationKey<User> | null; 
 
     constructor() 
     {
@@ -28,9 +29,10 @@ export class File implements IEntity
         this.file_type = null;
         this.file_path = null;
         this.timestamp = null;
+        this.size = null;
 
-        this.user = new NavigationKey<User>("user_id","Users","id","User", null);
-        this.campaign = new NavigationKey<any>("campaign_id","Campaigns","id","Campaign", null);
+        this.user = new NavigationKey<User>(this,"user","user_id", "Files","File","Users","id","User", null);
+        this.campaign = new NavigationKey<User>(this,"campaign","campaign_id",  "Files","File","Campaigns","id","Campaign", null);
 
         this.type = 0;
     }
@@ -54,7 +56,8 @@ export class File implements IEntity
             "file_suffix",
             "file_type",
             "file_path",
-            "timestamp"
+            "timestamp",
+            "size"
         ]
     }
 
@@ -82,4 +85,8 @@ export class File implements IEntity
         return this.id === object.id ;
     }
     
+    equalsToKnex(object: any , alias:string = ""): boolean 
+    {
+        return this.id === object[`${alias}id`] ;
+    }
 }

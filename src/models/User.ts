@@ -2,6 +2,7 @@ import { IEntity } from "@/core/Repository/IEntity"
 import { Address } from "./Address";
 import { NavigationKey } from "@/core/Repository/NavigationKey";
 import { File } from "@/models/File"
+import { Notification } from "./Notification";
 
 
 export class User implements IEntity 
@@ -18,14 +19,14 @@ export class User implements IEntity
     email_confirmed : boolean = false; 
     phone_number : string | null; 
     password : string;
-    status : string;
+    status : number;
     type: number = 0; 
 
     readonly notifications: NavigationKey<any>;
     readonly address: NavigationKey<Address>;
     readonly profileImage: NavigationKey<File>;
 
-    constructor(jsonObject?: { [key: string]: any } ) 
+    constructor() 
     {
         this.id = null;
         this.address_id = null;
@@ -38,12 +39,12 @@ export class User implements IEntity
         this.email_confirmed = false;
         this.phone_number = null;
         this.password = "";
-        this.status = "";
+        this.status = 0;
         this.type = 0;
 
-        this.notifications = new NavigationKey<any>("id","Notifications","user_id","Notification", new Array<any>() );
-        this.address = new NavigationKey<Address>("address_id","Addresses","id","Address", null );
-        this.profileImage = new NavigationKey<File>("profile_image_id","Files","id","File", null );
+        this.notifications = new NavigationKey<Notification>(this,"notifications","id","Users","User","Notifications","user_id","Notification", new Array<any>() );
+        this.address = new NavigationKey<Address>(this,"address","address_id","Users","User","Addresses","id","Address", null );
+        this.profileImage = new NavigationKey<File>(this,"profileImage","profile_image_id", "Users","User" ,"Files","id","File", null );
 
     }
 
@@ -55,11 +56,6 @@ export class User implements IEntity
     getTableName(): string 
     {
         return "Users";    
-    }
-
-    getClassName(): string 
-    {
-        return "User";    
     }
 
     isCreated()
@@ -103,5 +99,10 @@ export class User implements IEntity
         if(object === this) return true
 
         return this.id === object.id ;
+    }
+
+    equalsToKnex(object: any , alias:string = ""): boolean 
+    {
+        return this.id === object[`${alias}id`] ;
     }
 }

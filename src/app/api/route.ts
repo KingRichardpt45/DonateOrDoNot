@@ -1,22 +1,98 @@
 import { NextResponse } from 'next/server';
 import knexConfig from "@/../knexfile.js"
-import { RepositoryAsyncV1 } from '@/core/Repository/RepositoryAsyncV1';
+import { RepositoryAsync } from '@/core/Repository/RepositoryAsync';
 import { Address } from '@/models/Address';
 import { User } from '@/models/User';
+import { PrimaryKeyPart } from '@/core/Repository/PrimaryKeyPart';
+import { Constrain } from '@/core/Repository/Constrain';
+import { Notification } from '@/models/Notification';
+import { IncludeNavigation } from '@/core/Repository/IncludeNavigation';
 const knex = require('knex')(knexConfig["development"]);
 
 export async function GET() {
+
+    function delay(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
     
-    // let AddresseRepo = new RepositoryAsync<Addresse>("Addresses");
-    // let myAddresse = new Addresse();
+   // let AddresseRepo = new RepositoryAsync<Address>("Address");
+    let UserRepo = new RepositoryAsync<User>("User");
+    let myAddresse = new Address();
+
+    myAddresse.address = "Santo antónio Caminho da miranda";
+    myAddresse.city = "funchal"
+    myAddresse.door = "29"
+    myAddresse.postal_code = "9020-098"
+
+    let notification = new Notification();
+    notification.campaign_id = 0;
+    notification.message = "teste1";
+    let notification2 = new Notification();
+    notification2.campaign_id = 0;
+    notification2.message = "teste2";
+
+    //create
+    let user = new User();
+    user.address.value = myAddresse;
+    user.email = "test@test.com";
+    user.first_name = "ricardo";
+    user.middle_names = "F. C.";
+    user.last_name = "Vieira";
+    user.notifications.value.push(notification);
+    user.notifications.value.push(notification2);
+
+    //let result = await UserRepo.create(user);
+
+
+    // gets without includes
+    //console.log( await AddresseRepo.create(myAddresse) );
+    // let result = await AddresseRepo.getAll([],[{column: "id", order:"desc"}],2,1);
+    // let result = await AddresseRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],[]);
+    // let result = await AddresseRepo.getByCondition([ new Constrain("id","!=","2")],[],[],2,1);
+    // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
+    // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
+
+    // gets with includes
+    let result = await UserRepo.getAll((user)=> [ new IncludeNavigation( user.notifications , 0), new IncludeNavigation( user.address , 0) ]);
+    // let result = await AddresseRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],[]);
+    // let result = await AddresseRepo.getByCondition([ new Constrain("id","!=","2")],[],[],2,1);
+    // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
+    // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
+
+    // updates
+    // user.id = 25;
+    // user.address_id = 32
+    // user.email = "test2@test.coms";
+    // user.first_name = "ricardo3s";
+    // user.middle_names = "F. C. 4";
+    // user.last_name = "Vieirass";
+    //let result = await UserRepo.update(user);
+    //let result = await UserRepo.updateExcluding(user,"address_id");
+    //let result = await UserRepo.updateFields(user,"address_id");
+
+
+    // deletes
+    // let result1 = await UserRepo.delete(user);
+    // let a1 = new Address()
+    // a1.id = 50;
+    // let a2 = new Address()
+    // a2.id = 49;
+    // let result2 = await AddresseRepo.deleteRange([a1,a2]);
+
+     // let notificationrepo = new RepositoryAsync<Notification>("Notification");
+    // let result3 = await notificationrepo.deleteByCondition([new Constrain("user_id",">=",24)]);
+
+   // let result4 = await notificationrepo.deleteRangeByPrimaryKeys( [ new PrimaryKeyPart("id",18) ], [new PrimaryKeyPart("id",19)] );
+
+
     // myAddresse.address = "miranda 20";
     // myAddresse.city = "funchal";
     // myAddresse.postal_code = "9020-099"
     // // myAddresse.id = 1;
 
-      let userRepo = new RepositoryAsyncV1<User>("Users");
-      let user = new User();
-      user.id = 7;
+      // let userRepo = new RepositoryAsyncV1<User>("Users");
+      // let user = new User();
+      // user.id = 7;
     // user.Addresse = myAddresse;
     // user.email = "tania@gmail.com"
     // user.name = "tt";
@@ -38,5 +114,6 @@ export async function GET() {
 
     //console.log( await userRepo.getByPrimaryKey([{name:"Users.id",value:20}],["Addresse"]))
 
-  return NextResponse.json({h:"hello world"});
+    return NextResponse.json({h:"hello world", a : result });
 }
+

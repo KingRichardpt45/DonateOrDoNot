@@ -1,4 +1,8 @@
 import { IEntity } from "@/core/Repository/IEntity";
+import { NavigationKey } from "./NavigationKey";
+import { Constrain } from "./Constrain";
+import { PrimaryKeyPart } from "./PrimaryKeyPart";
+import { IncludeNavigation } from "./IncludeNavigation";
 
 /**
  * Represents an asynchronous repository for managing entities.
@@ -10,7 +14,7 @@ export interface IRepositoryAsync< Entity extends IEntity >
 {
     /**
      * Retrieves all entities from the repository, with optional includes, ordering, and limiting.
-     * @param includes - An array of related entities to include in the result set.
+     * @param includes - An array of relation entities to include in the result set.
      * @param orderBy - An array specifying the sorting order, e.g., [{ column: "columnName", order: "asc" }].
      * @param limit - The maximum number of records to retrieve.
      * @returns A promise that resolves to an array of entities.
@@ -21,12 +25,12 @@ export interface IRepositoryAsync< Entity extends IEntity >
      * const users = await userRepo.getAll(["Addresse"], [{ column: "Users.id", order: "desc" }], 2);
      * ```
      */
-    getAll( includes: string[] , orderBy:any[], limit:number ): Promise<Entity[]> 
+    getAll( includeFunction: ( entity : Entity ) => IncludeNavigation[] , orderBy:any[], limit:number, offset:number): Promise<Entity[]> 
 
      /**
      * Retrieves a single entity based on its primary key.
      * @param primaryKeyParts - Array of objects with name-value pairs representing primary key fields.
-     * @param includes - An array of related entities to include in the result.
+     * @param includes - An array of relation entities to include in the result.
      * @returns A promise that resolves to the entity if found, otherwise null.
      * 
      * @example
@@ -35,12 +39,12 @@ export interface IRepositoryAsync< Entity extends IEntity >
      * const user = await userRepo.getByPrimaryKey([{ name: "Users.id", value: 20 }], ["Addresse"]);
      * ```
      */
-    getByPrimaryKey( primaryKeyParts: { name: string , value : any }[], includes: string[] ): Promise<Entity | null> 
+    getByPrimaryKey( primaryKeyParts: PrimaryKeyPart[], includeFunction: ( entity : Entity ) => IncludeNavigation[] ): Promise<Entity | null> 
 
     /**
      * Retrieves entities that match specific conditions.
      * @param constrains - An array of constraints, each with a key, an operator, and a value.
-     * @param includes - An array of related entities to include in the result.
+     * @param includes - An array of relation entities to include in the result.
      * @param orderBy - An array specifying the sorting order.
      * @param limit - The maximum number of records to retrieve.
      * @returns A promise that resolves to an array of matching entities.
@@ -51,12 +55,12 @@ export interface IRepositoryAsync< Entity extends IEntity >
      * const users = await userRepo.getByCondition([{ key: "Users.id", op: ">", value: 20 }], ["Addresse"], [{ column: "Users.id", order: "desc" }], 2);
      * ```
      */
-    getByCondition( constrains: { key: string , op : string , value: any }[] , includes: string[], orderBy:any[], limit:number ): Promise<Entity[]> 
+    getByCondition( constrains: Constrain[] , includeFunction: ( entity : Entity ) => IncludeNavigation[] , orderBy:any[], limit:number, offset:number ): Promise<Entity[]> 
 
     /**
      * Retrieves the first entity that matches specific conditions.
      * @param constrains - An array of constraints, each with a key, an operator (see knexOperators), and a value.
-     * @param includes - An array of related entities to include in the result.
+     * @param includes - An array of relation entities to include in the result.
      * @param orderBy - An array specifying the sorting order.
      * @param limit - The maximum number of records to retrieve.
      * @returns A promise that resolves to the first matching entity, or null if none match.
@@ -67,7 +71,7 @@ export interface IRepositoryAsync< Entity extends IEntity >
      * const user = await userRepo.getFirstByCondition([{ key: "Users.id", op: ">", value: 20 }], ["Addresse"], [{ column: "Users.id", order: "desc" }], 2);
      * ```
      */
-    getFirstByCondition( constrains: { key: string , op : string , value: any }[] , includes: string[], orderBy:any[], limit:number ): Promise<Entity | null>
+    getFirstByCondition( constrains: Constrain[] , includeFunction: ( entity : Entity ) => IncludeNavigation[], orderBy:any[], limit:number, offset:number ): Promise<Entity | null>
 
 
 

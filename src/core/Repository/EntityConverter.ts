@@ -46,9 +46,9 @@ export class EntityConverter
         const entries = entity.getKeys();
         let object : { [key: string]: any } = {} 
         entries.forEach( 
-            ([key, value]) => 
+            (key) => 
             {   
-                object[key] = value;    
+                object[key] = entity[key];    
             }
         );
         return object 
@@ -78,10 +78,13 @@ export class EntityConverter
         const entries = entity.getKeys();
         let object : { [key: string]: any } = {} 
         entries.forEach( 
-            ([key, value]) => 
+            (key) => 
             {   
                 if(!excluding.includes(key))
-                    object[key] = value;    
+                {
+                    console.log(key,excluding);
+                    object[key] = entity[key];    
+                }
             }
         );
         return object 
@@ -129,11 +132,14 @@ export class EntityConverter
 
         fields.forEach(field => {
             // Check if the entity has the specified field
-            const entry = entries.find(([key]) => key === field);
-            if (!entry) {
-                throw new Error(`Field "${field}" does not exist on the entity ${entity.getEntityName()}`);
-            }
+            // const entry = entries.find(([key]) => key === field);
+            // if (!entry) {
+            //     throw new Error(`Field "${field}" does not exist on the entity ${entity.getEntityName()}`);
+            // }
             // Add field to object if it exists
+            if(entity[field] === null )
+                throw new Error(`Field "${field}" does not exist on the entity ${entity.getEntityName()}`);
+
             object[field] = entity[field];
         });
 
@@ -158,15 +164,14 @@ export class EntityConverter
      * console.log(entity); // Output: an instance of `MyEntity` populated with values from knexObject.
      * ```
      */
-    knexObjectIEntity<Entity extends IEntity>( object : any, entityName : string, alias : string = "" ) : Entity | null
+    knexObjectToIEntity<Entity extends IEntity>( object : any, entityName : string, alias : string = "" ) : Entity | null
     {   
         const entity : IEntity = this.factory.create(entityName, object) as IEntity;
         const keys = entity.getKeys();
-        alias = alias == "" ? "" : alias + ".";
 
         for (const key of keys) 
         {
-            entity[key] = object[`${alias}${keys}`]   
+            entity[key] = object[`${alias}${key}`]   
         }
 
         return entity as Entity;

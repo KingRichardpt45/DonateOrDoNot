@@ -1,6 +1,7 @@
 import { Factory } from "@/core/Utils/Factory/Factory";
-import { User } from "../../../models/User"
-import { Addresse } from "../../../models/Address";
+import { User } from "@/models/User"
+import { Address } from "@/models/Address";
+import { Notification } from "@/models/Notification";
 
 /**
  * A pre-configured instance of the `Factory` class, specifically for managing model types.
@@ -14,7 +15,9 @@ import { Addresse } from "../../../models/Address";
  */
 const ModelFactory : Factory = new Factory(
     { type : User , name : "User" },
-    { type : Addresse , name : "Addresse" });
+    { type : Address , name : "Address" },
+    { type : Notification , name : "Notification" }
+);
 
 /**
  * Retrieves the singleton instance of `ModelFactory`, which is pre-configured with model types.

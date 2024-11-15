@@ -3,109 +3,319 @@ import { IRepositoryAsync } from "@/core/Repository/IRepositoryAsync";
 import { dbConnection } from "@/db/KnexConnection"
 import { EntityConverter } from "./EntityConverter";
 import { getModelFactory } from "@/core/Utils/Factory/ModelsFactory";
-import { StringCaseConverter } from "../Utils/StringCaseConverter";
-import knex, { Knex } from "knex";
+import { Knex } from "knex";
 import { Constrain } from "@/core/Repository/Constrain";
 import { IFactory } from "../Utils/Factory/IFactory";
 import { PrimaryKeyPart } from "./PrimaryKeyPart";
-import { ALL } from "dns";
 import { NavigationKey } from "./NavigationKey";
+import { IncludeNavigation } from "./IncludeNavigation";
 
-export class RepositoryAsyncV1<Entity extends IEntity> implements IRepositoryAsync<Entity> 
+export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync<Entity> 
 {
     readonly tableName: string;
     readonly entityName : string ;
     readonly entityConverter : EntityConverter;
+    readonly modelFactory : IFactory;
     readonly typeObject : Entity ;
     readonly dbConnection : Knex<any,any[]> ;
     
     constructor( entityName: string )
     {
         let modelFactory : IFactory = getModelFactory();
+        this.modelFactory = modelFactory;
         this.typeObject = modelFactory.create(entityName) as Entity;
         this.tableName = this.typeObject.getTableName();
         this.entityName = this.typeObject.getEntityName()
         this.entityConverter = new EntityConverter(modelFactory);
         this.dbConnection = dbConnection;
     }
-    getAll(includes: string[], orderBy: any[], limit: number): Promise<Entity[]> {
-        throw new Error("Method not implemented.");
-    }
 
-    // getAll(includes: string[], orderBy: any[], limit: number, offset: number): Promise<Entity[]> {
-    //     // let query = this.dbConnection( this.tableName );
-    //     throw new Error("Method not implemented.");
-    //     // query = this.applyPaginationAndSorting(query,orderBy,limit,offset);
-    //     //return;
-    // }
-    getByPrimaryKey(primaryKeyParts: { name: string; value: any; }[], includes: string[]): Promise<Entity | null> {
-        throw new Error("Method not implemented.");
-    }
-    getByCondition(constrains: { key: string; op: string; value: any; }[], includes: string[], orderBy: any[], limit: number): Promise<Entity[]> {
-        throw new Error("Method not implemented.");
-    }
-    getFirstByCondition(constrains: { key: string; op: string; value: any; }[], includes: string[], orderBy: any[], limit: number): Promise<Entity | null> {
-        throw new Error("Method not implemented.");
-    }
-
-
-
-
-    async create(entity: Entity): Promise<Entity> 
+    async getAll( includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [], orderBy: any[] = [], limit: number = 0, offset:number = 0): Promise<Entity[]> 
     {
-        return await this.createAux(entity) as Entity;
-    }
-
-    private async createAux(entity: IEntity): Promise<IEntity> 
-    {
-        throw new Error("Method not implemented.");
-        // if( entity.isCreated() )
-        //     throw new Error("Invalid Operation");
-
-        // let createdNavigationObjects = await this.createNestedNavigationEntities(entity) ;
-
-        // let convertedEntity = this.entityConverter.toKnexObject(entity);
-        // let result : any = (await dbConnection( entity.getClassName() + "s" ).insert(convertedEntity,entity.getKeys()))[0] 
-
-        // let createdEntity = this.modelFactory.create( entity.getClassName() , result) as IEntity;
+        let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
+        let query = dbConnection( this.tableName );
+        let selectColumns = [`${this.tableName}.*`];
+        query = this.include(query,includes,selectColumns);
+        query = this.applyPaginationAndSorting(query,orderBy,limit,offset);
         
-        // this.updateNavigationObjects(createdEntity,createdNavigationObjects);
+        const result = await query.select(selectColumns);
 
-        // return createdEntity;
+        return this.constructEntities(result,includes);
     }
 
-    private async createNestedNavigationEntities(entity : IEntity) : Promise<{ navigationKey : string, entity : any }[]>
+    async getByPrimaryKey(primaryKeyParts: PrimaryKeyPart[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [] ): Promise<Entity | null> 
     {
-        let createdNavigationObjects : { navigationKey : string, entity : any }[] = [] 
-        let navigationKey : NavigationKey<IEntity>;
+        let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
+        let query = dbConnection( this.tableName );
+        let selectColumns = [`${this.tableName}.*`];
+        query = this.include(query,includes,selectColumns);
 
-        for( const navigationKeyName of entity.getNavigationKeys())
+        for (const primaryKeyPart of primaryKeyParts) 
         {
-            navigationKey = entity[navigationKeyName] as NavigationKey<IEntity>;
+            query = query.where(primaryKeyPart.key,"=", primaryKeyPart.value );
+        }
+        
+        const result = await query.select(selectColumns);
+        
+        let entities = this.constructEntities(result,includes);
 
-            if(navigationKey == null)
-            {
-                throw new Error("Invalid entity type definition in getNavigationKeys where entity[navigationKeyName] as null instead of NavigationKey<Entity extends IEntity>.")
+        return  entities.length == 1 ? entities[0] : null;
+    }
+    
+    async getByCondition(constrains: Constrain[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [] , orderBy: any[], limit: number = 0, offset:number = 0): Promise<Entity[]> 
+    {
+        let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
+        let query = dbConnection(this.tableName);
+        let selectColumns = [`${this.tableName}.*`];
+        query = this.include(query,includes,selectColumns);
+        query = this.addConstrains(query,constrains);
+        query = this.applyPaginationAndSorting(query,orderBy,limit,offset);
+
+        const result = await query.select(selectColumns);
+
+        return this.constructEntities(result,includes);
+    }
+
+    async getFirstByCondition(constrains: Constrain[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [], orderBy: any[], limit: number, offset:number ): Promise<Entity | null> 
+    {
+        const entries = await this.getByCondition(constrains,includeFunction,orderBy,limit,offset);
+
+        return entries.length > 0 ? entries[0] : null;
+    }
+
+    private include( query: Knex.QueryBuilder , includes : IncludeNavigation[], selects:string[] ) : Knex.QueryBuilder // campan,donor.navegationKey2,navegationKey.navegationKey.navegationKey
+    {
+        let included : string[] = [this.entityName];
+        let includeNavigation : NavigationKey<IEntity>;
+
+        for (let i = 0; i < includes.length; i++) 
+        {
+            includeNavigation = includes[i].navigationKey;
+            
+            if( included.some( entity => entity === includeNavigation.referencingEntity || entity === includeNavigation.referencedEntity ) )
+            {    
+                query = this.includeAux( query, selects, i, includeNavigation );
+                included.push(includeNavigation.referencedEntity);
             }
-                
-            if( navigationKey.isArray() && navigationKey.value?.length > 0 && ((navigationKey.value as IEntity[] )[0]).isCreated() )
+            else
             {
-
-            }  
-            else if( !navigationKey.isArray() && navigationKey.value != null )
-            {
-                let createdNavigationEntity = await this.createAux( navigationKey.value as IEntity ); 
-                createdNavigationObjects.push({ navigationKey : navigationKey.key, entity : createdNavigationEntity }); 
-               // this.updateForeignKey(entity,createdNavigationEntity);   
+                throw new Error(`Invalid include in ${ includeNavigation.referencingEntity } for ${includeNavigation.key} of type ${includeNavigation.referencedEntity}.
+                        ${ includeNavigation.referencingEntity } is not included. Check the order of includes `);
             }
         }
 
-        return createdNavigationObjects;
+        if( included.length -1 != includes.length )
+            throw new Error( "Not all includes where include" + included.toString() );
+      
+        return query;
+    }
+
+    private includeAux( query:Knex.QueryBuilder, selects:string[], index:number, navigationKey:NavigationKey<IEntity> ) : Knex.QueryBuilder
+    {
+        // if(navigationKey.isDecency)
+        // {
+            query = query.leftJoin( 
+                { [navigationKey.referencedTable] : navigationKey.referencedTable }, 
+                `${navigationKey.referencingTable}.${navigationKey.key}`, 
+                `${navigationKey.referencedTable}.${navigationKey.referencedColumn}`
+            );
+        // }
+        // else
+        // {
+        //     console.log(navigationKey);
+        //     query = query.leftJoin( 
+        //         { [navigationKey.referencingTable] : navigationKey.referencingTable }, 
+        //         `${navigationKey.referencingTable}.${navigationKey.key}`, 
+        //         `${navigationKey.referencedTable}.${navigationKey.referencedColumn}`
+        //     );
+        // }
+
+        let object = this.modelFactory.create( navigationKey.referencedEntity ) as IEntity; 
+        let array = object.getKeys().map( name => `${navigationKey.referencedTable}.${name} as ${index}.${name}`);
+
+        selects.push(...array);
+
+        return query;
+    }
+
+    private constructEntities( results: any[], includes:IncludeNavigation[] ) : Entity[]
+    {      
+        if(results.length == 0) 
+            return [];
+
+        let createdEntitiesLists : IEntity[][] = this.buildMatrix(results[0], includes);
+
+        let entityList: IEntity[] ;
+        let resultObject: any;
+        for (let indexResults = 0; indexResults < results.length; indexResults++) 
+        {
+            resultObject = results[indexResults];
+
+            entityList = createdEntitiesLists[0];
+            if( entityList.length == 0 || !entityList[entityList.length-1].equalsToKnex(resultObject ) )
+            {
+                entityList.push( this.entityConverter.knexObjectToIEntity( resultObject , this.entityName ) as Entity );
+            }
+           
+            for (let indexCreatedEntitiesLists = 1 , includeIndex = 0; indexCreatedEntitiesLists < createdEntitiesLists.length ; includeIndex = indexCreatedEntitiesLists++ ) 
+            {
+                entityList = createdEntitiesLists[indexCreatedEntitiesLists];
+                if( entityList.length == 0 || !entityList[entityList.length-1].equalsToKnex(resultObject, `${indexCreatedEntitiesLists}.` )  )
+                {  
+                    entityList.push( this.entityConverter.knexObjectToIEntity( resultObject , includes[includeIndex].navigationKey.referencedEntity , `${includeIndex}.` ) as IEntity );
+                    this.mergeCreatedEntities(createdEntitiesLists, includes, includeIndex , indexCreatedEntitiesLists );
+                    entityList.splice(0,entityList.length);
+                }
+            }   
+        }
+
+        return createdEntitiesLists[0] as Entity[];
+    }
+
+    private buildMatrix( object:any, includes:IncludeNavigation[] ) : IEntity[][]
+    {
+        let createdEntitiesLists : IEntity[][] = [];
+
+        for (let i = 0; i <= includes.length; i++) 
+        {
+            createdEntitiesLists.push( [] );
+        }
+
+        return createdEntitiesLists;
+    }
+
+    private mergeCreatedEntities( createdEntitiesLists : IEntity[][], includes:IncludeNavigation[], navigationKeyIndex:number, mergeIndex:number )
+    {
+        let mergeToIndex = includes[navigationKeyIndex].dependingNavigationKeyIndex;
+        let navigationKey = includes[navigationKeyIndex].navigationKey;
+
+        let mergeToList = createdEntitiesLists[mergeToIndex];
+        let entityToAddIncludes = mergeToList[mergeToList.length-1];
+        let mergeEntitiesList = createdEntitiesLists[mergeIndex];
+
+        if( !navigationKey.isArray() &&  mergeEntitiesList.length > 1)
+            throw new Error("Cannot merge navigationKey is not an array and has more then one item to be added.");
+        
+        if( entityToAddIncludes[navigationKey.key] == null )
+            throw new Error(`Invalid NavigationKey object ${entityToAddIncludes.getEntityName()} does not contain ${navigationKey.key} `);
+
+        if( navigationKey.isArray() )
+            (entityToAddIncludes[navigationKey.name].value as IEntity[] ).push( mergeEntitiesList[0] ) ;
+        else
+            entityToAddIncludes[navigationKey.name].value =  mergeEntitiesList[0];
+        
+    }
+
+   
+
+
+    async create(entity: Entity): Promise<Entity> 
+    {    
+        return await this.createAux(entity) as Entity;
+    }
+
+    private async createAux( entity: IEntity ): Promise<IEntity> 
+    {
+        if( entity.isCreated() )
+             throw new Error("Invalid Operation: Trying to create an already created Entity.");
+
+        await this.createDependedNavigationEntities(entity);
+
+        let convertedEntity = this.entityConverter.toKnexObject(entity);
+
+        let results : any = await dbConnection( entity.getTableName() )
+                                .insert( convertedEntity, entity.getKeys() );
+        
+        if( !results || results.length != 1 )
+            throw new Error("Cannot create entity!");
+
+        let createdEntity = this.entityConverter.knexObjectToIEntity(results[0],entity.getEntityName()) as IEntity;
+
+        this.updatePrimaryKeys(createdEntity , entity);
+        await this.createRelatedNavigationEntities( createdEntity , entity );
+
+        return entity;
+    }
+
+    private async createDependedNavigationEntities( entity : IEntity )
+    {
+        let navigationKey : NavigationKey<IEntity>;
+
+        for( const navigationKeyName of entity.getNavigationKeys())
+        {   
+            navigationKey = entity[navigationKeyName] as NavigationKey<IEntity>;
+
+            if(navigationKey == null)
+                throw new Error("Invalid entity type definition in getNavigationKeys where entity[navigationKeyName] as null instead of NavigationKey<Entity extends IEntity>.")
+
+            if(navigationKey.value == null || !navigationKey.isDecency )
+                continue;
+                
+            await this.createNavigationKeyEntities( entity, navigationKey);
+        }
+    }
+
+    private updatePrimaryKeys( createdEntity : IEntity, entityModel:IEntity )
+    {
+        for (const primaryKeyPart of entityModel.getPrimaryKeyParts() ) 
+        {
+            entityModel[primaryKeyPart] = createdEntity[primaryKeyPart];
+        }
+    }
+
+    private async createRelatedNavigationEntities( createdEntity : IEntity, entityModel:IEntity )
+    {
+        let navigationKey : NavigationKey<IEntity>;
+
+        for( const navigationKeyName of createdEntity.getNavigationKeys())
+        {   
+            navigationKey = createdEntity[navigationKeyName] as NavigationKey<IEntity>;
+
+            if(navigationKey == null)
+                throw new Error("Invalid entity type definition in getNavigationKeys where entity[navigationKeyName] as null instead of NavigationKey<Entity extends IEntity>.")
+            
+            if(navigationKey.value == null || navigationKey.isDecency ) 
+                continue;
+            
+            createdEntity[navigationKeyName] = entityModel[navigationKeyName];
+            navigationKey = createdEntity[navigationKeyName];
+            
+            await this.createNavigationKeyEntities( createdEntity, navigationKey, false);
+        }
+    }
+
+    private async createNavigationKeyEntities(entity: IEntity, navigationKey: NavigationKey<IEntity>, isDependent = true) 
+    {
+        if (navigationKey.isArray()) 
+        {
+            for (const relatedEntity of navigationKey.value as IEntity[]) 
+            {
+                await this.createNavigationKeyEntity(entity, relatedEntity, navigationKey, isDependent);
+            }
+        } 
+        else 
+        {
+            await this.createNavigationKeyEntity(entity, navigationKey.value as IEntity, navigationKey, isDependent);
+        }
+    }
+
+    private async createNavigationKeyEntity(entity: IEntity, relatedEntity: IEntity, navigationKey: NavigationKey<IEntity>, isDependent: boolean) 
+    {
+        if( isDependent )
+        {
+            const createdNavigationEntity = await this.createAux(relatedEntity);
+            entity[navigationKey.key] = createdNavigationEntity[navigationKey.referencedColumn];
+        }
+        else
+        {
+            relatedEntity[navigationKey.referencedColumn] = entity[navigationKey.key];
+            await this.createAux(relatedEntity);
+        }
     }
 
 
 
-
+    
     async update(entity: Entity ) : Promise<boolean>
     {
         return this.updateExcluding(entity);
@@ -113,12 +323,12 @@ export class RepositoryAsyncV1<Entity extends IEntity> implements IRepositoryAsy
 
     async updateExcluding(entity: Entity , ...excludedFields:string[] ) : Promise<boolean>
     {
-        let keys = entity.getPrimaryKeyParts().concat(excludedFields);
-        let convertedEntity = this.entityConverter.toKnexObjectExcludingFields(entity, keys) ;
+        let keysToExclude = [...entity.getPrimaryKeyParts(), ...excludedFields];
+        let convertedEntity = this.entityConverter.toKnexObjectExcludingFields(entity, keysToExclude) ;
         let query = dbConnection( this.tableName )
         query = this.addPrimaryKeyConstrains(query,entity);
 
-        let result : any[] = await query.update(convertedEntity,keys) as any[];
+        let result : any[] = await query.update(convertedEntity,keysToExclude) as any[];
         return result.length == 1 ;
     }
 
@@ -158,26 +368,28 @@ export class RepositoryAsyncV1<Entity extends IEntity> implements IRepositoryAsy
 
     async deleteRangeByPrimaryKeys(... primaryKeys: PrimaryKeyPart[][] ): Promise<number>
     {
-        let query = dbConnection( this.tableName );
-        let keyPartIndex = 0;
-
-        for (let objectIndex = 0; objectIndex < primaryKeys.length; objectIndex++) 
+        let result = 0;
+        for (const entityPrimaryKeys of primaryKeys) 
         {
-            keyPartIndex=0;
-            for (const primaryKeyPart of this.typeObject.getPrimaryKeyParts() ) 
+            let query = dbConnection( this.tableName )
+
+            for (const primaryKey of entityPrimaryKeys) 
             {
-                query = query.where(primaryKeyPart,"=",primaryKeys[objectIndex][keyPartIndex].value)
-                keyPartIndex++;
-            }
+                query = query.where(primaryKey.key,"=", primaryKey.value);
+            }    
+
+            result += await query.delete();
         }
-                
-        let result : number = await query.delete() as number;
 
         return result;
     }
     
-    async deleteByCondition( constrains : Constrain[]): Promise<number> 
-    {
+    async deleteByCondition( constrains : Constrain[] ): Promise<number> 
+    {   
+        if (constrains.length === 0) {
+            throw new Error("No constraints provided for delete.");
+        }
+
         let query = this.addConstrains( this.dbConnection( this.tableName ), constrains );
         let result = await query.delete() 
         return result;
@@ -190,17 +402,19 @@ export class RepositoryAsyncV1<Entity extends IEntity> implements IRepositoryAsy
     {
         for (const constrain of constrains) 
         {
-            query = this.addConstrain(query,constrain);
+            query = this.addConstrainByType(query,constrain);
         }
 
         return query
     }
 
-    private addConstrain(  query:Knex.QueryBuilder, constrain:Constrain ): Knex.QueryBuilder
+    private addConstrainByType(  query:Knex.QueryBuilder, constrain:Constrain ): Knex.QueryBuilder
     {
         switch(constrain.op)
         {
             case "like":
+                if( typeof constrain.value !== 'string' )
+                    throw new Error("Invalid where like. Value is not a string");
                 query = query.whereLike(constrain.key,constrain.value);
                 break;
             case "!=":
@@ -232,7 +446,7 @@ export class RepositoryAsyncV1<Entity extends IEntity> implements IRepositoryAsy
 
     private applyPaginationAndSorting( query:Knex.QueryBuilder , orderBy: any[], limit: number , offset: number) : Knex.QueryBuilder
     {
-        if(orderBy.length == 0)
+        if(orderBy.length > 0)
             query = query.orderBy(orderBy);
 
         if(limit != 0)

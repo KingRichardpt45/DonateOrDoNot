@@ -10,7 +10,7 @@ export class Address implements IEntity
     address : string | null;
     door : string | null;
 
-    constructor(jsonObject?: { [key: string]: any }, alias : string = "") 
+    constructor() 
     {
         this.id = null;
         this.postal_code = null;
@@ -62,5 +62,10 @@ export class Address implements IEntity
         if(object === this) return true
 
         return this.id === object.id ;
+    }
+
+    equalsToKnex(object: any , alias:string = ""): boolean 
+    {
+        return this.id === object[`${alias}id`] ;
     }
 }
