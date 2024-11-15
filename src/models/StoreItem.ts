@@ -1,28 +1,25 @@
 import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {File} from "@/models/File";
-import {BadgeType} from "@/models/types/BadgeType";
 
-export class Badge extends Entity {
+export class StoreItem extends Entity {
     [key: string]: unknown;
 
     id: number | null = null;
     name: string | null = null;
     description: string | null = null;
-    value: number | null = null;
-    unit: string | null = null;
-    type: BadgeType = BadgeType.Unknown;
+    cost: number | null = null;
 
     image_id: number | null = null;
 
-    readonly image = new NavigationKey<File>(this, "image", "image_id", Badge.getTableName(), Badge.getEntityName(), File.getTableName(), File.getEntityName(), "id", null)
+    readonly image = new NavigationKey<File>(this, "image", "image_id", StoreItem.getTableName(), StoreItem.getEntityName(), File.getTableName(), File.getEntityName(), "id", null)
 
     getPrimaryKeyParts(): string[] {
         return ["id"];
     }
 
     getKeys(): string[] {
-        return ["id", "name", "description", "value", "unit", "type", "image_id"];
+        return ["id", "name", "description", "cost", "image_id"];
     }
 
     getNavigationKeys(): string[] {
@@ -30,22 +27,22 @@ export class Badge extends Entity {
     }
 
     getTableName(): string {
-        return Badge.getTableName();
+        return StoreItem.getTableName();
     }
 
     getEntityName(): string {
-        return Badge.getEntityName();
+        return StoreItem.getEntityName();
     }
 
     equals(object: unknown): boolean {
-        return object instanceof Badge && this.id === object.id;
+        return object instanceof StoreItem && this.id === object.id;
     }
 
     static getTableName(): string {
-        return "Badges";
+        return "StoreItems";
     }
 
     static getEntityName(): string {
-        return "Badge";
+        return "StoreItem";
     }
 }

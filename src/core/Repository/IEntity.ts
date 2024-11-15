@@ -8,7 +8,7 @@ export interface IEntity {
     /**
      * Allows access to any string key with a value of any type, providing flexibility in defining entity attributes.
      */
-    [key: string]: any;
+    [key: string]: unknown;
 
     /**
      * Determines if the entity has been created (e.g., saved in the database).
@@ -62,18 +62,6 @@ export interface IEntity {
     getNavigationKeys(): string[];
 
     /**
-     * Retrieves the name of the entity.
-     * @returns A string representing the name of the entity (same as the class name).
-     *
-     * @example
-     * ```typescript
-     * // Get the name of  the entity  of a user entity.
-     * const className = user.getEntityName(); // e.g., "User"
-     * ```
-     */
-    getEntityName(): string;
-
-    /**
      * Retrieves the table name of the entity.
      * @returns A string representing the table name of the entity.
      *
@@ -86,10 +74,31 @@ export interface IEntity {
     getTableName(): string;
 
     /**
+     * Retrieves the name of the entity.
+     * @returns A string representing the name of the entity (same as the class name).
+     *
+     * @example
+     * ```typescript
+     * // Get the name of  the entity  of a user entity.
+     * const className = user.getEntityName(); // e.g., "User"
+     * ```
+     */
+    getEntityName(): string;
+
+    /**
      * Compares if the object are equals or referencing the same.
      *
      * @param object any, the object to compare.
      * @returns true if the object is the same by equals comparison.
      */
     equals(object: unknown): boolean;
+
+    /**
+     * Compares if the object are equals.
+     *
+     * @param {any} object - The KNEX Object to compare.
+     * @param {string} [alias] - An optional alias for the comparison.
+     * @returns {boolean} true if the KNEX Object is the same by PRIMARY KEYS comparison.
+     */
+    equalsToKnex(object: unknown, alias: string): boolean
 }

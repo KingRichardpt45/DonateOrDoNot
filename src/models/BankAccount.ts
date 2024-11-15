@@ -1,20 +1,19 @@
 import {Entity} from "@/core/repository/Entity";
 
-export class Address extends Entity {
+export class BankAccount extends Entity {
     [key: string]: unknown;
 
     id: number | null = null;
-    postal_code: string | null = null;
-    city: string | null = null;
-    address: string | null = null;
-    door: string | null = null;
+    iban: string | null = null;
+    account_holder: string | null = null;
+    bank_name: string | null = null;
 
     getPrimaryKeyParts(): string[] {
         return ["id"];
     }
 
     getKeys(): string[] {
-        return ["id", "postal_code", "city", "address", "door"];
+        return ["id", "iban", "account_holder", "bank_name"];
     }
 
     getNavigationKeys(): string[] {
@@ -22,22 +21,22 @@ export class Address extends Entity {
     }
 
     getTableName(): string {
-        return Address.getTableName();
+        return BankAccount.getTableName();
     }
 
     getEntityName(): string {
-        return Address.getEntityName();
+        return BankAccount.getEntityName();
     }
 
     equals(object: unknown): boolean {
-        return object instanceof Address && this.id === object.id;
+        return object instanceof BankAccount && this.id === object.id;
     }
 
     static getTableName(): string {
-        return "Addresses";
+        return "BankAccounts";
     }
 
     static getEntityName(): string {
-        return "Address";
+        return "BankAccount";
     }
 }

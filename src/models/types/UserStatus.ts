@@ -1,16 +1,19 @@
 /**
  * Enum representing the possible statuses of a user account.
  */
-export enum AccountStatus {
+export enum UserStatus {
+    /** The account status is unknown. */
+    Unknown = 0,
+
     /** The account is active and fully functional. */
-    Active = 0,
+    Active = 1,
 
     /** The account is suspended and cannot be used. */
-    Suspended = 1,
+    Suspended = 2,
 
     /** The account is deactivated by the user or system. */
-    Deactivated = 2,
+    Deactivated = 3,
 
     /** The account is pending activation by the user or system. */
-    Pending = 3,
+    Pending = 4,
 }

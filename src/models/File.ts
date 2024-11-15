@@ -1,45 +1,47 @@
-import { IEntity } from "@/core/repository/IEntity";
-import { User } from "@/models/User";
-import { NavigationKey } from "@/core/repository/NavigationKey";
+import {Entity} from "@/core/repository/Entity";
+import {User} from "@/models/User";
+import {NavigationKey} from "@/core/repository/NavigationKey";
+import {Campaign} from "@/models/Campaign";
+import {Badge} from "@/models/Badge";
+import {FileType} from "@/models/types/FileType";
 
-export class File implements IEntity {
+export class File extends Entity {
     [key: string]: unknown;
 
     id: number | null = null;
-    uploaded_by_user_id: number | null = null;
-    campaign_id: number | null = null;
     original_name: string | null = null;
     file_suffix: string | null = null;
     file_type: number | null = null;
     file_path: string | null = null;
     timestamp: Date | null = null;
-    type: number = 0;
+    type: FileType = FileType.Unknown;
 
-    user: NavigationKey<User> = new NavigationKey<User>("user_id", User.getTableName(), "id", User.getEntityName(), null);
-    campaign: NavigationKey<any> = new NavigationKey<any>("campaign_id", "Campaigns", "id", "Campaign", null);
+    user_id: number | null = null;
+    campaign_id: number | null = null;
+    badge_id: number | null = null;
 
-    getEntityName(): string {
-        return File.getEntityName();
-    }
-
-    getTableName(): string {
-        return File.getTableName();
-    }
-
-    isCreated(): boolean {
-        return this.id !== null;
-    }
+    readonly user = new NavigationKey<User>(this, "user", "user_id", File.getTableName(), File.getEntityName(), User.getTableName(), User.getEntityName(), "id", null);
+    readonly campaign = new NavigationKey<Campaign>(this, "campaign", "campaign_id", File.getTableName(), File.getEntityName(), Campaign.getTableName(), Campaign.getEntityName(), "id", null);
+    readonly badge = new NavigationKey<Badge>(this, "badge", "badge_id", File.getTableName(), File.getEntityName(), Badge.getTableName(), Badge.getEntityName(), "id", null);
 
     getPrimaryKeyParts(): string[] {
         return ["id"];
     }
 
     getKeys(): string[] {
-        return ["id", "uploaded_by_user_id", "campaign_id", "original_name", "file_suffix", "file_type", "file_path", "timestamp"];
+        return ["id", "original_name", "file_suffix", "file_type", "file_path", "timestamp", "user_id", "campaign_id", "badge_id"];
     }
 
     getNavigationKeys(): string[] {
-        return ["user", "campaign"];
+        return ["user", "campaign", "badge"];
+    }
+
+    getTableName(): string {
+        return File.getTableName();
+    }
+
+    getEntityName(): string {
+        return File.getEntityName();
     }
 
     equals(object: unknown): boolean {
@@ -47,10 +49,10 @@ export class File implements IEntity {
     }
 
     static getTableName(): string {
-        return "File";
+        return "Files";
     }
 
     static getEntityName(): string {
-        return "Files";
+        return "File";
     }
 }
