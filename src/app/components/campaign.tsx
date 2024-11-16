@@ -5,27 +5,28 @@ const campaigns = [
   {
     image: '/images/hunger.png',
     title: 'Fight Hunger',
-    description: 'Help us provide meals to those in need. Your donation can make a real difference in someone\'s life.',
+    description:
+      "Help us provide meals to those in need. Your donation can make a real difference in someone's life.",
     donationGoals: [
       '1€ = 2 meals',
       '5€ = 10 meals',
       '10€ = 20 meals and essential groceries',
-      '20€ = 40 meals, groceries, and cooking supplies'
-    ]
+      '20€ = 40 meals, groceries, and cooking supplies',
+    ],
   },
   {
     image: '/images/Elephant.png',
     title: 'Save the Elephants',
-    description: 'Join our efforts to protect elephants from poaching and preserve their natural habitats.',
+    description:
+      'Join our efforts to protect elephants from poaching and preserve their natural habitats.',
     donationGoals: [
       '1€ = Protect 10 sq meters of habitat',
       '5€ = Provide a day\'s food for an elephant',
       '10€ = Support anti-poaching patrols for a day',
-      '20€ = Contribute to elephant rehabilitation efforts'
-    ]
-  }
+      '20€ = Contribute to elephant rehabilitation efforts',
+    ],
+  },
 ];
-
 export default function Campaign() {
   const [currentCampaign, setCurrentCampaign] = useState(0);
 
@@ -47,7 +48,22 @@ export default function Campaign() {
   return (
     <section className={styles.campaign}>
       <div className={styles.carousel}>
-        <button className={styles.navButton} onClick={prevCampaign}>&lt;</button>
+        {/* Indicators */}
+        <div className={styles.indicators}>
+          {campaigns.map((_, index) => (
+            <span
+              key={index}
+              className={`${styles.dot} ${
+                currentCampaign === index ? styles.activeDot : ''
+              }`}
+              onClick={() => setCurrentCampaign(index)}
+            ></span>
+          ))}
+        </div>
+
+        <button className={styles.navButton} onClick={prevCampaign}>
+          &lt;
+        </button>
         <div
           className={styles.imageTrain}
           style={{ transform: `translateX(-${currentCampaign * 100}%)` }}
@@ -56,7 +72,10 @@ export default function Campaign() {
             <img key={index} src={campaign.image} alt={campaign.title} />
           ))}
         </div>
-        <button className={styles.navButton} onClick={nextCampaign}>&gt;</button>
+        <button className={styles.navButton} onClick={nextCampaign}>
+          &gt;
+        </button>
+
       </div>
 
       <div className={styles.overlay}>
@@ -67,8 +86,13 @@ export default function Campaign() {
             <p key={index}>{goal}</p>
           ))}
         </div>
-        <button className={styles.donateButton}>Donate Now</button>
       </div>
+        {/* Bottom Overlay */}
+        <div className={styles.bottomOverlay}>
+          <p>Be one of this campaign's top Donors!</p>
+          <button className={styles.donateNowButton}>Donate Now</button>
+        </div>
     </section>
   );
 }
+
