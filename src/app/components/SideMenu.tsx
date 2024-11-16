@@ -43,7 +43,7 @@ const SideMenu = () => {
         <div className={styles.menuGroup}>
           <ul>
             <li>
-              <a href="#">
+              <a href="/">
                 <span className={styles.iconContainer}>
                   <Home size={20} />
                 </span>
@@ -51,7 +51,7 @@ const SideMenu = () => {
               </a>
             </li>
             <li>
-              <a href="#">
+              <a href="/Search">
                 <span className={styles.iconContainer}>
                   <Search size={20} />
                 </span>
