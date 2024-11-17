@@ -19,11 +19,20 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     readonly typeObject : Entity ;
     readonly dbConnection : Knex<any,any[]> ;
     
-    constructor( entityName: string )
+    /**
+     * Constructs a new instance of the repository
+     * @param entityConstructor The constructor that defines de repository Entity
+     * 
+     * @example
+     * let repo = new RepositoryAsync(User) 
+     * or
+     * let repo = new RepositoryAsync<User>(User)
+     */
+    constructor( entityConstructor :new (...args: any[]) => Entity )
     {
         let modelFactory : IFactory = getModelFactory();
         this.modelFactory = modelFactory;
-        this.typeObject = modelFactory.create(entityName) as Entity;
+        this.typeObject = new entityConstructor() as Entity;
         this.tableName = this.typeObject.getTableName();
         this.entityName = this.typeObject.getEntityName()
         this.entityConverter = new EntityConverter(modelFactory);
@@ -34,7 +43,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     {
         let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
         let query = dbConnection( this.tableName );
-        let selectColumns = [`${this.tableName}.*`];
+        let selectColumns = this.selectEntityColumn();
         query = this.include(query,includes,selectColumns);
         query = this.applyPaginationAndSorting(query,orderBy,limit,offset);
         
@@ -47,12 +56,12 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     {
         let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
         let query = dbConnection( this.tableName );
-        let selectColumns = [`${this.tableName}.*`];
+        let selectColumns = this.selectEntityColumn();
         query = this.include(query,includes,selectColumns);
 
         for (const primaryKeyPart of primaryKeyParts) 
         {
-            query = query.where(primaryKeyPart.key,"=", primaryKeyPart.value );
+            query = query.where(`entity.{primaryKeyPart.key}`,"=", primaryKeyPart.value );
         }
         
         const result = await query.select(selectColumns);
@@ -64,9 +73,10 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     
     async getByCondition(constrains: Constrain[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [] , orderBy: any[], limit: number = 0, offset:number = 0): Promise<Entity[]> 
     {
+        constrains = this.filterConstrains(constrains);
         let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
         let query = dbConnection(this.tableName);
-        let selectColumns = [`${this.tableName}.*`];
+        let selectColumns = this.selectEntityColumn();
         query = this.include(query,includes,selectColumns);
         query = this.addConstrains(query,constrains);
         query = this.applyPaginationAndSorting(query,orderBy,limit,offset);
@@ -83,7 +93,29 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return entries.length > 0 ? entries[0] : null;
     }
 
-    private include( query: Knex.QueryBuilder , includes : IncludeNavigation[], selects:string[] ) : Knex.QueryBuilder // campan,donor.navegationKey2,navegationKey.navegationKey.navegationKey
+    private selectEntityColumn() : string[]
+    {
+        //return this.typeObject.getKeys().map( name => `${this.tableName}.${name} as entity.${name}`);
+        return [`${this.tableName}.*`];
+    }
+
+    private filterConstrains( constrains:Constrain[] ) : Constrain[]
+    {
+        let filteredConstrains = [];
+        for (const constrain of constrains ) 
+        {
+            if( this.typeObject[constrain.key] !== undefined )
+            {
+                filteredConstrains.push( new Constrain(`${this.tableName}.${constrain.key}`,constrain.op,constrain.value) );
+            }
+            else
+                filteredConstrains.push( constrain )
+        }
+
+        return filteredConstrains;
+    }
+
+    private include( query: Knex.QueryBuilder , includes : IncludeNavigation[], selects:string[] ) : Knex.QueryBuilder
     {
         let included : string[] = [this.entityName];
         let includeNavigation : NavigationKey<IEntity>;
@@ -112,24 +144,13 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     private includeAux( query:Knex.QueryBuilder, selects:string[], index:number, navigationKey:NavigationKey<IEntity> ) : Knex.QueryBuilder
     {
-        // if(navigationKey.isDecency)
-        // {
-            query = query.leftJoin( 
-                { [navigationKey.referencedTable] : navigationKey.referencedTable }, 
-                `${navigationKey.referencingTable}.${navigationKey.key}`, 
-                `${navigationKey.referencedTable}.${navigationKey.referencedColumn}`
-            );
-        // }
-        // else
-        // {
-        //     console.log(navigationKey);
-        //     query = query.leftJoin( 
-        //         { [navigationKey.referencingTable] : navigationKey.referencingTable }, 
-        //         `${navigationKey.referencingTable}.${navigationKey.key}`, 
-        //         `${navigationKey.referencedTable}.${navigationKey.referencedColumn}`
-        //     );
-        // }
 
+        query = query.leftJoin( 
+            { [navigationKey.referencedTable] : navigationKey.referencedTable }, 
+            `${navigationKey.referencingTable}.${navigationKey.key}`, 
+            `${navigationKey.referencedTable}.${navigationKey.referencedColumn}`
+        );
+       
         let object = this.modelFactory.create( navigationKey.referencedEntity ) as IEntity; 
         let array = object.getKeys().map( name => `${navigationKey.referencedTable}.${name} as ${index}.${name}`);
 
@@ -154,6 +175,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
             entityList = createdEntitiesLists[0];
             if( entityList.length == 0 || !entityList[entityList.length-1].equalsToKnex(resultObject ) )
             {
+                //entityList.push( this.entityConverter.knexObjectToIEntity( resultObject , this.entityName , "entity." ) as Entity );
                 entityList.push( this.entityConverter.knexObjectToIEntity( resultObject , this.entityName ) as Entity );
             }
            
