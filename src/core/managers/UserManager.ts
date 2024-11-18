@@ -10,6 +10,7 @@ import {EntityManager} from "@/core/managers/EntityManager";
 import {OperationResult} from "@/core/managers/OperationResult";
 import {FormError} from "@/core/managers/FormError";
 import {SimpleError} from "@/core/managers/SimpleError";
+import {Operator} from "@/core/repository/Operator";
 
 export class UserManager extends EntityManager<User> {
 
@@ -28,25 +29,13 @@ export class UserManager extends EntityManager<User> {
     }
 
     /**
-     * Retrieves a user by their unique ID.
-     * Optionally, additional related data can be included via the includeFunction.
-     *
-     * @param id - The unique identifier for the user.
-     * @param includeFunction - A function that returns additional navigation (related entities).
-     * @returns A promise that resolves to the User object or null if not found.
-     */
-    async getById(id: number, includeFunction: (user: User) => IncludeNavigation[] = () => []): Promise<User | null> {
-        return await this.repository.getFirstByCondition([new Constrain("id", "=", id)], includeFunction, [], 0, 0);
-    }
-
-    /**
      * Registers a new user. Validates the user data (name, email, password) and encrypts the password.
      * If validation fails, errors are returned. If validation passes, the user is created.
      *
      * @param user - The User object to be created (must include at least name, email, and password).
      * @returns A promise that resolves to an OperationResult containing the created user or null, and any validation errors.
      */
-    async singUp(user: User): Promise<OperationResult<User | null, FormError>> {
+    async signUp(user: User): Promise<OperationResult<User | null, FormError>> {
         const errors: FormError[] = [];
 
         if (StringUtils.stringIsNullOrEmpty(user.first_name))
@@ -57,7 +46,11 @@ export class UserManager extends EntityManager<User> {
         if (StringUtils.stringIsNullOrEmpty(user.email))
             errors.push(new FormError("email", ["A email must be provided!"]));
         else {
-            //TODO:verify email todo;
+            const existingUserWithEmail = await this.getFirstByCondition([new Constrain("email", Operator.EQUALS, user.email)],
+                (user) => [new IncludeNavigation(user.address, 0)], [], 0, 0)
+
+            if (existingUserWithEmail != null)
+                errors.push(new FormError("email", ["A user with this email already exists!"]));
         }
 
         if (StringUtils.stringIsNullOrEmpty(user.password))
@@ -79,7 +72,6 @@ export class UserManager extends EntityManager<User> {
             return new OperationResult(user, errors);
         } else
             return new OperationResult(null, errors)
-
     }
 
     /**
@@ -89,8 +81,8 @@ export class UserManager extends EntityManager<User> {
      * @param password - The plain-text password entered by the user.
      * @returns A promise that resolves to an OperationResult containing the authenticated user or null, and any errors.
      */
-    async singIn(email: string, password: string): Promise<OperationResult<User | null, SimpleError>> {
-        const user = await this.repository.getFirstByCondition([new Constrain("email", "=", email)],
+    async signIn(email: string, password: string): Promise<OperationResult<User | null, SimpleError>> {
+        const user = await this.repository.getFirstByCondition([new Constrain("email", Operator.EQUALS, email)],
             (user) => [new IncludeNavigation(user.address, 0)],
             [], 0, 0
         );
