@@ -24,21 +24,20 @@ export class Services {
     private static readonly services = new Map<string, unknown>();
 
     // Private constructor to prevent instantiation.
-    private constructor() 
-    {
-        let encryption = new JWTEncryption();
-        let dbConnection = new DBConnectionService("development") ;
-        let userCachingService = new LocalSessionUserCacheService(3600*1000, 2, new RepositoryAsync(User,dbConnection.dbConnection) );
-        let sessionService = new SessionService(encryption,userCachingService);
-        let userProvider = new UserProvider(sessionService,userCachingService);
-        let authorizationService = new AuthorizationService( userProvider, "/signin", "/unauthorized");
+    private constructor() {
+        const encryption = new JWTEncryption();
+        const dbConnection = new DBConnectionService("development");
+        const userCachingService = new LocalSessionUserCacheService(3600 * 1000, 2, new RepositoryAsync(User, dbConnection.dbConnection));
+        const sessionService = new SessionService(encryption, userCachingService);
+        const userProvider = new UserProvider(sessionService, userCachingService);
+        const authorizationService = new AuthorizationService(userProvider, "/signin", "/unauthorized");
 
-        Services.register<DBConnectionService>( "DBConnectionService", dbConnection);
-        Services.register<SessionService>( "SessionService" , sessionService);
-        Services.register<IUserProvider>( "IUserProvider" , userProvider);
-        Services.register<IEncryption>( "PasswordEncryption" , new PasswordEncryption( process.env.PW_ENCRYPTION_KEY as string ) );
-        Services.register<IPasswordValidation>( "IPasswordValidation" , new PasswordValidation() );
-        Services.register<IAuthorizationService>( "IAuthorizationService" , authorizationService );
+        Services.register<DBConnectionService>("DBConnectionService", dbConnection);
+        Services.register<SessionService>("SessionService", sessionService);
+        Services.register<IUserProvider>("IUserProvider", userProvider);
+        Services.register<IEncryption>("PasswordEncryption", new PasswordEncryption(process.env.PW_ENCRYPTION_KEY as string));
+        Services.register<IPasswordValidation>("IPasswordValidation", new PasswordValidation());
+        Services.register<IAuthorizationService>("IAuthorizationService", authorizationService);
     }
 
     /**
@@ -87,8 +86,7 @@ export class Services {
      * @returns Services instance
      */
     static getInstance(): Services {
-        if (!Services.instance)
-            Services.instance = new Services();
+        if (!Services.instance) Services.instance = new Services();
 
         return Services.instance;
     }

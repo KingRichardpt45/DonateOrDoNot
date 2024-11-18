@@ -28,19 +28,18 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
      * or
      * let repo = new RepositoryAsync<User>(User)
      */
-    constructor( entityConstructor :new (...args: any[]) => Entity , dbConnection?:Knex<any,any> )  
-    {
-        let modelFactory : IFactory = getModelFactory();
+    constructor(entityConstructor: new (...args: any[]) => Entity, dbConnection?: Knex<any, any>) {
+        let modelFactory: IFactory = getModelFactory();
         this.modelFactory = modelFactory;
         this.typeObject = new entityConstructor() as Entity;
         this.tableName = this.typeObject.getTableName();
         this.entityName = this.typeObject.getEntityName()
         this.entityConverter = new EntityConverter(modelFactory);
 
-        if(dbConnection == null)
+        if (dbConnection == null)
             this.dbConnection = Services.getInstance().get<DBConnectionService>("DBConnectionService").dbConnection;
         else
-        this.dbConnection = dbConnection;
+            this.dbConnection = dbConnection;
     }
 
     async getAll(includeFunction: (entity: Entity) => IncludeNavigation[] = () => [], orderBy: unknown[] = [], limit: number = 0, offset: number = 0): Promise<Entity[]> {
