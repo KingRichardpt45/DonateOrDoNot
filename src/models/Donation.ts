@@ -22,7 +22,7 @@ export class Donation extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "is_name_hidden", "value", "donor_id", "campaign_id" ,"comment"];
+        return ["id", "is_name_hidden", "value", "donor_id", "campaign_id", "comment"];
     }
 
     getNavigationKeys(): string[] {

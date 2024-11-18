@@ -40,7 +40,7 @@ export class Notification extends Entity {
     static getTableName(): string {
         return "Notifications";
     }
-    
+
     static getEntityName(): string {
         return "Notification";
     }

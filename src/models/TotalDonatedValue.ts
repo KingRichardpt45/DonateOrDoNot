@@ -8,7 +8,7 @@ export class TotalDonatedValue extends Entity {
 
     id: number | null = null;
     total_value: number | null = null;
-   
+
     donor_id: number | null = null;
     campaign_id: number | null = null;
 

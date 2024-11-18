@@ -4,7 +4,7 @@
  * @enum {number}
  */
 export enum NotificationTypes {
-   
+
     /**
      * Type for a new donation notification.
      */

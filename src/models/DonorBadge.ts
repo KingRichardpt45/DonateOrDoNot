@@ -2,7 +2,7 @@ import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {User} from "@/models/User";
 import {Badge} from "@/models/Badge";
-import { Donor } from "./Donor";
+import {Donor} from "./Donor";
 
 export class DonorBadge extends Entity {
     [key: string]: unknown;
@@ -21,7 +21,7 @@ export class DonorBadge extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "donor_id", "badge_id","unblock_at"];
+        return ["id", "donor_id", "badge_id", "unblock_at"];
     }
 
     getNavigationKeys(): string[] {

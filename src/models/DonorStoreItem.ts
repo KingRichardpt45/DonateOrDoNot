@@ -1,7 +1,7 @@
 import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {StoreItem} from "@/models/StoreItem";
-import { Donor } from "./Donor";
+import {Donor} from "./Donor";
 
 export class DonorStoreItem extends Entity {
     [key: string]: unknown;

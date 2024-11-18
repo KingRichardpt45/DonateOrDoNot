@@ -1,17 +1,16 @@
 /**
  * Represents a Cookie with a name, options, and duration.
  */
-export class Cookie
-{
+export class Cookie {
     /**
      * The name of the cookie.
      */
-    readonly name:string;
+    readonly name: string;
 
     /**
      * The options of the cookie, such as path, domain, secure flag, etc.
      */
-    readonly options:any[];
+    readonly options: any[];
 
     /**
      * The duration (in milliseconds) for which the cookie is valid.
@@ -24,8 +23,7 @@ export class Cookie
      * @param {number} duration - The duration (in milliseconds) for which the cookie is valid.
      * @param {any} options - Additional options for the cookie (e.g., path, domain, secure).
      */
-    constructor( name:string, duration:number, options:any)
-    {
+    constructor(name: string, duration: number, options: any) {
         this.name = name;
         this.options = options;
         this.duration = duration;

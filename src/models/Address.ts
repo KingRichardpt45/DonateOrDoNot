@@ -1,7 +1,6 @@
-import { Entity } from "@/core/repository/Entity";
+import {Entity} from "@/core/repository/Entity";
 
-export class Address extends Entity 
-{
+export class Address extends Entity {
     [key: string]: unknown;
 
     id: number | null = null;
@@ -29,11 +28,11 @@ export class Address extends Entity
     getEntityName(): string {
         return Address.getEntityName();
     }
-    
+
     static getTableName(): string {
         return "Addresses";
     }
-    
+
     static getEntityName(): string {
         return "Address";
     }

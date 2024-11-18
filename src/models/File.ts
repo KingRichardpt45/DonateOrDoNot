@@ -26,8 +26,8 @@ export class File extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "original_name", "file_suffix", "file_type", "file_path", 
-            "timestamp", "user_id", "campaign_id" ];
+        return ["id", "original_name", "file_suffix", "file_type", "file_path",
+            "timestamp", "user_id", "campaign_id"];
     }
 
     getNavigationKeys(): string[] {
@@ -45,7 +45,7 @@ export class File extends Entity {
     static getTableName(): string {
         return "Files";
     }
-    
+
     static getEntityName(): string {
         return "File";
     }

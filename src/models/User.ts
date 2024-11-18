@@ -1,6 +1,6 @@
 import {Entity} from "@/core/repository/Entity";
 import {Address} from "./Address";
-import { NavigationKey } from "@/core/repository/NavigationKey";
+import {NavigationKey} from "@/core/repository/NavigationKey";
 import {File} from "@/models/File";
 import {Notification} from "@/models/Notification";
 import {AccountStatus} from "@/models/types/AccountStatus";
@@ -33,18 +33,18 @@ export class User extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", 
-            "first_name", 
-            "middle_names", 
-            "last_name", 
+        return ["id",
+            "first_name",
+            "middle_names",
+            "last_name",
             "email",
-            "email_confirmation_token", 
-            "email_confirmed", 
+            "email_confirmation_token",
+            "email_confirmed",
             "phone_number",
-            "password", 
-            "status", 
-            "type", 
-            "address_id", 
+            "password",
+            "status",
+            "type",
+            "address_id",
             "profile_image_id"];
     }
 
@@ -63,11 +63,11 @@ export class User extends Entity {
     static getTableName(): string {
         return "Users";
     }
-    
+
     static getEntityName(): string {
         return "User";
     }
-    
+
     equals(object: unknown): boolean {
         return object instanceof User && this.id === object.id;
     }

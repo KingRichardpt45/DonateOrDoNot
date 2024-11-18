@@ -40,20 +40,20 @@ export class Campaign extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", 
-            "title", 
-            "description", 
-            "current_donation_value", 
-            "objective_value", 
-            "category", 
+        return ["id",
+            "title",
+            "description",
+            "current_donation_value",
+            "objective_value",
+            "category",
             "end_date",
-            "contact_email", 
-            "contact_phone_number", 
-            "donation_counter", 
+            "contact_email",
+            "contact_phone_number",
+            "donation_counter",
             "last_notified_value",
-            "interval_notification_value", 
-            "status", 
-            "campaign_manager_id", 
+            "interval_notification_value",
+            "status",
+            "campaign_manager_id",
             "bank_account_id"];
     }
 

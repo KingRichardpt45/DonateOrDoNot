@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
-import { RepositoryAsync } from '@/core/repository/RepositoryAsync';
-import { Address } from '@/models/Address';
-import { User } from '@/models/User';
-import { Constrain } from '@/core/repository/Constrain';
-import { Notification } from '@/models/Notification';
-import { IncludeNavigation } from '@/core/repository/IncludeNavigation';
+import {NextResponse} from 'next/server';
+import {RepositoryAsync} from '@/core/repository/RepositoryAsync';
+import {Address} from '@/models/Address';
+import {User} from '@/models/User';
+import {Constrain} from '@/core/repository/Constrain';
+import {Notification} from '@/models/Notification';
+import {IncludeNavigation} from '@/core/repository/IncludeNavigation';
 
 
 export async function GET() {
@@ -49,7 +49,7 @@ export async function GET() {
     // gets with includes
     //let result = await UserRepo.getAll((user)=> [ new IncludeNavigation( user.notifications , 0), new IncludeNavigation( user.address , 0) ]);
     // let result = await AddresseRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],[]);
-    const result = await UserRepo.getFirstByCondition([ new Constrain("Addresses.id","=","18") ],(user) => [new IncludeNavigation(user.address,0) ],[],0,0);
+    const result = await UserRepo.getFirstByCondition([new Constrain("Addresses.id", "=", "18")], (user) => [new IncludeNavigation(user.address, 0)], [], 0, 0);
     // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
     // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
 
@@ -73,10 +73,10 @@ export async function GET() {
     // a2.id = 49;
     // let result2 = await AddresseRepo.deleteRange([a1,a2]);
 
-     // let notificationrepo = new RepositoryAsync<Notification>("Notification");
+    // let notificationrepo = new RepositoryAsync<Notification>("Notification");
     // let result3 = await notificationrepo.deleteByCondition([new Constrain("user_id",">=",24)]);
 
-   // let result4 = await notificationrepo.deleteRangeByPrimaryKeys( [ new PrimaryKeyPart("id",18) ], [new PrimaryKeyPart("id",19)] );
+    // let result4 = await notificationrepo.deleteRangeByPrimaryKeys( [ new PrimaryKeyPart("id",18) ], [new PrimaryKeyPart("id",19)] );
 
 
     // myAddresse.address = "miranda 20";
@@ -84,9 +84,9 @@ export async function GET() {
     // myAddresse.postal_code = "9020-099"
     // // myAddresse.id = 1;
 
-      // let userRepo = new RepositoryAsyncV1<User>("Users");
-      // let user = new User();
-      // user.id = 7;
+    // let userRepo = new RepositoryAsyncV1<User>("Users");
+    // let user = new User();
+    // user.id = 7;
     // user.Addresse = myAddresse;
     // user.email = "tania@gmail.com"
     // user.name = "tt";
@@ -97,9 +97,9 @@ export async function GET() {
 
     // user.phone_number= "925678030"
     // console.log( await userRepo.update(user) );
-   // console.log( await userRepo.delete(user) )
-   // console.log( await userRepo.deleteRangeByPrimaryKeys([1,2,3,4,6,8]) )
-   
+    // console.log( await userRepo.delete(user) )
+    // console.log( await userRepo.deleteRangeByPrimaryKeys([1,2,3,4,6,8]) )
+
     //console.log( await userRepo.deleteByCondition([{key:"id",op:"=",value:13},{key:"name",op:"=",value:"tt"}]) )
 
     //console.log( await userRepo.getByCondition([{key:"Users.id",op:">",value:20}],["Addresse"],[{column: "Users.id", order:"desc"}],2))
@@ -108,6 +108,6 @@ export async function GET() {
 
     //console.log( await userRepo.getByPrimaryKey([{name:"Users.id",value:20}],["Addresse"]))
 
-    return NextResponse.json({h:"hello world", a : result });
+    return NextResponse.json({h: "hello world", a: result});
 }
 

@@ -4,7 +4,7 @@ import {User} from "@/models/User";
 import {Donation} from "@/models/Donation";
 import {DonorBadge} from "@/models/DonorBadge";
 import {DonorStoreItem} from "@/models/DonorStoreItem";
-import { Notification } from "./Notification";
+import {Notification} from "./Notification";
 
 export class Donor extends Entity {
     [key: string]: unknown;
@@ -28,21 +28,21 @@ export class Donor extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", 
-                "donacoins", 
-                "total_donations", 
-                "total_donated_value", 
-                "frequency_of_donation", 
-                "frequency_of_donation_datetime", 
-                "best_frequency_of_donation_datetime"
-            ];
+        return ["id",
+            "donacoins",
+            "total_donations",
+            "total_donated_value",
+            "frequency_of_donation",
+            "frequency_of_donation_datetime",
+            "best_frequency_of_donation_datetime"
+        ];
     }
 
     getNavigationKeys(): string[] {
         return ["user",
             "donations",
-            "badges", 
-            "store_items", 
+            "badges",
+            "store_items",
             "notifications"];
     }
 
