@@ -32,5 +32,5 @@ export interface IEncryption
      * console.log(decryptedData); // Output: "mySecretData" (original data)
      * ```
      */
-    decrypt(value: string): Promise<any>;
+    decrypt(value: string | null): Promise<unknown>;
 }

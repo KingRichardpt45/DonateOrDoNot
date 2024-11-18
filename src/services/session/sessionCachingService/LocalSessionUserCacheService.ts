@@ -66,7 +66,7 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
     {   
         return await this.mutex.runExclusive( () => 
             {
-                let user =  this.cache.get(session.userId)?.user ;
+                const user =  this.cache.get(session.userId)?.user ;
                 return user !== undefined ? user : null
             }
         );

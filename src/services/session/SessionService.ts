@@ -52,7 +52,7 @@ export class SessionService
 
         (await cookies()).set(this.templateCookie.name, encryptedSession, {...this.templateCookie.options, expires});
 
-        this.cachingService.store(session);
+        await this.cachingService.store(session);
 
         return session;
     }
@@ -73,7 +73,7 @@ export class SessionService
             const session = (await this.encryptor.decrypt( cookie )) as { userId:number, expires:Date };
             return session? new Session( session.userId, new Date(session.expires) ) : null;
         }
-        catch (error)
+        catch
         {
             return null;
         }
@@ -84,11 +84,11 @@ export class SessionService
      */
     public async delete() : Promise<void>
     {   
-        let session = await this.verify();
+        const session = await this.verify();
 
         if(session)
         {
-            this.cachingService.remove(session);
+            await this.cachingService.remove(session);
 
             (await cookies()).delete(this.templateCookie);
         }

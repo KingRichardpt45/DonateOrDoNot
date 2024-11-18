@@ -8,5 +8,5 @@ export interface IPasswordValidation
      * 
      * @param {string} password the password to validate;  
      */
-    validate( password:string ) : Promise<string[]>
+    validate( password:string | null ) : Promise<string[]>
 }

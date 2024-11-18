@@ -3,8 +3,8 @@ import {Address} from "./Address";
 import { NavigationKey } from "@/core/repository/NavigationKey";
 import {File} from "@/models/File";
 import {Notification} from "@/models/Notification";
-import { AccountStatus } from "./types/AccountStatus";
-import { UserRoleTypes } from "./types/UserRoleTypes";
+import {AccountStatus} from "@/models/types/AccountStatus";
+import {UserRoleTypes} from "@/models/types/UserRoleTypes";
 
 export class User extends Entity {
     [key: string]: unknown;
@@ -70,10 +70,5 @@ export class User extends Entity {
     
     equals(object: unknown): boolean {
         return object instanceof User && this.id === object.id;
-    }
-
-    equalsToKnex(object: any , alias:string = ""): boolean 
-    {
-        return this.id === object[`${alias}id`] ;
     }
 }

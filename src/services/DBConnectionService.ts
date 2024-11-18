@@ -1,5 +1,5 @@
 import { knexConfig } from '@/../knexfile.js';
-import { Knex } from "knex";
+import { Knex, knex } from "knex";
 
 /**
  * This class connects and provides the knex connection of a provider environment configuration.
@@ -18,6 +18,6 @@ export class DBConnectionService
      */
     constructor( environment:string )
     {
-        this.dbConnection = require('knex')(knexConfig[environment]);
+        this.dbConnection = knex(knexConfig[environment]);
     }
 }

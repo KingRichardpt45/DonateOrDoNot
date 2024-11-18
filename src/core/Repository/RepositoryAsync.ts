@@ -29,22 +29,22 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
      * or
      * let repo = new RepositoryAsync<User>(User)
      */
-    constructor( entityConstructor :new (...args: any[]) => Entity )
+    constructor( entityConstructor :new (...args: unknown[]) => Entity, dbConnection: Knex<any,any[]> | null = null )
     {
-        let modelFactory : IFactory = getModelFactory();
+        const modelFactory : IFactory = getModelFactory();
         this.modelFactory = modelFactory;
         this.typeObject = new entityConstructor() as Entity;
         this.tableName = this.typeObject.getTableName();
         this.entityName = this.typeObject.getEntityName()
         this.entityConverter = new EntityConverter(modelFactory);
-        this.dbConnection = Services.getInstance().get<DBConnectionService>("DBConnectionService").dbConnection;
+        this.dbConnection = dbConnection ? dbConnection : Services.getInstance().get<DBConnectionService>("DBConnectionService").dbConnection;
     }
 
-    async getAll( includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [], orderBy: any[] = [], limit: number = 0, offset:number = 0): Promise<Entity[]> 
+    async getAll( includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [], orderBy: unknown[] = [], limit: number = 0, offset:number = 0): Promise<Entity[]>
     {
-        let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
+        const includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
         let query = this.dbConnection( this.tableName );
-        let selectColumns = this.selectEntityColumn();
+        const selectColumns = this.selectEntityColumn();
         query = this.include(query,includes,selectColumns);
         query = this.applyPaginationAndSorting(query,orderBy,limit,offset);
         
@@ -55,9 +55,9 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     async getByPrimaryKey(primaryKeyParts: PrimaryKeyPart[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [] ): Promise<Entity | null> 
     {
-        let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
+        const includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
         let query = this.dbConnection( this.tableName );
-        let selectColumns = this.selectEntityColumn();
+        const selectColumns = this.selectEntityColumn();
         query = this.include(query,includes,selectColumns);
 
         for (const primaryKeyPart of primaryKeyParts) 
@@ -67,17 +67,17 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         
         const result = await query.select(selectColumns);
         
-        let entities = this.constructEntities(result,includes);
+        const entities = this.constructEntities(result,includes);
 
         return  entities.length == 1 ? entities[0] : null;
     }
     
-    async getByCondition(constrains: Constrain[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [] , orderBy: any[], limit: number = 0, offset:number = 0): Promise<Entity[]> 
+    async getByCondition(constrains: Constrain[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [] , orderBy: unknown[], limit: number = 0, offset:number = 0): Promise<Entity[]>
     {
         constrains = this.filterConstrains(constrains);
-        let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
+        const includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
         let query = this.dbConnection(this.tableName);
-        let selectColumns = this.selectEntityColumn();
+        const selectColumns = this.selectEntityColumn();
         query = this.include(query,includes,selectColumns);
         query = this.addConstrains(query,constrains);
         query = this.applyPaginationAndSorting(query,orderBy,limit,offset);
@@ -87,7 +87,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return this.constructEntities(result,includes);
     }
 
-    async getFirstByCondition(constrains: Constrain[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [], orderBy: any[], limit: number, offset:number ): Promise<Entity | null> 
+    async getFirstByCondition(constrains: Constrain[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [], orderBy: unknown[], limit: number, offset:number ): Promise<Entity | null>
     {
         const entries = await this.getByCondition(constrains,includeFunction,orderBy,limit,offset);
 
@@ -102,7 +102,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     private filterConstrains( constrains:Constrain[] ) : Constrain[]
     {
-        let filteredConstrains = [];
+        const filteredConstrains = [];
         for (const constrain of constrains ) 
         {
             if( this.typeObject[constrain.key] !== undefined )
@@ -118,7 +118,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     private include( query: Knex.QueryBuilder , includes : IncludeNavigation[], selects:string[] ) : Knex.QueryBuilder
     {
-        let included : string[] = [this.entityName];
+        const included : string[] = [this.entityName];
         let includeNavigation : NavigationKey<IEntity>;
 
         for (let i = 0; i < includes.length; i++) 
@@ -152,23 +152,23 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
             `${navigationKey.referencedTable}.${navigationKey.referencedColumn}`
         );
        
-        let object = this.modelFactory.create( navigationKey.referencedEntity ) as IEntity; 
-        let array = object.getKeys().map( name => `${navigationKey.referencedTable}.${name} as ${index}.${name}`);
+        const object = this.modelFactory.create( navigationKey.referencedEntity ) as IEntity; 
+        const array = object.getKeys().map( name => `${navigationKey.referencedTable}.${name} as ${index}.${name}`);
 
         selects.push(...array);
 
         return query;
     }
 
-    private constructEntities( results: any[], includes:IncludeNavigation[] ) : Entity[]
+    private constructEntities( results: unknown[], includes:IncludeNavigation[] ) : Entity[]
     {      
         if(results.length == 0) 
             return [];
 
-        let createdEntitiesLists : IEntity[][] = this.buildMatrix(results[0], includes);
+        const createdEntitiesLists : IEntity[][] = this.buildMatrix(results[0], includes);
 
         let entityList: IEntity[] ;
-        let resultObject: any;
+        let resultObject: unknown;
         for (let indexResults = 0; indexResults < results.length; indexResults++) 
         {
             resultObject = results[indexResults];
@@ -195,9 +195,9 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return createdEntitiesLists[0] as Entity[];
     }
 
-    private buildMatrix( object:any, includes:IncludeNavigation[] ) : IEntity[][]
+    private buildMatrix( object:unknown, includes:IncludeNavigation[] ) : IEntity[][]
     {
-        let createdEntitiesLists : IEntity[][] = [];
+        const createdEntitiesLists : IEntity[][] = [];
 
         for (let i = 0; i <= includes.length; i++) 
         {
@@ -209,12 +209,12 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     private mergeCreatedEntities( createdEntitiesLists : IEntity[][], includes:IncludeNavigation[], navigationKeyIndex:number, mergeIndex:number )
     {
-        let mergeToIndex = includes[navigationKeyIndex].dependingNavigationKeyIndex;
-        let navigationKey = includes[navigationKeyIndex].navigationKey;
+        const mergeToIndex = includes[navigationKeyIndex].dependingNavigationKeyIndex;
+        const navigationKey = includes[navigationKeyIndex].navigationKey;
 
-        let mergeToList = createdEntitiesLists[mergeToIndex];
-        let entityToAddIncludes = mergeToList[mergeToList.length-1];
-        let mergeEntitiesList = createdEntitiesLists[mergeIndex];
+        const mergeToList = createdEntitiesLists[mergeToIndex];
+        const entityToAddIncludes = mergeToList[mergeToList.length-1];
+        const mergeEntitiesList = createdEntitiesLists[mergeIndex];
 
         if( !navigationKey.isArray() &&  mergeEntitiesList.length > 1)
             throw new Error("Cannot merge navigationKey is not an array and has more then one item to be added.");
@@ -244,15 +244,15 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
         await this.createDependedNavigationEntities(entity);
 
-        let convertedEntity = this.entityConverter.toKnexObject(entity);
+        const convertedEntity = this.entityConverter.toKnexObject(entity);
 
-        let results : any = await this.dbConnection( entity.getTableName() )
+        const results = await this.dbConnection( entity.getTableName() )
                                 .insert( convertedEntity, entity.getKeys() );
         
         if( !results || results.length != 1 )
             throw new Error("Cannot create entity!");
 
-        let createdEntity = this.entityConverter.knexObjectToIEntity(results[0],entity.getEntityName()) as IEntity;
+        const createdEntity = this.entityConverter.knexObjectToIEntity(results[0],entity.getEntityName()) as IEntity;
 
         this.updatePrimaryKeys(createdEntity , entity);
         await this.createRelatedNavigationEntities( createdEntity , entity );
@@ -346,22 +346,22 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     async updateExcluding(entity: Entity , ...excludedFields:string[] ) : Promise<boolean>
     {
-        let keysToExclude = [...entity.getPrimaryKeyParts(), ...excludedFields];
-        let convertedEntity = this.entityConverter.toKnexObjectExcludingFields(entity, keysToExclude) ;
+        const keysToExclude = [...entity.getPrimaryKeyParts(), ...excludedFields];
+        const convertedEntity = this.entityConverter.toKnexObjectExcludingFields(entity, keysToExclude) ;
         let query = this.dbConnection( this.tableName )
         query = this.addPrimaryKeyConstrains(query,entity);
 
-        let result : any[] = await query.update(convertedEntity,keysToExclude) as any[];
+        const result : unknown[] = await query.update(convertedEntity,keysToExclude);
         return result.length == 1 ;
     }
 
     async updateFields(entity: Entity , ...Fields:string[] ) : Promise<boolean>
     {
-        let convertedEntity = this.entityConverter.toKnexObjectOnlyFields(entity, Fields);
+        const convertedEntity = this.entityConverter.toKnexObjectOnlyFields(entity, Fields);
         let query = this.dbConnection( this.tableName )
         query = this.addPrimaryKeyConstrains(query,entity);
 
-        let result : any[] = await query.update(convertedEntity,Fields) as any[];
+        const result : unknown[] = await query.update(convertedEntity,Fields);
         return result.length == 1 ;
     }
     
@@ -373,14 +373,14 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         let query = this.dbConnection( this.tableName );
         query = this.addPrimaryKeyConstrains(query,entity);
 
-        let result : number = await query.delete() as number;
+        const result : number = await query.delete() as number;
 
         return result == 1;
     }
 
-    async deleteRange( entities: Entity[] ): Promise<Array<Boolean>> 
+    async deleteRange( entities: Entity[] ): Promise<Array<boolean>> 
     {
-        let results : Boolean[] = [];
+        const results : boolean[] = [];
         for (const entity of entities) 
         {
             results.push( await this.delete(entity) );
@@ -413,8 +413,8 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
             throw new Error("No constraints provided for delete.");
         }
 
-        let query = this.addConstrains( this.dbConnection( this.tableName ), constrains );
-        let result = await query.delete() 
+        const query = this.addConstrains( this.dbConnection( this.tableName ), constrains );
+        const result = await query.delete()
         return result;
     }
 

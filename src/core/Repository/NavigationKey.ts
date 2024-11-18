@@ -29,7 +29,7 @@ export class NavigationKey<Entity extends IEntity>
     readonly referencedEntity : string;
 
     /** The value of the referenced entity or entities. Can be a single `IEntity`, an array of `IEntity`, or `null`. */
-    value : Entity | Entity[] |null = null ;
+    value : Entity | Entity[] | null = null ;
 
     /** A boolean indicating whether `value` is an iterable collection (e.g., array) of `IEntity` instances. */
     private readonly valueIsArray : boolean ;

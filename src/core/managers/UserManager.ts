@@ -1,15 +1,15 @@
 import { User } from "@/models/User";
-import { EntityManager } from "./EntityManager";
 import { Constrain } from "../repository/Constrain";
 import { IncludeNavigation } from "../repository/IncludeNavigation";
-import { OperationResult } from "./OperationResult";
-import { FormError } from "./FormError";
 import { IPasswordValidation } from "@/services/IPasswordValidation";
 import { Services } from "@/services/Services";
-import { IEncryption } from "../utils/encryption/IEncryption";
-import { SimpleError } from "./SimpleError";
+import { IEncryption } from "@/core/utils/encryption/IEncryption";
 import { StringUtils } from "../utils/StringUtils";
 import { AccountStatus } from "@/models/types/AccountStatus";
+import {EntityManager} from "@/core/managers/EntityManager";
+import {OperationResult} from "@/core/managers/OperationResult";
+import {FormError} from "@/core/managers/FormError";
+import {SimpleError} from "@/core/managers/SimpleError";
 
 export class UserManager extends EntityManager<User>
 {
@@ -51,7 +51,7 @@ export class UserManager extends EntityManager<User>
      */
     async singUp( user: User ) : Promise<OperationResult<User|null,FormError>> 
     {
-        let errors :FormError[] = [];
+        const errors :FormError[] = [];
 
         if( StringUtils.stringIsNullOrEmpty( user.first_name ) )
             errors.push( new FormError("name",["A name must be provided!"] ) );
@@ -69,7 +69,7 @@ export class UserManager extends EntityManager<User>
             errors.push( new FormError("password",["A name must be provided!"] ) );
         else
         {
-            let validationResult = await this.passwordValidator.validate(user.password); 
+            const validationResult = await this.passwordValidator.validate(user.password); 
             if(validationResult.length > 0)
                 errors.push( new FormError("password",validationResult) );
             else
@@ -99,7 +99,7 @@ export class UserManager extends EntityManager<User>
      */
     async singIn( email:string, password:string ) : Promise< OperationResult<User|null,SimpleError> > 
     {
-        let user = await this.repository.getFirstByCondition(   [ new Constrain("email","=",email) ],
+        const user = await this.repository.getFirstByCondition(   [ new Constrain("email","=",email) ],
                                                                 (user) => [new IncludeNavigation(user.address,0) ],
                                                                 [],0,0
                                                             );

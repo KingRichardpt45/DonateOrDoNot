@@ -34,6 +34,10 @@ export class PasswordEncryption implements IEncryption
 
     async encrypt(value: any): Promise<string> 
     {
+        if (!value) {
+            return ""
+        }
+
         const iv = crypto.randomBytes(this.ivLength); // Generate a random IV
         const cipher = crypto.createCipheriv(this.algorithm, this.key, iv);
 
@@ -43,9 +47,12 @@ export class PasswordEncryption implements IEncryption
         return `${iv.toString('hex')}:${encrypted}`;
     }
 
-    async decrypt(encrypted: any): Promise<any> 
+    async decrypt(encrypted: string | null): Promise<unknown>
     {
-        const [ivHex, cipherText] = encrypted.split(':');
+        if (!encrypted) {
+            throw new Error('Encrypted value is empty.');
+        }
+        const [ivHex, cipherText] = (encrypted as string).split(':');
         if (!ivHex || !cipherText) {
             throw new Error('Invalid encrypted value format.');
         }

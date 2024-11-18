@@ -9,7 +9,7 @@ import { Services } from "@/services/Services";
 import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
 import { User } from "@/models/User";
 import { headers } from 'next/headers';
-import { IAuthorizationService } from "@/services/session/AuthorizationService/IAuthorizationService";
+import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { redirect } from "next/navigation"
 

@@ -53,9 +53,4 @@ export class File extends Entity {
     equals(object: unknown): boolean {
         return object instanceof File && this.id === object.id;
     }
-    
-    equalsToKnex(object: any , alias:string = ""): boolean 
-    {
-        return this.id === object[`${alias}id`] ;
-    }
 }

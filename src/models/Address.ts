@@ -15,7 +15,7 @@ export class Address extends Entity
     }
 
     getKeys(): string[] {
-        return ["id", "postal_code", "city", "address", "door"];
+        return ["id", "postal_code", "city", "address"];
     }
 
     getNavigationKeys(): string[] {
@@ -29,7 +29,6 @@ export class Address extends Entity
     getEntityName(): string {
         return Address.getEntityName();
     }
-
     
     static getTableName(): string {
         return "Addresses";
@@ -41,10 +40,5 @@ export class Address extends Entity
 
     equals(object: unknown): boolean {
         return object instanceof Address && this.id === object.id;
-    }
-
-    equalsToKnex(object: any , alias:string = ""): boolean 
-    {
-        return this.id === object[`${alias}id`] ;
     }
 }

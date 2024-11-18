@@ -1,4 +1,4 @@
-import { IOperationError } from "./IOperationError";
+import { IOperationError } from "@/core/managers/IOperationError";
 
 export class FormError implements IOperationError
 {

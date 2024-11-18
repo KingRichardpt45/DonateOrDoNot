@@ -21,8 +21,8 @@ export class EnumFieldValidation
     {
         // let a = (Object.values(enumType as Object) as string[]).includes(value) ? value as T[keyof T] : undefined;
         // console.log("aaaaaaaaaaaa", a)
-        
-        let array = Object.values(enumType as Object) as string[];
+
+        const array = Object.values(enumType as object) as string[];
         for (let index = 0; index < array.length; index++) 
         {
             if ( (enumType as [] )[index]  == value ) 

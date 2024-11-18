@@ -1,17 +1,17 @@
-import { DBConnectionService } from "@/services/DBConnectionService"
-import { SessionService } from "@/services/session/SessionService"
-import { LocalSessionUserCacheService } from "@/services/session/sessionCachingService/LocalSessionUserCacheService"
-import { JWTEncryption } from "@/core/utils/encryption/JWTEncryption"
-import { UserProvider } from "@/services/session/userProvider/UserProvider"
-import { IPasswordValidation } from "./IPasswordValidation"
-import { IEncryption } from "@/core/utils/encryption/IEncryption"
-import { PasswordEncryption } from "@/core/utils/encryption/PasswordEncryption"
-import { PasswordValidation } from "./PasswordVaidation"
-import { IUserProvider } from "./session/userProvider/IUserProvider"
-import { RepositoryAsync } from "@/core/repository/RepositoryAsync"
-import { User } from "@/models/User"
-import { IAuthorizationService } from "./session/authorizationService/IAuthorizationService"
-import { AuthorizationService } from "./session/authorizationService/AuthorizationService"
+import {DBConnectionService} from "@/services/DBConnectionService"
+import {SessionService} from "@/services/session/SessionService"
+import {LocalSessionUserCacheService} from "@/services/session/sessionCachingService/LocalSessionUserCacheService"
+import {JWTEncryption} from "@/core/utils/encryption/JWTEncryption"
+import {UserProvider} from "@/services/session/userProvider/UserProvider"
+import {IPasswordValidation} from "./IPasswordValidation"
+import {IEncryption} from "@/core/utils/encryption/IEncryption"
+import {PasswordEncryption} from "@/core/utils/encryption/PasswordEncryption"
+import {PasswordValidation} from "./PasswordVaidation"
+import {IUserProvider} from "./session/userProvider/IUserProvider"
+import {RepositoryAsync} from "@/core/repository/RepositoryAsync"
+import {User} from "@/models/User"
+import {IAuthorizationService} from "@/services/session/authorizationService/IAuthorizationService"
+import {AuthorizationService} from "@/services/session/authorizationService/AuthorizationService"
 
 /**
  * A class that manages a collection of services.
@@ -27,13 +27,15 @@ export class Services
     // Private constructor to prevent instantiation.
     private constructor() 
     {
-        let encryption = new JWTEncryption();
-        let userCachingService = new LocalSessionUserCacheService(3600*1000, 2, new RepositoryAsync(User) );
-        let sessionService = new SessionService(encryption,userCachingService);
-        let userProvider = new UserProvider(sessionService,userCachingService);
-        let authorizationService = new AuthorizationService( userProvider, "/signin", "/unauthorized");
+        console.log("abc")
+        const encryption = new JWTEncryption();
+        const dbConnection = new DBConnectionService("development")
+        const userCachingService = new LocalSessionUserCacheService(3600 * 1000, 2, new RepositoryAsync(User, dbConnection.dbConnection));
+        const sessionService = new SessionService(encryption, userCachingService);
+        const userProvider = new UserProvider(sessionService, userCachingService);
+        const authorizationService = new AuthorizationService(userProvider, "/signin", "/unauthorized");
 
-        Services.register<DBConnectionService>( "DBConnectionService", new DBConnectionService("development") );
+        Services.register<DBConnectionService>("DBConnectionService", dbConnection);
         Services.register<SessionService>( "SessionService" , sessionService);
         Services.register<IUserProvider>( "IUserProvider" , userProvider);
         Services.register<IEncryption>( "PasswordEncryption" , new PasswordEncryption( process.env.PW_ENCRYPTION_KEY as string ) );

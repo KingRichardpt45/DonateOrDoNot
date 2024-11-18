@@ -2,41 +2,36 @@ import { NextResponse } from 'next/server';
 import { RepositoryAsync } from '@/core/repository/RepositoryAsync';
 import { Address } from '@/models/Address';
 import { User } from '@/models/User';
-import { PrimaryKeyPart } from '@/core/repository/PrimaryKeyPart';
 import { Constrain } from '@/core/repository/Constrain';
 import { Notification } from '@/models/Notification';
 import { IncludeNavigation } from '@/core/repository/IncludeNavigation';
 
 
 export async function GET() {
-
-    function delay(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    
-   // let AddresseRepo = new RepositoryAsync<Address>("Address");
-    let UserRepo = new RepositoryAsync(User);
-    let myAddresse = new Address();
+// let AddresseRepo = new RepositoryAsync<Address>("Address");
+    const UserRepo = new RepositoryAsync(User);
+    const myAddresse = new Address();
 
     myAddresse.address = "Santo antónio Caminho da miranda";
     myAddresse.city = "funchal"
     myAddresse.specification = "29"
     myAddresse.postal_code = "9020-098"
 
-    let notification = new Notification();
+    const notification = new Notification();
     notification.campaign_id = 0;
     notification.message = "teste1";
-    let notification2 = new Notification();
+    const notification2 = new Notification();
     notification2.campaign_id = 0;
     notification2.message = "teste2";
 
     //create
-    let user = new User();
+    const user = new User();
     user.address.value = myAddresse;
     user.email = "test@test.com";
     user.first_name = "ricardo";
     user.middle_names = "F. C.";
     user.last_name = "Vieira";
+    user.notifications.value = [];
     user.notifications.value.push(notification);
     user.notifications.value.push(notification2);
 
@@ -54,7 +49,7 @@ export async function GET() {
     // gets with includes
     //let result = await UserRepo.getAll((user)=> [ new IncludeNavigation( user.notifications , 0), new IncludeNavigation( user.address , 0) ]);
     // let result = await AddresseRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],[]);
-    let result = await UserRepo.getFirstByCondition([ new Constrain("Addresses.id","=","18") ],(user) => [new IncludeNavigation(user.address,0) ],[],0,0);
+    const result = await UserRepo.getFirstByCondition([ new Constrain("Addresses.id","=","18") ],(user) => [new IncludeNavigation(user.address,0) ],[],0,0);
     // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
     // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
 

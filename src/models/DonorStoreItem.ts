@@ -1,6 +1,5 @@
 import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
-import {User} from "@/models/User";
 import {StoreItem} from "@/models/StoreItem";
 import { Donor } from "./Donor";
 

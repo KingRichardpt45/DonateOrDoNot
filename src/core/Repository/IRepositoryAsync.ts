@@ -1,5 +1,4 @@
 import { IEntity } from "@/core/repository/IEntity";
-import { NavigationKey } from "./NavigationKey";
 import { Constrain } from "./Constrain";
 import { PrimaryKeyPart } from "./PrimaryKeyPart";
 import { IncludeNavigation } from "./IncludeNavigation";

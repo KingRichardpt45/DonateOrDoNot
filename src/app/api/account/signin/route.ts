@@ -1,8 +1,6 @@
 import { UserManager } from "@/core/managers/UserManager";
 import { FormObjectValidator } from "@/core/utils/FormObjectValidator";
-import { User } from "@/models/User";
 import { Services } from "@/services/Services";
-import { ISessionUserCacheService } from "@/services/session/sessionCachingService/ISessionCacheService";
 import { SessionService } from "@/services/session/SessionService";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -28,7 +26,7 @@ export async function POST( request: NextRequest )
 
         //console.log(formData)
 
-        let result = await userManager.singIn(
+        const result = await userManager.singIn(
             formData.get("email")!.toString().trim() ,
             formData.get("password")!.toString().trim()
         )

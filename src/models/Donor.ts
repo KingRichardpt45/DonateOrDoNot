@@ -39,8 +39,8 @@ export class Donor extends Entity {
     }
 
     getNavigationKeys(): string[] {
-        return ["user", 
-            "campaigns", 
+        return ["user",
+            "donations",
             "badges", 
             "store_items", 
             "notifications"];

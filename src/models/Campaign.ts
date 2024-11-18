@@ -3,10 +3,10 @@ import {NavigationKey} from "@/core/repository/NavigationKey";
 import {File} from "@/models/File";
 import {Donation} from "@/models/Donation";
 import {CampaignManager} from "@/models/CampaignManager";
-import {CampaignStatus} from "@/models/types/CampaignStatus";
 import {Notification} from "@/models/Notification";
 import {BankAccount} from "@/models/BankAccount";
 import {CampaignBadge} from "@/models/CampaignBadge";
+import {CampaignStatus} from "@/models/types/CampaignStatus";
 
 export class Campaign extends Entity {
     [key: string]: unknown;

@@ -13,8 +13,11 @@ export class PasswordValidation implements IPasswordValidation
         .matches(/(?=.*[^\w\s])/, 'Password must contain a special character')
         .required('Password is required');
         
-    async validate(password: string): Promise<string[]> 
+    async validate(password: string | null): Promise<string[]>
     {
+        if (password === null) {
+            return ["Password is required"];
+        }
         try {
             await this.passwordSchema.validate( password );
             return [];

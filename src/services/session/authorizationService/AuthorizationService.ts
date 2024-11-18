@@ -1,4 +1,4 @@
-import { IAuthorizationService } from "./IAuthorizationService";
+import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
 import { IUserProvider } from "../userProvider/IUserProvider";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { redirect, RedirectType } from "next/navigation";
@@ -14,7 +14,7 @@ export class AuthorizationService implements IAuthorizationService
     private readonly noRolePage:string;
 
     /**
-     * Creates an instance of AuthorizationService.
+     * Creates an instance of authorizationService.
      * 
      * @param userProvider - A provider for retrieving the current user's session and details.
      */

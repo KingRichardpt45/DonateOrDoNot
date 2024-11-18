@@ -54,8 +54,8 @@ export async function POST( request: NextRequest )
             { status: 422, statusText:"Invalid form data."}
         );
 
-    let user = setUserInfo(formData,typeValue as number);
-    let result = await userManager.singUp(user);
+    const user = setUserInfo(formData,typeValue as number);
+    const result = await userManager.singUp(user);
 
     if ( !result.isOK )
         return NextResponse.json( { errors : result.errors }, { status: 422, statusText:"Invalid form data." } );
@@ -81,7 +81,7 @@ function mergeMiddleNames( names:string[] ) : string
 
 function setUserInfo( formData : FormData , type : number) : User
 {
-    let user = new User();
+    const user = new User();
 
     user.address.value = new Address();
     user.address.value.address = formData.get("address")!.toString().trim();
@@ -89,7 +89,7 @@ function setUserInfo( formData : FormData , type : number) : User
     user.address.value.city = formData.get("city")!.toString().trim();
     user.address.value.postal_code = formData.get("postalCode")!.toString().trim();
 
-    let names = formData.get("name")!.toString().split(" ");
+    const names = formData.get("name")!.toString().split(" ");
     console.log(names)
     user.first_name = names[0].trim();
     if(names.length > 1)

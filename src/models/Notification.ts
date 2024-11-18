@@ -48,9 +48,4 @@ export class Notification extends Entity {
     equals(object: unknown): boolean {
         return object instanceof Notification && this.id === object.id;
     }
-
-    equalsToKnex(object: any, alias?: string): boolean 
-    {
-        return this.id === object[`${alias}id`] ;
-    }
 }

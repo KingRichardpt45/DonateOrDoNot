@@ -4,7 +4,7 @@ import next from "next";
 // import { DBConnectionService } from "./services/DBConnectionService"
 // import { SessionService } from "./services/session/SessionService"
 // import { LocalSessionUserCacheService } from "./services/session/LocalSessionUserCacheService"
-// import { JWTEncryption } from "./core/Utils/Encryption/JWTEncryption"
+// import { JWTEncryption } from "./core/Utils/encryption/JWTEncryption"
 // import { UserProvider } from "./services/userProvider/UserProvider"
 //import { Server } from "socket.io";
 

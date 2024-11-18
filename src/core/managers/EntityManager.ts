@@ -20,7 +20,7 @@ export class EntityManager<Entity extends IEntity>
      * 
      * @param entityConstructor - A constructor function for creating instances of the Entity type.
      */
-    constructor( entityConstructor: new (...args: any[]) => Entity )
+    constructor( entityConstructor: new (...args: unknown[]) => Entity )
     {
         this.repository = new RepositoryAsync(entityConstructor);
     }

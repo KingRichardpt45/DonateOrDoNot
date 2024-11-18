@@ -1,5 +1,5 @@
 import { IEncryption } from "@/core/utils/encryption/IEncryption";
-import { SignJWT, jwtVerify } from "jose"
+import {SignJWT, jwtVerify, JWTPayload} from "jose"
 
 export class JWTEncryption implements IEncryption
 {
@@ -19,8 +19,11 @@ export class JWTEncryption implements IEncryption
             .sign(this.encryptionKey);
     }
 
-    async decrypt(value: any): Promise<any | null>
+    async decrypt(value: string | null): Promise<JWTPayload | null>
     {
+        if (!value)
+            return null;
+
         try 
         {
             const { payload } = await jwtVerify( value , this.encryptionKey , { algorithms : ["HS256"]} );

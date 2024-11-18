@@ -1,10 +1,10 @@
 import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
-import {CampaignManagerTypes} from "@/models/types/CampaignManagerTypes";
 import {Campaign} from "@/models/Campaign";
 import {User} from "@/models/User";
 import { File } from "./File";
 import { Notification } from "./Notification";
+import {CampaignManagerTypes} from "@/models/types/CampaignManagerTypes";
 
 export class CampaignManager extends Entity {
     [key: string]: unknown;

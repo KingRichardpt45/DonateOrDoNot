@@ -1,7 +1,5 @@
 import { UserManager } from "@/core/managers/UserManager";
-import { User } from "@/models/User";
 import { Services } from "@/services/Services";
-import { ISessionUserCacheService } from "@/services/session/sessionCachingService/ISessionCacheService";
 import { SessionService } from "@/services/session/SessionService";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,8 +11,8 @@ export async function POST( request: NextRequest )
     const session = await sessionService.verify() 
     if( session != null && session.expires >= new Date() )
     {
-        let userId = session.userId;
-        let user = await userManager.getById(userId);
+        const userId = session.userId;
+        const user = await userManager.getById(userId);
 
         if(user == null)
         {
