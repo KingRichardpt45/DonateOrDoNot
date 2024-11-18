@@ -13,9 +13,11 @@ import {
   User,
   LogOut
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const SideMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (e.clientX <= 10) {
@@ -33,6 +35,27 @@ const SideMenu = () => {
       document.removeEventListener("mousemove", handleMouseMove);
     };
   }, [handleMouseMove]);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/account/signout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) 
+      {
+        router.push("/");
+
+      } else {
+        console.error("Failed to log out");
+      }
+    } catch (error) {
+      console.error("An error occurred during logout:", error);
+    }
+  };
 
   return (
     <div 
@@ -122,12 +145,15 @@ const SideMenu = () => {
               </a>
             </li>
             <li>
-              <a href="#">
+            <button 
+                onClick={handleLogout}
+                className={styles.logoutButton} // Optional: Add a style for the button
+              >
                 <span className={styles.iconContainer}>
                   <LogOut size={20} />
                 </span>
                 Log out
-              </a>
+              </button>
             </li>
           </ul>
         </div>

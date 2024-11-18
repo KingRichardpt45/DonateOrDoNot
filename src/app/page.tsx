@@ -16,25 +16,22 @@ import { redirect } from "next/navigation"
 export default async function Home() 
 {
 
-  test();
-
-  return (
-    <div className={styles.page}>
-      "test"
-      {/* <main className={styles.main}>
-      <ExpandableSearchBar/>  
-      <Campaign/>
-      </main> */}
-    </div>
-  );
-}
-
-async function test () : Promise<void>
-{
-    // let a = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
+  let a = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
    
-    //   await a.authorizeRedirect(UserRoleTypes.Donor, "/signin");
-
-   // redirect("/signin");
-   
+  if ( !await a.hasRole(UserRoleTypes.Donor))
+  {
+      console.log("no user");
+      redirect("signin");
+      return;
+  } 
+  else
+    return (
+      <div className={styles.page}>
+        "test"
+        {/* <main className={styles.main}>
+        <ExpandableSearchBar/>  
+        <Campaign/>
+        </main> */}
+      </div>
+    );
 }

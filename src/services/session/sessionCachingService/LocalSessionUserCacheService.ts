@@ -25,7 +25,8 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
      * @param delay - An additional delay (in minutes) to account for before marking a session as expired.
      * @param userRepository - The repository for retrieving user data based on session details.
      */
-    constructor(cleanUpInterval: number, delay: number, userRepository: RepositoryAsync<User>) {
+    constructor(cleanUpInterval: number, delay: number, userRepository: RepositoryAsync<User>) 
+    {
         this.userRepository = userRepository;
         this.delay = delay
         setInterval(() => this.cleanupExpiredSessions(), cleanUpInterval);
@@ -37,20 +38,25 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
      * @param session - The session object containing user ID and expiration details.
      * @throws If the user corresponding to the session's user ID does not exist.
      */
-    async store(session: Session): Promise<void> {
-        await this.mutex.runExclusive(async () => {
-                const user = await this.userRepository.getFirstByCondition(
-                    [new Constrain("id", "=", session.userId)],
-                    (user) => [new IncludeNavigation(user.address, 0)],
-                    [], 0, 0
-                );
+    async store(session: Session): Promise<void> 
+    {
+        await this.mutex.runExclusive( () => { this.storeAux(session); return; } );
+    }
 
-                if (!user)
-                    throw new Error("Trying to store user but the provided id does not exist.")
-                else
-                    this.cache.set(session.userId, {user, session});
-            }
+    private async storeAux(session: Session): Promise<User>
+    {   
+        const user = await this.userRepository.getFirstByCondition(
+            [new Constrain("id", "=", session.userId)],
+            (user) => [new IncludeNavigation(user.address, 0)],
+            [], 0, 0
         );
+
+        if (!user)
+            throw new Error("Trying to store user but the provided id does not exist.")
+        else
+            this.cache.set(session.userId, {user, session});
+
+        return user;
     }
 
     /**
@@ -59,10 +65,17 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
      * @param session - The session object to look up in the cache.
      * @returns The user object if found, or `null` if no matching session exists in the cache.
      */
-    async retrieve(session: Session): Promise<User | null> {
-        return await this.mutex.runExclusive(() => {
-                const user = this.cache.get(session.userId)?.user;
-                return user !== undefined ? user : null
+    async retrieve(session: Session): Promise<User | null> 
+    {
+        return await this.mutex.runExclusive( async ()  => 
+            {   
+                const now = new Date();
+                let user = this.cache.get(session.userId)?.user;
+        
+                if( session.expires >= now && user == undefined )
+                    user = await this.storeAux(session) as User | undefined;
+                 
+                return user !== undefined ? user : null;
             }
         );
     }
@@ -72,8 +85,10 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
      *
      * @param session - The session object to remove from the cache.
      */
-    async remove(session: Session): Promise<void> {
-        await this.mutex.runExclusive(() => {
+    async remove(session: Session): Promise<void> 
+    {
+        await this.mutex.runExclusive(() => 
+            {
                 this.cache.delete(session.userId);
             }
         );
@@ -83,8 +98,10 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
      * Cleans up expired sessions from the cache. A session is considered expired if its expiration time,
      * plus the additional delay, is less than or equal to the current time.
      */
-    private async cleanupExpiredSessions(): Promise<void> {
-        await this.mutex.runExclusive(() => {
+    private async cleanupExpiredSessions(): Promise<void> 
+    {
+        await this.mutex.runExclusive(() =>
+            {
                 const now = new Date();
                 for (const [userId, value] of this.cache) {
                     const date = new Date(value.session.expires);

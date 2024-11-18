@@ -7,13 +7,17 @@ import {NextRequest, NextResponse} from "next/server";
 const sessionService = Services.getInstance().get<SessionService>("SessionService")
 const userManager = new UserManager();
 const validatorSingInForm = new FormObjectValidator("email", "password");
+const redirectOnSuccessLogin = "/"
 
 export async function POST(request: NextRequest) {
     const session = await sessionService.verify()
 
-    if (session != null && session.expires >= new Date()) {
-        return NextResponse.json({}, {status: 400, statusText: "Already have a valid session."})
-    } else {
+    if (session != null && session.expires >= new Date()) 
+    {
+        //return NextResponse.json({}, {status: 400, statusText: "Already have a valid session."})
+        return NextResponse.redirect( new URL( redirectOnSuccessLogin, request.url) );
+    } 
+    else {
         const formData = await request.formData();
         const errors = validatorSingInForm.validate(formData);
 
@@ -32,6 +36,7 @@ export async function POST(request: NextRequest) {
 
         const session = await sessionService.create(result.value!.id as number);
 
-        return NextResponse.json({}, {status: 200})
+        //return NextResponse.json({}, {status: 200})
+        return NextResponse.redirect( new URL( redirectOnSuccessLogin, request.url) );
     }
 }

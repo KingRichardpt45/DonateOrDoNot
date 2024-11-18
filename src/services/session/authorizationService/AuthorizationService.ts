@@ -1,7 +1,6 @@
 import {IAuthorizationService} from "@/services/session/authorizationService/IAuthorizationService";
 import {IUserProvider} from "../userProvider/IUserProvider";
 import {UserRoleTypes} from "@/models/types/UserRoleTypes";
-import {redirect, RedirectType} from "next/navigation";
 
 /**
  * Service to handle user authorization tasks, such as session validation,
@@ -36,25 +35,4 @@ export class AuthorizationService implements IAuthorizationService {
             return user.type === role;
 
     }
-
-    async authorizeRedirect(requiredRole: UserRoleTypes, redirectTo?: string): Promise<void> {
-        let noSessionPage;
-        let noRolePage;
-        if (redirectTo) {
-            noSessionPage = redirectTo;
-            noRolePage = redirectTo;
-        } else {
-            noSessionPage = this.noSessionPage;
-            noRolePage = this.noRolePage;
-        }
-
-        const user = await this.userProvider.getUser();
-        console.log("user", user);
-        if (!user)
-            redirect(noSessionPage, RedirectType.replace);
-
-        if (user.type !== requiredRole)
-            redirect(noRolePage, RedirectType.replace);
-    }
-
 }

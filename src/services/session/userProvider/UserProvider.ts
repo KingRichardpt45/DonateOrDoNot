@@ -26,7 +26,8 @@ export class UserProvider implements IUserProvider {
         this.sessionService = sessionService;
     }
 
-    async getUser(): Promise<User | null> {
+    async getUser(): Promise<User | null> 
+    {
         const session = await this.sessionService.verify();
 
         if (!session)
