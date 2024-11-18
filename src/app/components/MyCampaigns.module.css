@@ -3,6 +3,9 @@
     background-color: #1e0e34;
     color: white;
     font-family: Arial, sans-serif;
+    min-height: 100vh; /* Ensure page height covers the full viewport */
+    display: flex;
+    flex-direction: column;
 }
 
 .sectionTitle {
@@ -13,13 +16,14 @@
 
 .campaignsContainer {
     display: flex;
-    gap: 15px;
+    gap: 20px; /* Increase spacing between cards */
     flex-wrap: wrap;
     justify-content: center;
 }
 
 .campaignCard {
-    width: 140px;
+    width: 250px; /* Increase card width */
+    height: 250px;
     background-color: #5c2079;
     border-radius: 10px;
     overflow: hidden;
@@ -35,7 +39,6 @@
 
 .campaignImage {
     width: 100%;
-    height: 140px;
     object-fit: cover;
 }
 
@@ -45,17 +48,34 @@
     position: absolute;
     bottom: 0;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-align title, status, and icon */
 }
 
 .campaignTitle {
-    font-size: 14px;
-    margin: 0;
+    font-size: 16px; /* Slightly larger title */
+    margin: 5px 0;
 }
 
 .campaignStatus {
-    font-size: 12px;
+    font-size: 14px;
     color: #ffcc00;
+    margin: 5px 0;
 }
+
+.editIconContainer {
+    margin-top: 5px;
+}
+
+.editIcon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    object-fit: contain; /* Ensure the icon maintains its aspect ratio */
+}
+
+
 
 .searchContainer {
     display: flex;
@@ -74,7 +94,6 @@
     outline: none;
     padding-left: 40px;
     background-color: white;
-    background-image: url('/images/search-icon.png'); /* Path to search icon image */
     background-repeat: no-repeat;
     background-position: 10px center;
 }

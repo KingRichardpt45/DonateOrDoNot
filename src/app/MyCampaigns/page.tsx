@@ -3,16 +3,14 @@
 import styles from "../components/myCampaigns.module.css"; // Adjust the path if necessary
 import SideMenu from "../components/SideMenu";
 import { Header } from "../components/NavBarNotLogged";
-import { useState } from "react";
 
 export default function MyCampaigns() {
-  // Example data for campaigns
   const activeCampaigns = [
     { id: 1, title: "Donate Blood & Save a Life", status: "Ongoing", image: "/images/testecampanha.png" },
     { id: 2, title: "Food Drive", status: "Under Review", image: "/images/testecampanha.png" },
-    { id: 3, title: "", status: "", image: "/images/testecampanha.png" },
-    { id: 4, title: "", status: "", image: "/images/testecampanha.png" },
-    { id: 5, title: "", status: "", image: "/images/testecampanha.png" },
+    { id: 3, title: "Food Drive", status: "Under Review", image: "/images/testecampanha.png" },
+    { id: 4, title: "Food Drive", status: "Under Review", image: "/images/testecampanha.png" },
+    { id: 5, title: "Food Drive", status: "Under Review", image: "/images/testecampanha.png" }
   ];
 
   const allCampaigns = [
@@ -30,12 +28,13 @@ export default function MyCampaigns() {
         {activeCampaigns.map((campaign, index) => (
           <div key={index} className={styles.campaignCard}>
             <img src={campaign.image} alt={campaign.title} className={styles.campaignImage} />
-            {campaign.title && (
-              <div className={styles.campaignInfo}>
-                <h3 className={styles.campaignTitle}>{campaign.title}</h3>
-                <p className={styles.campaignStatus}>{campaign.status}</p>
+            <div className={styles.campaignInfo}>
+            <div className={styles.editIconContainer}>
+                <img src="/images/pencil.png" alt="Edit" className={styles.editIcon} />
               </div>
-            )}
+              {campaign.title && <h3 className={styles.campaignTitle}>{campaign.title}</h3>}
+              {campaign.status && <p className={styles.campaignStatus}>{campaign.status}</p>}
+            </div>
           </div>
         ))}
       </div>
@@ -58,4 +57,3 @@ export default function MyCampaigns() {
     </div>
   );
 }
-
