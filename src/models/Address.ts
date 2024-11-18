@@ -7,7 +7,7 @@ export class Address extends Entity {
     postal_code: string | null = null;
     city: string | null = null;
     address: string | null = null;
-    door: string | null = null;
+    specification: string | null = null;
 
     getPrimaryKeyParts(): string[] {
         return ["id"];

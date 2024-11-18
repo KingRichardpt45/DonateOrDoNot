@@ -11,6 +11,7 @@ export class UserBadge extends Entity {
 
     user_id: number | null = null;
     badge_id: number | null = null;
+    unblock_at: Date | null = null;
 
     readonly user = new NavigationKey<User>(this, "user", "user_id", UserBadge.getTableName(), UserBadge.getEntityName(), Campaign.getTableName(), Campaign.getEntityName(), "id", null);
     readonly badge = new NavigationKey<Badge>(this, "badge", "badge_id", UserBadge.getTableName(), UserBadge.getEntityName(), Badge.getTableName(), Badge.getEntityName(), "id", null);
@@ -20,7 +21,7 @@ export class UserBadge extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "user_id", "badge_id"];
+        return ["id", "user_id", "badge_id","unblock_at"];
     }
 
     getNavigationKeys(): string[] {

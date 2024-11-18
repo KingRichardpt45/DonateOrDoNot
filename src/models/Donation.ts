@@ -9,6 +9,7 @@ export class Donation extends Entity {
     id: number | null = null;
     is_name_hidden: boolean | null = null
     value: number | null = null;
+    comment: string | null = null
 
     user_id: number | null = null;
     campaign_id: number | null = null;
@@ -21,7 +22,7 @@ export class Donation extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "is_name_hidden", "value", "user_id", "campaign_id"];
+        return ["id", "is_name_hidden", "value", "user_id", "campaign_id" ,"comment"];
     }
 
     getNavigationKeys(): string[] {

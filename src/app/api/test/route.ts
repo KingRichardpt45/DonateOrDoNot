@@ -20,7 +20,7 @@ export async function GET() {
 
     myAddresse.address = "Santo antónio Caminho da miranda";
     myAddresse.city = "funchal"
-    myAddresse.door = "29"
+    myAddresse.specification = "29"
     myAddresse.postal_code = "9020-098"
 
     let notification = new Notification();

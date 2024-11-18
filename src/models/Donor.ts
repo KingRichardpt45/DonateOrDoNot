@@ -4,6 +4,7 @@ import {User} from "@/models/User";
 import {Donation} from "@/models/Donation";
 import {UserBadge} from "@/models/UserBadge";
 import {UserStoreItem} from "@/models/UserStoreItem";
+import { Notification } from "./Notification";
 
 export class Donor extends Entity {
     [key: string]: unknown;
@@ -13,24 +14,36 @@ export class Donor extends Entity {
     total_donations: number | null = null;
     total_donated_value: number | null = null;
     frequency_of_donation: number | null = null;
-    frequency_of_donation_datetime: unknown | null = null;
-    best_frequency_of_donation_datetime: unknown | null = null;
+    frequency_of_donation_datetime: number | null = null;
+    best_frequency_of_donation_datetime: number | null = null;
 
     readonly user = new NavigationKey<User>(this, "user", "id", Donor.getTableName(), Donor.getEntityName(), User.getTableName(), User.getEntityName(), "id", null);
     readonly donations = new NavigationKey<Donation>(this, "donations", "id", Donor.getTableName(), Donor.getEntityName(), Donation.getTableName(), Donation.getEntityName(), "user_id", null);
     readonly badges = new NavigationKey<UserBadge>(this, "badges", "id", Donor.getTableName(), Donor.getEntityName(), UserBadge.getTableName(), UserBadge.getEntityName(), "user_id", null);
     readonly store_items = new NavigationKey<UserStoreItem>(this, "store_items", "id", Donor.getTableName(), Donor.getEntityName(), UserStoreItem.getTableName(), UserStoreItem.getEntityName(), "user_id", null);
+    readonly notifications = new NavigationKey<Notification>(this, "notifications", "id", Donor.getTableName(), Donor.getEntityName(), Notification.getTableName(), Notification.getEntityName(), "user_id", []);
 
     getPrimaryKeyParts(): string[] {
         return ["id"];
     }
 
     getKeys(): string[] {
-        return ["id", "donacoins", "total_donations", "total_donated_value", "frequency_of_donation", "frequency_of_donation_datetime", "best_frequency_of_donation_datetime", "user_id", "donations", "badges", "store_items"];
+        return ["id", 
+                "donacoins", 
+                "total_donations", 
+                "total_donated_value", 
+                "frequency_of_donation", 
+                "frequency_of_donation_datetime", 
+                "best_frequency_of_donation_datetime"
+            ];
     }
 
     getNavigationKeys(): string[] {
-        return ["user", "campaigns", "badges", "store_items"];
+        return ["user", 
+            "campaigns", 
+            "badges", 
+            "store_items", 
+            "notifications"];
     }
 
     getTableName(): string {

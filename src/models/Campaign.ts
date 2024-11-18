@@ -14,14 +14,13 @@ export class Campaign extends Entity {
     id: number | null = null;
     title: string | null = null;
     description: string | null = null;
-    current_donation_value: number | null = null;
     objective_value: number | null = null;
+    current_donation_value: number | null = null;
     category: string | null = null;
     end_date: Date | null = null;
     contact_email: string | null = null;
     contact_phone_number: string | null = null;
     donation_counter: number | null = null;
-    notification_interval: number | null = null;
     last_notified_value: number | null = null;
     interval_notification_value: number | null = null;
     status: CampaignStatus = CampaignStatus.InAnalysis;
@@ -41,9 +40,21 @@ export class Campaign extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "title", "description", "current_donation_value", "objective_value", "category", "end_date",
-            "contact_email", "contact_phone_number", "donation_counter", "notification_interval", "last_notified_value",
-            "interval_notification_value", "status", "campaign_manager_id", "bank_account_id"];
+        return ["id", 
+            "title", 
+            "description", 
+            "current_donation_value", 
+            "objective_value", 
+            "category", 
+            "end_date",
+            "contact_email", 
+            "contact_phone_number", 
+            "donation_counter", 
+            "last_notified_value",
+            "interval_notification_value", 
+            "status", 
+            "campaign_manager_id", 
+            "bank_account_id"];
     }
 
     getNavigationKeys(): string[] {

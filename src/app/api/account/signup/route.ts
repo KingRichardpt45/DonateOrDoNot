@@ -85,7 +85,7 @@ function setUserInfo( formData : FormData , type : number) : User
 
     user.address.value = new Address();
     user.address.value.address = formData.get("address")!.toString().trim();
-    user.address.value.door = formData.get("addressSpecification")!.toString().trim();
+    user.address.value.specification = formData.get("addressSpecification")!.toString().trim();
     user.address.value.city = formData.get("city")!.toString().trim();
     user.address.value.postal_code = formData.get("postalCode")!.toString().trim();
 

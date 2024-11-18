@@ -11,10 +11,10 @@ export class File extends Entity {
     id: number | null = null;
     original_name: string | null = null;
     file_suffix: string | null = null;
-    file_type: number | null = null;
+    file_type: FileTypes = FileTypes.Image;
     file_path: string | null = null;
     timestamp: Date | null = null;
-    type: FileTypes = FileTypes.Image;
+    size: number | null = null;
 
     user_id: number | null = null;
     campaign_id: number | null = null;
@@ -29,7 +29,8 @@ export class File extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "original_name", "file_suffix", "file_type", "file_path", "timestamp", "user_id", "campaign_id", "badge_id"];
+        return ["id", "original_name", "file_suffix", "file_type", "file_path", 
+            "timestamp", "user_id", "campaign_id", "badge_id"];
     }
 
     getNavigationKeys(): string[] {

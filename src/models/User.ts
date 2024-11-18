@@ -35,9 +35,19 @@ export class User extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "first_name", "middle_names", "last_name", "email",
-            "email_confirmation_token", "email_confirmed", "phone_number",
-            "password", "status", "type", "address_id", "profile_image_id"];
+        return ["id", 
+            "first_name", 
+            "middle_names", 
+            "last_name", 
+            "email",
+            "email_confirmation_token", 
+            "email_confirmed", 
+            "phone_number",
+            "password", 
+            "status", 
+            "type", 
+            "address_id", 
+            "profile_image_id"];
     }
 
     getNavigationKeys(): string[] {
