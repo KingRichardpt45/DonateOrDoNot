@@ -1,12 +1,8 @@
 import "server-only"
+
 import { User } from "@/models/User";
-import { Session } from "../Session";
 import { IUserProvider } from "./IUserProvider";
-import { ISessionUserCacheService } from "../SessionCahingService/ISessionCacheService";
-import { NextRequest } from "next/server";
-import { GetServerSidePropsContext } from "next";
-import { Services } from "../../Services";
-import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
+import { ISessionUserCacheService } from "../sessionCachingService/ISessionCacheService";
 import { SessionService } from "../SessionService";
 
 /**
@@ -34,8 +30,6 @@ export class UserProvider implements IUserProvider {
     async getUser(): Promise<User | null> 
     {
         const session = await this.sessionService.verify();
-
-        console.log("userprovider", session);
         
         if(!session)
             return null;

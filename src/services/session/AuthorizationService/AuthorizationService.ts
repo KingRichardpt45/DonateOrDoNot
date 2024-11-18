@@ -1,6 +1,4 @@
-import { User } from "@/models/User";
 import { IAuthorizationService } from "./IAuthorizationService";
-import { SessionService } from "../SessionService";
 import { IUserProvider } from "../userProvider/IUserProvider";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { redirect, RedirectType } from "next/navigation";

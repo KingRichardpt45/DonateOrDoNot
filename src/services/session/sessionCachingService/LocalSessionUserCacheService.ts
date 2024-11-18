@@ -52,8 +52,6 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
                     throw new Error("Trying to store user but the provided id does not exist.")
                 else
                     this.cache.set( session.userId, { user , session });
-
-                console.log("test1",session,this.cache ,"------------------------------------------------")
             }
         );
     }
@@ -66,11 +64,12 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
      */
     async retrieve(session: Session): Promise<User | null>
     {   
-        return await this.mutex.runExclusive( () => {
-            console.log("teste",session,this.cache)
-            let user =  this.cache.get(session.userId)?.user ;
-            return user !== undefined ? user : null
-        });
+        return await this.mutex.runExclusive( () => 
+            {
+                let user =  this.cache.get(session.userId)?.user ;
+                return user !== undefined ? user : null
+            }
+        );
     }
 
     /**
@@ -80,10 +79,11 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
      */
     async remove(session: Session): Promise<void> 
     {
-        await this.mutex.runExclusive(() => {
-            console.log("REMOoooooooooooooooooooooooved")
-            this.cache.delete(session.userId);
-        });
+        await this.mutex.runExclusive(() => 
+            {
+                this.cache.delete(session.userId);
+            }
+        );
     }
 
     /**
@@ -92,17 +92,19 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
      */
     private async cleanupExpiredSessions(): Promise<void> 
     {
-        await this.mutex.runExclusive(() => {
-            const now = new Date();
-            for (const [userId, value] of this.cache) 
+        await this.mutex.runExclusive(() => 
             {
-                const date = new Date(value.session.expires);
-                date.setMinutes( date.getMinutes() + this.delay )
+                const now = new Date();
+                for (const [userId, value] of this.cache) 
+                {
+                    const date = new Date(value.session.expires);
+                    date.setMinutes( date.getMinutes() + this.delay )
 
-                if ( date <= now) {
-                    this.cache.delete(userId);
+                    if ( date <= now) {
+                        this.cache.delete(userId);
+                    }
                 }
             }
-        });
+        );
     }
 }

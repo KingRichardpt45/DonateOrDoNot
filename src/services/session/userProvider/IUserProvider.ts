@@ -1,7 +1,4 @@
 import { User } from "@/models/User";
-import { Session } from "@/services/session/Session";
-import { GetServerSidePropsContext } from "next";
-import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 
 /**
  * Represents a provider that fetches a user based on a given session.

@@ -1,6 +1,6 @@
 import { DBConnectionService } from "@/services/DBConnectionService"
 import { SessionService } from "@/services/session/SessionService"
-import { LocalSessionUserCacheService } from "@/services/session/SessionCahingService/LocalSessionUserCacheService"
+import { LocalSessionUserCacheService } from "@/services/session/sessionCachingService/LocalSessionUserCacheService"
 import { JWTEncryption } from "@/core/Utils/Encryption/JWTEncryption"
 import { UserProvider } from "@/services/session/userProvider/UserProvider"
 import { IPasswordValidation } from "./IPasswordValidation"
@@ -10,8 +10,8 @@ import { PasswordValidation } from "./PasswordVaidation"
 import { IUserProvider } from "./session/userProvider/IUserProvider"
 import { RepositoryAsync } from "@/core/repository/RepositoryAsync"
 import { User } from "@/models/User"
-import { IAuthorizationService } from "./session/AuthorizationService/IAuthorizationService"
-import { AuthorizationService } from "./session/AuthorizationService/AuthorizationService"
+import { IAuthorizationService } from "./session/authorizationService/IAuthorizationService"
+import { AuthorizationService } from "./session/authorizationService/AuthorizationService"
 
 /**
  * A class that manages a collection of services.

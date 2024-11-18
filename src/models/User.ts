@@ -2,10 +2,10 @@ import {Entity} from "@/core/repository/Entity";
 import {Address} from "./Address";
 import { NavigationKey } from "@/core/repository/NavigationKey";
 import {File} from "@/models/File";
-import {UserTypes} from "@/models/types/UserTypes";
 import {Notification} from "@/models/Notification";
 import {UserBadge} from "@/models/UserBadge";
 import { AccountStatus } from "./types/AccountStatus";
+import { UserRoleTypes } from "./types/UserRoleTypes";
 
 export class User extends Entity {
     [key: string]: unknown;
@@ -20,7 +20,7 @@ export class User extends Entity {
     phone_number: string | null = null;
     password: string | null = null;
     status: AccountStatus = AccountStatus.Pending;
-    type: UserTypes = UserTypes.Donor;
+    type: UserRoleTypes = UserRoleTypes.Donor;
 
     address_id: number | null = null;
     profile_image_id: number | null = null;

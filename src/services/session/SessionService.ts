@@ -3,7 +3,7 @@ import { IEncryption } from "@/core/Utils/Encryption/IEncryption";
 import { cookies } from "next/headers";
 import { Cookie } from "./Cookie";
 import { Session } from "@/services/session/Session"
-import { ISessionUserCacheService } from "./SessionCahingService/ISessionCacheService";
+import { ISessionUserCacheService } from "./sessionCachingService/ISessionCacheService";
 
 /**
  * Service for managing user sessions, handling session creation, verification, and deletion.
