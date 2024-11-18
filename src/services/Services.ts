@@ -1,6 +1,5 @@
 import { DBConnectionService } from "@/services/DBConnectionService"
 import { SessionService } from "@/services/session/SessionService"
-import { ISessionUserCacheService } from "./session/SessionCahingService/ISessionCacheService"
 import { LocalSessionUserCacheService } from "@/services/session/SessionCahingService/LocalSessionUserCacheService"
 import { JWTEncryption } from "@/core/Utils/Encryption/JWTEncryption"
 import { UserProvider } from "@/services/session/userProvider/UserProvider"
