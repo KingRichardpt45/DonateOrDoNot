@@ -369,6 +369,7 @@
   border-radius: 0px; /* Optional for a rounded look */
   margin-bottom: 0;
   margin-top: 0;
+  height: 90vh;
 }
 
 .carousel {

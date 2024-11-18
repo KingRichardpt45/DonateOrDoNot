@@ -1,0 +1,123 @@
+/* Modal Wrapper */
+.modalWrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  
+}
+
+/* Modal Content */
+.modalContent {
+  background-image: url('/images/backgroundSigns.png'); /* Purple background */
+  background-color: #6a0dad !important;
+  color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  max-width: 400px;
+  width: 100%;
+  border-color: white;
+  border-width: 20px;
+}
+
+/* Close Button */
+.modalClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 1.5rem;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Input Field */
+.input {
+  width: 60px;
+  padding: 4px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+/* Currency Symbol */
+.currencySymbol {
+  font-size: 1.2rem;
+}
+
+/* Donation Amount Buttons */
+.donationAmounts {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.donationButton {
+  background-color: #6a0dad;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.donationButtonSelected {
+  background-color: white;
+  color: #6a0dad;
+  font-weight: bold;
+}
+
+/* Payment Methods */
+.paymentMethods {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.paymentMethodButton {
+  background-color: #6a0dad;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.paymentMethodSelected {
+  background-color: white;
+  color: #6a0dad;
+  font-weight: bold;
+}
+
+
+
+/* Radio Group */
+.radioGroup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Donate Button */
+.modalSubmit {
+  width: 100%;
+  padding: 10px;
+  background-color: #ff69b4;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
