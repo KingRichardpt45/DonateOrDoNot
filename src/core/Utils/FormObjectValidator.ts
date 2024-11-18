@@ -1,11 +1,10 @@
-import { FormError } from "@/core/managers/FormError";
-import { StringUtils } from "./StringUtils";
+import {FormError} from "@/core/managers/FormError";
+import {StringUtils} from "./StringUtils";
 
 /**
  * Class for validating form object.
  */
-export class FormObjectValidator 
-{
+export class FormObjectValidator {
     private requiredFields: string[];
 
     /**
@@ -22,15 +21,12 @@ export class FormObjectValidator
      * @param fields
      * @returns An array of missing values;
      */
-    validate( data : FormData ): FormError[]
-    {
+    validate(data: FormData): FormError[] {
         const missingFields: FormError[] = [];
 
-        for (const field of this.requiredFields ) 
-        {
-            if ( StringUtils.stringIsNullOrEmpty( data.get(field)?.toString() ) ) 
-            {
-                missingFields.push(new FormError(field,[`The field can not be empty.`]));
+        for (const field of this.requiredFields) {
+            if (StringUtils.stringIsNullOrEmpty(data.get(field)?.toString())) {
+                missingFields.push(new FormError(field, [`The field can not be empty.`]));
             }
         }
 

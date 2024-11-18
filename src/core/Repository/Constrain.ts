@@ -1,11 +1,10 @@
 /**
  * Represents a constraint used in a query, typically for filtering data.
- * 
+ *
  * This class is used to store the details of a constraint, including the key (column name),
  * the operator (e.g., "=", ">", "<"), and the value used for the comparison.
  */
-export class Constrain 
-{
+export class Constrain {
     /** The name of the key or column (e.g., "age", "status", "userId"). */
     readonly key: string;
 
@@ -17,13 +16,12 @@ export class Constrain
 
     /**
      * Constructs a `Constrain` instance.
-     * 
+     *
      * @param key - The name of the key or column (e.g., "age", "status", "userId").
      * @param op - The operator to be used for comparison (e.g., "=", ">", "<", ">=", "<=", "LIKE" , "!=").
      * @param value - The value to compare the key against (e.g., a number, string, or boolean).
      */
-    constructor(key: string, op: string, value: any) 
-    {
+    constructor(key: string, op: string, value: any) {
         this.key = key;
         this.op = op;
         this.value = value;

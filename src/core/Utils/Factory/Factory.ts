@@ -1,4 +1,4 @@
-import { IFactory } from "@/core/utils/factory/IFactory"
+import {IFactory} from "@/core/utils/factory/IFactory"
 
 /**
  * Represents a generic factory for creating instances of registered types.

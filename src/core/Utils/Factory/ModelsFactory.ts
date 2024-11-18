@@ -1,7 +1,7 @@
-import { Factory } from "@/core/utils/factory/Factory";
-import { User } from "@/models/User"
-import { Address } from "@/models/Address";
-import { Notification } from "@/models/Notification";
+import {Factory} from "@/core/utils/factory/Factory";
+import {User} from "@/models/User"
+import {Address} from "@/models/Address";
+import {Notification} from "@/models/Notification";
 
 /**
  * A pre-configured instance of the `Factory` class, specifically for managing model types.
@@ -13,10 +13,10 @@ import { Notification } from "@/models/Notification";
  * const user = ModelFactory.create<User>("User", "John Doe", 30);
  * ```
  */
-const ModelFactory : Factory = new Factory(
-    { type : User , name : "User" },
-    { type : Address , name : "Address" },
-    { type : Notification , name : "Notification" }
+const ModelFactory: Factory = new Factory(
+    {type: User, name: "User"},
+    {type: Address, name: "Address"},
+    {type: Notification, name: "Notification"}
 );
 
 /**
@@ -32,7 +32,6 @@ const ModelFactory : Factory = new Factory(
  * const address = factory.create<Address>("Address", "123 Main St", "Springfield", "12345");
  * ```
  */
-export function getModelFactory() 
-{
+export function getModelFactory() {
     return ModelFactory;
 }

@@ -1,12 +1,11 @@
-import { IEncryption } from "@/core/utils/encryption/IEncryption";
+import {IEncryption} from "@/core/utils/encryption/IEncryption";
 import crypto from 'crypto';
 
 /**
  * Class that implements encryption and decryption of values using AES-256-CBC.
  * This class is responsible for securely encrypting and decrypting data, typically used for storing sensitive information such as passwords.
  */
-export class PasswordEncryption implements IEncryption
-{
+export class PasswordEncryption implements IEncryption {
     // AES encryption algorithm
     private readonly algorithm = 'aes-256-cbc';
 
@@ -16,15 +15,14 @@ export class PasswordEncryption implements IEncryption
     // Length of the initialization vector (IV) used for AES encryption (16 bytes for AES-256-CBC)
     private readonly ivLength = 16;
 
-     /**
+    /**
      * Constructor for PasswordEncryption class.
-     * 
+     *
      * @param {string} encryptionKey  The key to use in encryption and decryption
-     * 
+     *
      * @throws Throws an error if the key is not set or is not exactly 32 characters long.
      */
-    constructor(encryptionKey:string) 
-    {
+    constructor(encryptionKey: string) {
         if (!encryptionKey || encryptionKey.length !== 32) {
             throw new Error('ENCRYPTION_KEY must be set in environment variables and be 32 characters long.');
         }
@@ -32,8 +30,7 @@ export class PasswordEncryption implements IEncryption
         this.key = Buffer.from(encryptionKey, 'utf8');
     }
 
-    async encrypt(value: any): Promise<string> 
-    {
+    async encrypt(value: any): Promise<string> {
         if (!value) {
             return ""
         }
@@ -47,8 +44,7 @@ export class PasswordEncryption implements IEncryption
         return `${iv.toString('hex')}:${encrypted}`;
     }
 
-    async decrypt(encrypted: string | null): Promise<unknown>
-    {
+    async decrypt(encrypted: string | null): Promise<unknown> {
         if (!encrypted) {
             throw new Error('Encrypted value is empty.');
         }
