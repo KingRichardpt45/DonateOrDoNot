@@ -11,6 +11,7 @@
 
 /* Modal Content */
 .modalContent {
+  background-image: url('/images/backgroundSigns.png')!important;
   background: linear-gradient(145deg, #4b007d, #9c27b0); /* Gradient purple */
   padding: 24px 32px;
   border-radius: 16px; /* Softer edges */
