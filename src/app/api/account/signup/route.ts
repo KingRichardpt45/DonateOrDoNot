@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
         );
 
     const user = setUserInfo(formData, typeValue as number);
-    const result = await userManager.singUp(user);
+    const result = await userManager.signUp(user);
 
     if (!result.isOK)
         return NextResponse.json({errors: result.errors}, {status: 422, statusText: "Invalid form data."});

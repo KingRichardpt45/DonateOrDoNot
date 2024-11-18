@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
         //console.log(formData)
 
-        const result = await userManager.singIn(
+        const result = await userManager.signIn(
             formData.get("email")!.toString().trim(),
             formData.get("password")!.toString().trim()
         )
