@@ -83,8 +83,8 @@ function setUserInfo(formData: FormData, type: number): User {
     user.address.value.city = formData.get("city")!.toString().trim();
     user.address.value.postal_code = formData.get("postalCode")!.toString().trim();
 
-    const names = formData.get("name")!.toString().split(" ");
-    console.log(names)
+    let names = formData.get("name")!.toString().split(" ");
+    
     user.first_name = names[0].trim();
     if (names.length > 1) {
         user.middle_names = mergeMiddleNames(names);

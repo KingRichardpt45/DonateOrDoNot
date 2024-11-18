@@ -14,7 +14,7 @@ export class Address extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "postal_code", "city", "address"];
+        return ["id", "postal_code", "city", "address", "specification"];
     }
 
     getNavigationKeys(): string[] {
