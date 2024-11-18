@@ -26,6 +26,18 @@ const campaigns = [
       '20€ = Contribute to elephant rehabilitation efforts',
     ],
   },
+  {
+    image: '/images/Football.png',
+    title: 'Football For All',
+    description:
+      'Join our efforts to protect elephants from poaching and preserve their natural habitats.',
+    donationGoals: [
+      '1€ = Protect 10 sq meters of habitat',
+      '5€ = Provide a day\'s food for an elephant',
+      '10€ = Support anti-poaching patrols for a day',
+      '20€ = Contribute to elephant rehabilitation efforts',
+    ],
+  },
 ];
 export default function Campaign() {
   const [currentCampaign, setCurrentCampaign] = useState(0);
