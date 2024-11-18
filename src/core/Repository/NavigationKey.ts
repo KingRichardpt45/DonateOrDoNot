@@ -1,4 +1,4 @@
-import {IEntity} from "@/core/repository/IEntity";
+import {IEntity} from "./IEntity";
 
 /**
  * Represents a navigation key that links to a referenced entity or collection of entities.
@@ -65,8 +65,8 @@ export class NavigationKey<Entity extends IEntity>
         this.referencingTable = referencingTable;
         this.referencingEntity = referencingEntity;
         this.referencedTable = referencedTable;
-        this.referencedColumn = referencedColumn;
         this.referencedEntity = referencedEntity;
+        this.referencedColumn = referencedColumn;
         this.value = value
         this.valueIsArray = this.value != null && typeof (this.value as any)[Symbol.iterator] === 'function'
         this.isDecency = parent.getTableName() === referencingTable;

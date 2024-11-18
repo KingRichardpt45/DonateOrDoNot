@@ -1,6 +1,6 @@
-import { IEntity } from "@/core/repository/IEntity";
+import {Entity} from "@/core/repository/Entity";
 
-export class Address implements IEntity {
+export class Address extends Entity {
     [key: string]: unknown;
 
     id: number | null = null;
@@ -8,23 +8,6 @@ export class Address implements IEntity {
     city: string | null = null;
     address: string | null = null;
     door: string | null = null;
-
-    constructor() 
-    {
-        this.id = null;
-        this.postal_code = null;
-        this.city = null;
-        this.address = null;  
-        this.door = null; 
-    }
-
-    getTableName(): string {
-        return Address.getTableName();
-    }
-
-    isCreated(): boolean {
-        return this.id !== null;
-    }
 
     getPrimaryKeyParts(): string[] {
         return ["id"];
@@ -38,16 +21,24 @@ export class Address implements IEntity {
         return [];
     }
 
+    getTableName(): string {
+        return Address.getTableName();
+    }
+
+    getEntityName(): string {
+        return Address.getEntityName();
+    }
+
     equals(object: unknown): boolean {
         return object instanceof Address && this.id === object.id;
     }
 
     static getTableName(): string {
-        return "Address";
+        return "Addresses";
     }
 
     static getEntityName(): string {
-        return "Addresses";
+        return "Address";
     }
 
     equalsToKnex(object: any , alias:string = ""): boolean 
