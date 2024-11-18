@@ -1,10 +1,9 @@
-import { IEntity } from "@/core/Repository/IEntity";
-import { NavigationKey } from "@/core/Repository/NavigationKey";
-import { User } from "./User";
+import { IEntity } from "@/core/repository/IEntity";
+import { User } from "@/models/User";
+import { NavigationKey } from "@/core/repository/NavigationKey";
 
-export class File implements IEntity
-{
-    [key: string]: any;
+export class File implements IEntity {
+    [key: string]: unknown;
 
     id : number | null; 
     uploaded_by_user_id : number | null;
@@ -37,13 +36,15 @@ export class File implements IEntity
         this.type = 0;
     }
 
-    isCreated(): boolean 
-    {
+    getTableName(): string {
+        return File.getTableName();
+    }
+
+    isCreated(): boolean {
         return this.id !== null;
     }
 
-    getPrimaryKeyParts(): string[] 
-    {
+    getPrimaryKeyParts(): string[] {
         return ["id"];
     }
 
@@ -61,30 +62,22 @@ export class File implements IEntity
         ]
     }
 
-    getNavigationKeys(): string[] 
-    {
-        return ["user","campaign"];
+    getNavigationKeys(): string[] {
+        return ["user", "campaign"];
     }
 
-    getEntityName(): string 
-    {
+    equals(object: unknown): boolean {
+        return object instanceof File && this.id === object.id;
+    }
+
+    static getTableName(): string {
         return "File";
     }
-    
-    getTableName(): string
-    {
+
+    static getEntityName(): string {
         return "Files";
     }
-
-    public equals ( object : any)
-    {
-        if (!(object instanceof File)) return false;
-
-        if(object === this) return true
-
-        return this.id === object.id ;
-    }
-    
+ 
     equalsToKnex(object: any , alias:string = ""): boolean 
     {
         return this.id === object[`${alias}id`] ;

@@ -6,7 +6,7 @@ import { Notification } from "@/models/Notification";
 /**
  * A pre-configured instance of the `Factory` class, specifically for managing model types.
  * The `ModelFactory` allows creating instances of registered models by their unique names.
- * 
+ *
  * @example
  * ```typescript
  * // Create a User instance using ModelFactory
@@ -22,17 +22,16 @@ const ModelFactory : Factory = new Factory(
 /**
  * Retrieves the singleton instance of `ModelFactory`, which is pre-configured with model types.
  * This function provides a centralized access point to the factory instance for model creation.
- * 
- * @returns The `ModelFactory` instance, preloaded with `User` and `Addresse` model constructors.
- * 
+ *
+ * @returns The `ModelFactory` instance, preloaded with `User` and `Address` model constructors.
+ *
  * @example
  * ```typescript
- * // Access ModelFactory and create an Addresse instance
+ * // Access ModelFactory and create an Address instance
  * const factory = getModelFactory();
- * const address = factory.create<Addresse>("Addresse", "123 Main St", "Springfield", "12345");
+ * const address = factory.create<Address>("Address", "123 Main St", "Springfield", "12345");
  * ```
  */
-export function getModelFactory() 
-{
+export function getModelFactory() {
     return ModelFactory;
 }

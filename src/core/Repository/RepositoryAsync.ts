@@ -361,40 +361,35 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         let query = this.dbConnection( this.tableName )
         query = this.addPrimaryKeyConstrains(query,entity);
 
-        let result : any[] = await query.update(convertedEntity,Fields) as any[];
-        return result.length == 1 ;
+        const result: any[] = await query.update(convertedEntity, Fields) as any[];
+        return result.length == 1;
     }
-    
 
 
+    async delete(entity: Entity): Promise<boolean> {
+        let query = this.dbConnection(this.tableName);
+        query = this.addPrimaryKeyConstrains(query, entity);
 
-    async delete( entity: Entity ): Promise<boolean> 
-    {
-        let query = this.dbConnection( this.tableName );
-        query = this.addPrimaryKeyConstrains(query,entity);
-
-        let result : number = await query.delete() as number;
+        const result: number = await query.delete() as number;
 
         return result == 1;
     }
 
-    async deleteRange( entities: Entity[] ): Promise<Array<Boolean>> 
-    {
-        let results : Boolean[] = [];
-        for (const entity of entities) 
-        {
-            results.push( await this.delete(entity) );
+    async deleteRange(entities: Entity[]): Promise<Array<boolean>> {
+        const results: boolean[] = [];
+        for (const entity of entities) {
+            results.push(await this.delete(entity));
         }
-        
+
         return results
     }
 
     async deleteRangeByPrimaryKeys(... primaryKeys: PrimaryKeyPart[][] ): Promise<number>
     {
         let result = 0;
+        let query = this.dbConnection( this.tableName )
         for (const entityPrimaryKeys of primaryKeys) 
         {
-            let query = this.dbConnection( this.tableName )
 
             for (const primaryKey of entityPrimaryKeys) 
             {
@@ -404,7 +399,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
             result += await query.delete();
         }
 
-        return result;
+        return await query.delete() as number;
     }
     
     async deleteByCondition( constrains : Constrain[] ): Promise<number> 
@@ -441,41 +436,39 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
                 query = query.whereLike(constrain.key,constrain.value);
                 break;
             case "!=":
-                query = query.whereNot(constrain.key,constrain.value);
+                query = query.whereNot(constrain.key, constrain.value);
                 break;
             default:
-                query = query.where(constrain.key,constrain.op,constrain.value);
+                query = query.where(constrain.key, constrain.op, constrain.value);
                 break;
         }
 
         return query;
-    } 
+    }
 
-    private addPrimaryKeyConstrains(  query:Knex.QueryBuilder, entity:Entity ): Knex.QueryBuilder
-    {
+    private addPrimaryKeyConstrains(query: Knex.QueryBuilder, entity: Entity): Knex.QueryBuilder {
         let count = 0;
-        for( const primaryKeyPart of  entity.getPrimaryKeyParts())
-        {
-            if(count == 0)
-                query = query.where(primaryKeyPart,"=",entity[primaryKeyPart])
+        for (const primaryKeyPart of entity.getPrimaryKeyParts()) {
+            if (count == 0)
+                query = query.where(primaryKeyPart, "=", entity[primaryKeyPart])
             else
-                query = query.andWhere(primaryKeyPart,"=",entity[primaryKeyPart])
+                query = query.andWhere(primaryKeyPart, "=", entity[primaryKeyPart])
 
             count++;
         }
 
         return query;
-    } 
+    }
 
     private applyPaginationAndSorting( query:Knex.QueryBuilder , orderBy: any[], limit: number , offset: number) : Knex.QueryBuilder
     {
         if(orderBy.length > 0)
             query = query.orderBy(orderBy);
 
-        if(limit != 0)
+        if (limit != 0)
             query = query.limit(limit);
 
-        if(offset != 0)
+        if (offset != 0)
             query = query.offset(offset);
 
         return query;
