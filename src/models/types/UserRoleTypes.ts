@@ -10,4 +10,7 @@ export enum UserRoleTypes {
 
     /** Represents a user who manages campaigns. */
     CampaignManager = 1,
+
+    /** Represents a user who has administrative privileges. */
+    Admin = 2,
 }
