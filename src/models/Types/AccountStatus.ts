@@ -1,10 +1,8 @@
 /**
  * Enum representing the possible statuses of a user account.
  */
-export enum UserStatus {
-    /** The account status is unknown. */
-    Unknown = 0,
-
+export enum AccountStatus 
+{    
     /** The account is active and fully functional. */
     Active = 1,
 

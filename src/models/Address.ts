@@ -29,10 +29,6 @@ export class Address extends Entity {
         return Address.getEntityName();
     }
 
-    equals(object: unknown): boolean {
-        return object instanceof Address && this.id === object.id;
-    }
-
     static getTableName(): string {
         return "Addresses";
     }
