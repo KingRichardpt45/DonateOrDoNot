@@ -1,7 +1,7 @@
 import {IEntity} from "@/core/repository/IEntity";
 
 export abstract class Entity implements IEntity {
-    [key: string]: unknown;
+    [key: string]: any;
 
     abstract id: number | null;
 

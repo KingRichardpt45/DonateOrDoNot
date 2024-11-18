@@ -8,7 +8,7 @@ export interface IEntity {
     /**
      * Allows access to any string key with a value of any type, providing flexibility in defining entity attributes.
      */
-    [key: string]: unknown;
+    [key: string]: any;
 
     /**
      * Determines if the entity has been created (e.g., saved in the database).
