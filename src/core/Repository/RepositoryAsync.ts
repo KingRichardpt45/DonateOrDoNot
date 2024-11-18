@@ -1,6 +1,5 @@
 import { IEntity } from "@/core/Repository/IEntity";
 import { IRepositoryAsync } from "@/core/Repository/IRepositoryAsync";
-import { dbConnection } from "@/db/KnexConnection"
 import { EntityConverter } from "./EntityConverter";
 import { getModelFactory } from "@/core/Utils/Factory/ModelsFactory";
 import { Knex } from "knex";
@@ -9,6 +8,8 @@ import { IFactory } from "../Utils/Factory/IFactory";
 import { PrimaryKeyPart } from "./PrimaryKeyPart";
 import { NavigationKey } from "./NavigationKey";
 import { IncludeNavigation } from "./IncludeNavigation";
+import { Services } from "@/services/Services";
+import { DBConnectionService } from "@/services/DBConnectionService";
 
 export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync<Entity> 
 {
@@ -36,13 +37,13 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         this.tableName = this.typeObject.getTableName();
         this.entityName = this.typeObject.getEntityName()
         this.entityConverter = new EntityConverter(modelFactory);
-        this.dbConnection = dbConnection;
+        this.dbConnection = Services.getInstance().get<DBConnectionService>("DBConnectionService").dbConnection;
     }
 
     async getAll( includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [], orderBy: any[] = [], limit: number = 0, offset:number = 0): Promise<Entity[]> 
     {
         let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
-        let query = dbConnection( this.tableName );
+        let query = this.dbConnection( this.tableName );
         let selectColumns = this.selectEntityColumn();
         query = this.include(query,includes,selectColumns);
         query = this.applyPaginationAndSorting(query,orderBy,limit,offset);
@@ -55,7 +56,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     async getByPrimaryKey(primaryKeyParts: PrimaryKeyPart[], includeFunction: ( entity : Entity ) => IncludeNavigation[] = () => [] ): Promise<Entity | null> 
     {
         let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
-        let query = dbConnection( this.tableName );
+        let query = this.dbConnection( this.tableName );
         let selectColumns = this.selectEntityColumn();
         query = this.include(query,includes,selectColumns);
 
@@ -75,7 +76,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     {
         constrains = this.filterConstrains(constrains);
         let includes = includeFunction( this.modelFactory.create(this.entityName) as Entity );
-        let query = dbConnection(this.tableName);
+        let query = this.dbConnection(this.tableName);
         let selectColumns = this.selectEntityColumn();
         query = this.include(query,includes,selectColumns);
         query = this.addConstrains(query,constrains);
@@ -245,7 +246,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
         let convertedEntity = this.entityConverter.toKnexObject(entity);
 
-        let results : any = await dbConnection( entity.getTableName() )
+        let results : any = await this.dbConnection( entity.getTableName() )
                                 .insert( convertedEntity, entity.getKeys() );
         
         if( !results || results.length != 1 )
@@ -347,7 +348,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     {
         let keysToExclude = [...entity.getPrimaryKeyParts(), ...excludedFields];
         let convertedEntity = this.entityConverter.toKnexObjectExcludingFields(entity, keysToExclude) ;
-        let query = dbConnection( this.tableName )
+        let query = this.dbConnection( this.tableName )
         query = this.addPrimaryKeyConstrains(query,entity);
 
         let result : any[] = await query.update(convertedEntity,keysToExclude) as any[];
@@ -357,7 +358,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     async updateFields(entity: Entity , ...Fields:string[] ) : Promise<boolean>
     {
         let convertedEntity = this.entityConverter.toKnexObjectOnlyFields(entity, Fields);
-        let query = dbConnection( this.tableName )
+        let query = this.dbConnection( this.tableName )
         query = this.addPrimaryKeyConstrains(query,entity);
 
         let result : any[] = await query.update(convertedEntity,Fields) as any[];
@@ -393,7 +394,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         let result = 0;
         for (const entityPrimaryKeys of primaryKeys) 
         {
-            let query = dbConnection( this.tableName )
+            let query = this.dbConnection( this.tableName )
 
             for (const primaryKey of entityPrimaryKeys) 
             {

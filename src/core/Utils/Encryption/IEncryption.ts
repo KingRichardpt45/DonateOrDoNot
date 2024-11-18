@@ -17,7 +17,7 @@ export interface IEncryption
      * console.log(encryptedData); // Output: (an encrypted string or binary data)
      * ```
      */
-    encrypt(value: any): any;
+    encrypt(value: any) : Promise<string>
 
     /**
      * Decrypts the provided encrypted value.
@@ -32,5 +32,5 @@ export interface IEncryption
      * console.log(decryptedData); // Output: "mySecretData" (original data)
      * ```
      */
-    decrypt(value: any): any;
+    decrypt(value: any): Promise<any>;
 }

@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import knexConfig from "@/../knexfile.js"
 import { RepositoryAsync } from '@/core/Repository/RepositoryAsync';
 import { Address } from '@/models/Address';
 import { User } from '@/models/User';
@@ -7,7 +6,7 @@ import { PrimaryKeyPart } from '@/core/Repository/PrimaryKeyPart';
 import { Constrain } from '@/core/Repository/Constrain';
 import { Notification } from '@/models/Notification';
 import { IncludeNavigation } from '@/core/Repository/IncludeNavigation';
-const knex = require('knex')(knexConfig["development"]);
+
 
 export async function GET() {
 
@@ -16,7 +15,7 @@ export async function GET() {
     }
     
    // let AddresseRepo = new RepositoryAsync<Address>("Address");
-    let UserRepo = new RepositoryAsync<User>("User");
+    let UserRepo = new RepositoryAsync(User);
     let myAddresse = new Address();
 
     myAddresse.address = "Santo antónio Caminho da miranda";
@@ -53,9 +52,9 @@ export async function GET() {
     // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
 
     // gets with includes
-    let result = await UserRepo.getAll((user)=> [ new IncludeNavigation( user.notifications , 0), new IncludeNavigation( user.address , 0) ]);
+    //let result = await UserRepo.getAll((user)=> [ new IncludeNavigation( user.notifications , 0), new IncludeNavigation( user.address , 0) ]);
     // let result = await AddresseRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],[]);
-    // let result = await AddresseRepo.getByCondition([ new Constrain("id","!=","2")],[],[],2,1);
+    let result = await UserRepo.getFirstByCondition([ new Constrain("Addresses.id","=","18") ],(user) => [new IncludeNavigation(user.address,0) ],[],0,0);
     // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
     // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
 

@@ -20,9 +20,9 @@ exports.up = function(knex) {
             .references('id').inTable('Files')
             .onDelete('SET NULL').onUpdate('CASCADE');
         table.string('first_name').notNullable();
-        table.string('middle_names').notNullable();
-        table.string('last_name').notNullable();
-        table.string('email', 45).notNullable();
+        table.string('middle_names').nullable();
+        table.string('last_name').nullable();
+        table.string('email', 45).notNullable().unique();
         table.string('email_confirmation_token', 45).nullable();
         table.boolean('email_confirmed').notNullable().defaultTo(false);
         table.string('phone_number', 45).nullable();
