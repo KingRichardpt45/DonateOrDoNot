@@ -42,18 +42,18 @@ export class File extends Entity {
         return File.getEntityName();
     }
 
-    equals(object: unknown): boolean {
-        return object instanceof File && this.id === object.id;
-    }
-
     static getTableName(): string {
         return "Files";
     }
-
+    
     static getEntityName(): string {
         return "File";
     }
- 
+
+    equals(object: unknown): boolean {
+        return object instanceof File && this.id === object.id;
+    }
+    
     equalsToKnex(object: any , alias:string = ""): boolean 
     {
         return this.id === object[`${alias}id`] ;

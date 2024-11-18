@@ -37,15 +37,20 @@ export class Notification extends Entity {
         return Notification.getEntityName();
     }
 
+    static getTableName(): string {
+        return "Notifications";
+    }
+    
+    static getEntityName(): string {
+        return "Notification";
+    }
+
     equals(object: unknown): boolean {
         return object instanceof Notification && this.id === object.id;
     }
 
-    static getTableName(): string {
-        return "Notifications";
-    }
-
-    static getEntityName(): string {
-        return "Notification";
+    equalsToKnex(object: any, alias?: string): boolean 
+    {
+        return this.id === object[`${alias}id`] ;
     }
 }

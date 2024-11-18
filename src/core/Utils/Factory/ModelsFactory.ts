@@ -32,6 +32,7 @@ const ModelFactory : Factory = new Factory(
  * const address = factory.create<Address>("Address", "123 Main St", "Springfield", "12345");
  * ```
  */
-export function getModelFactory() {
+export function getModelFactory() 
+{
     return ModelFactory;
 }

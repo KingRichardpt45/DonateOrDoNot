@@ -1,6 +1,7 @@
-import {Entity} from "@/core/repository/Entity";
+import { Entity } from "@/core/repository/Entity";
 
-export class Address extends Entity {
+export class Address extends Entity 
+{
     [key: string]: unknown;
 
     id: number | null = null;
@@ -29,12 +30,17 @@ export class Address extends Entity {
         return Address.getEntityName();
     }
 
+    
     static getTableName(): string {
         return "Addresses";
     }
-
+    
     static getEntityName(): string {
         return "Address";
+    }
+
+    equals(object: unknown): boolean {
+        return object instanceof Address && this.id === object.id;
     }
 
     equalsToKnex(object: any , alias:string = ""): boolean 

@@ -60,16 +60,16 @@ export class User extends Entity {
         return User.getEntityName();
     }
 
-    equals(object: unknown): boolean {
-        return object instanceof User && this.id === object.id;
-    }
-
     static getTableName(): string {
         return "Users";
     }
-
+    
     static getEntityName(): string {
         return "User";
+    }
+    
+    equals(object: unknown): boolean {
+        return object instanceof User && this.id === object.id;
     }
 
     equalsToKnex(object: any , alias:string = ""): boolean 

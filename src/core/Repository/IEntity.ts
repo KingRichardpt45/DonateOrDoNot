@@ -4,7 +4,8 @@
  *
  * @template Entity - The type of the entity being managed, which must extend from IEntity.
  */
-export interface IEntity {
+export interface IEntity 
+{
     /**
      * Allows access to any string key with a value of any type, providing flexibility in defining entity attributes.
      */
@@ -50,7 +51,7 @@ export interface IEntity {
 
     /**
      * Retrieves the navigation keys of the entity, which represent related entities or navigation properties.
-     *
+     *  
      * @returns An array of strings representing the navigation keys of the entity.
      *
      * @example
@@ -62,32 +63,32 @@ export interface IEntity {
     getNavigationKeys(): string[];
 
     /**
-     * Retrieves the table name of the entity.
-     * @returns A string representing the table name of the entity.
-     *
-     * @example
-     * ```typescript
-     * // Get the class name of a user entity.
-     * const className = user.getTableName(); // e.g., "Users"
-     * ```
-     */
-    getTableName(): string;
-
-    /**
      * Retrieves the name of the entity.
      * @returns A string representing the name of the entity (same as the class name).
-     *
+     * 
      * @example
      * ```typescript
      * // Get the name of  the entity  of a user entity.
      * const className = user.getEntityName(); // e.g., "User"
      * ```
      */
-    getEntityName(): string;
+    getEntityName() : string;
+
+    /**
+     * Retrieves the table name of the entity.
+     * @returns A string representing the table name of the entity.
+     * 
+     * @example
+     * ```typescript
+     * // Get the class name of a user entity.
+     * const className = user.getTableName(); // e.g., "Users"
+     * ```
+     */
+    getTableName() : string;
 
     /**
      * Compares if the object are equals or referencing the same.
-     *
+     * 
      * @param object any, the object to compare.
      * @returns true if the object is the same by equals comparison.
      */
@@ -95,9 +96,10 @@ export interface IEntity {
 
     /**
      * Compares if the object are equals.
-     * 
-     * @param object any, the KNEX Object to compare.
-     * @returns true if the KNEX Object is the same by PRIMARY KEYS comparison.
+     *
+     * @param {any} object - The KNEX Object to compare.
+     * @param {string} [alias] - An optional alias for the comparison.
+     * @returns {boolean} true if the KNEX Object is the same by PRIMARY KEYS comparison.
      */
     equalsToKnex ( object : any , alias?:string) : boolean;
 }

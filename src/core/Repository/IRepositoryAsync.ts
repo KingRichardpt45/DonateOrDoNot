@@ -95,7 +95,7 @@ export interface IRepositoryAsync< Entity extends IEntity >
     /**
      * Updates an existing entity in the repository. This method updates all fields
      * of the entity and does not allow exclusion of specific fields.
-     *
+     * 
      * @param entity - The entity to be updated.
      * @returns A promise that resolves to a boolean indicating if the update was successful.
      * 
@@ -106,15 +106,15 @@ export interface IRepositoryAsync< Entity extends IEntity >
      * const success = await userRepo.update(user);
      * ```
      */
-    update(entity: Entity): Promise<boolean>
+    update(entity: Entity ) : Promise<boolean>
 
     /**
      * Updates an existing entity in the repository, excluding specified fields from the update.
-     *
+     * 
      * @param entity - The entity to be updated.
      * @param excludedFields - A list of field names to exclude from the update operation.
      * @returns A promise that resolves to a boolean indicating if the update was successful.
-     *
+     * 
      * @example
      * ```typescript
      * // Update a user's phone number, excluding "email" and "name" from the update.
@@ -122,7 +122,8 @@ export interface IRepositoryAsync< Entity extends IEntity >
      * const success = await userRepo.updateExcluding(user, "email", "name");
      * ```
      */
-    updateExcluding(entity: Entity, ...excludedFields: string[]): Promise<boolean>
+    updateExcluding(entity: Entity , ...excludedFields:string[] ) : Promise<boolean>
+
 
     /**
      * Updates specific fields of an entity in the repository, updating only the fields specified.
@@ -140,6 +141,8 @@ export interface IRepositoryAsync< Entity extends IEntity >
      * ```
      */
     updateFields(entity: Entity , ...Fields:string[] ) : Promise<boolean>
+
+
 
 
     /**

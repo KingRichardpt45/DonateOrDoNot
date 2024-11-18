@@ -2,36 +2,38 @@ import { IEntity } from "@/core/repository/IEntity"
 import { IFactory } from "../utils/factory/IFactory";
 
 /**
- * A utility class for converting between `IEntity` objects and plain objects
+ * A utility class for converting between `IEntity` objects and plain objects 
  * suitable for use with Knex.js.
- *
- * The `EntityConverter` provides methods to convert an `IEntity` to a plain object
- * for insertion or manipulation in a database, and to convert a plain object back
+ * 
+ * The `EntityConverter` provides methods to convert an `IEntity` to a plain object 
+ * for insertion or manipulation in a database, and to convert a plain object back 
  * into an `IEntity` instance.
  */
-export class EntityConverter {
+export class EntityConverter
+{
 
     /** The factory used to create entity instances. */
-    private readonly factory: IFactory;
+    private readonly factory : IFactory;
 
     /**
      * Constructs an `EntityConverter` instance.
-     *
+     * 
      * @param factory - The factory used to create entities from plain objects.
      */
-    constructor(factory: IFactory) {
+    constructor( factory:IFactory )
+    {
         this.factory = factory;
     }
 
     /**
      * Converts an `IEntity` to a plain object format..
-     *
-     * This method takes an `IEntity` and returns a plain object where each key-value pair
+     * 
+     * This method takes an `IEntity` and returns a plain object where each key-value pair 
      * represents a column-value mapping from the entity.
-     *
+     * 
      * @param entity - The `IEntity` instance to convert.
      * @returns A plain object representation of the entity with string keys and any value type.
-     *
+     * 
      * @example
      * ```typescript
      * const entity = new MyEntity();
@@ -39,7 +41,8 @@ export class EntityConverter {
      * console.log(knexObject); // Output: { column1: value1, column2: value2 }
      * ```
      */
-    toKnexObject(entity: IEntity): { [key: string]: any } {
+    toKnexObject( entity: IEntity ) : { [key: string]: any }
+    {
         const entries = entity.getKeys();
         let object : { [key: string]: any } = {} 
         entries.forEach( 
@@ -48,21 +51,21 @@ export class EntityConverter {
                 object[key] = entity[key];    
             }
         );
-        return object
+        return object 
     }
 
     /**
      * Converts an `IEntity` to a plain object format, excluding specified fields.
-     *
-     * This method takes an `IEntity` and returns a plain object where each key-value pair
-     * represents a column-value mapping from the entity, excluding fields specified
+     * 
+     * This method takes an `IEntity` and returns a plain object where each key-value pair 
+     * represents a column-value mapping from the entity, excluding fields specified 
      * in the `excluding` array. This is helpful for cases where only certain fields should be
      * sent to or saved in the database.
-     *
+     * 
      * @param entity - The `IEntity` instance to convert.
      * @param excluding - An array of field names to exclude from the conversion.
      * @returns A plain object representation of the entity with specified fields excluded.
-     *
+     * 
      * @example
      * ```typescript
      * const entity = new MyEntity();
@@ -70,7 +73,8 @@ export class EntityConverter {
      * console.log(knexObject); // Output: { column1: value1, column2: value2 } (excluding "password" and "secretKey")
      * ```
      */
-    toKnexObjectExcludingFields(entity: IEntity, excluding: string[]): { [key: string]: any } {
+    toKnexObjectExcludingFields( entity: IEntity , excluding:string[] ) : { [key: string]: any }
+    {
         const entries = entity.getKeys();
         let object : { [key: string]: any } = {} 
         entries.forEach( 
@@ -83,23 +87,23 @@ export class EntityConverter {
                 }
             }
         );
-        return object
+        return object 
     }
 
     /**
      * Converts an `IEntity` to a plain object format, including only specified fields.
-     *
-     * This method takes an `IEntity` and returns a plain object where each key-value pair
-     * represents a column-value mapping from the entity, including only the fields specified
+     * 
+     * This method takes an `IEntity` and returns a plain object where each key-value pair 
+     * represents a column-value mapping from the entity, including only the fields specified 
      * in the `fields` array. If a specified field does not exist on the entity, it throws an error.
      * This is useful for scenarios where only specific fields are allowed to be processed or stored.
-     *
+     * 
      * @param entity - The `IEntity` instance to convert.
      * @param fields - An array of field names to include in the conversion.
      * @returns A plain object representation of the entity with only specified fields included.
-     *
+     * 
      * @throws Error if any field specified in the `fields` array does not exist in the entity.
-     *
+     * 
      * @example
      * ```typescript
      * const entity = new MyEntity();
@@ -107,7 +111,8 @@ export class EntityConverter {
      * console.log(knexObject); // Output: { username: "user123", email: "user@example.com" }
      * ```
      */
-    toKnexObjectOnlyFields(entity: IEntity, fields: string[]): { [key: string]: any } {
+    toKnexObjectOnlyFields(entity: IEntity, fields: string[]): { [key: string]: any } 
+    {
         // const entries = entity.getKeys();
         // let object: { [key: string]: any } = {};
 
@@ -115,7 +120,6 @@ export class EntityConverter {
         //     {
         //         if(entity[field] === undefined)
         //             throw new Error(`Entity ${entity.getEntityName()} has no field ${field}`);
-
         //         object[field] = entity[field];
         //     }
         // );
@@ -123,7 +127,7 @@ export class EntityConverter {
         // return object;
 
         const entries = entity.getKeys();
-        const object: { [key: string]: any } = {};
+        let object: { [key: string]: any } = {};
 
         fields.forEach(field => {
             // Check if the entity has the specified field
@@ -143,15 +147,15 @@ export class EntityConverter {
 
     /**
      * Converts a plain object into an `IEntity` instance, using the provided entity name.
-     *
-     * This method takes an object (such as one retrieved from a database) and maps it back
+     * 
+     * This method takes an object (such as one retrieved from a database) and maps it back 
      * into an `IEntity` instance, optionally using an alias for the entity.
-     *
+     * 
      * @param object - The plain object to convert to an `IEntity`.
      * @param entityName - The name of the entity to create.
      * @param alias - An optional alias for the entity (defaults to an empty string).
      * @returns An instance of the Entity or `null` if the entity creation fails.
-     *
+     * 
      * @example
      * ```typescript
      * const knexObject = { column1: value1, column2: value2 };
