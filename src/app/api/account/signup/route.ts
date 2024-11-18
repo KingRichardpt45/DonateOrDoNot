@@ -1,7 +1,7 @@
 import { FormError } from "@/core/managers/FormError";
 import { UserManager } from "@/core/managers/UserManager";
-import { EnumFieldValidation as EnumUtils } from "@/core/Utils/EnumFieldValidation";
-import { FormObjectValidator } from "@/core/Utils/FormObjectValidator";
+import { EnumFieldValidation as EnumUtils } from "@/core/utils/EnumFieldValidation";
+import { FormObjectValidator } from "@/core/utils/FormObjectValidator";
 import { Address } from "@/models/Address";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { User } from "@/models/User";

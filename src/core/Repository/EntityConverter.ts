@@ -1,5 +1,5 @@
-import {IEntity} from "@/core/repository/IEntity"
-import {IFactory} from "@/core/utils/factory/IFactory";
+import { IEntity } from "@/core/repository/IEntity"
+import { IFactory } from "../utils/factory/IFactory";
 
 /**
  * A utility class for converting between `IEntity` objects and plain objects

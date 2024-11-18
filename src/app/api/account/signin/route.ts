@@ -1,5 +1,5 @@
 import { UserManager } from "@/core/managers/UserManager";
-import { FormObjectValidator } from "@/core/Utils/FormObjectValidator";
+import { FormObjectValidator } from "@/core/utils/FormObjectValidator";
 import { User } from "@/models/User";
 import { Services } from "@/services/Services";
 import { ISessionUserCacheService } from "@/services/session/sessionCachingService/ISessionCacheService";

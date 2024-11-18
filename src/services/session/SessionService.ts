@@ -1,5 +1,5 @@
 import "server-only"
-import { IEncryption } from "@/core/Utils/Encryption/IEncryption";
+import { IEncryption } from "@/core/utils/encryption/IEncryption";
 import { cookies } from "next/headers";
 import { Cookie } from "./Cookie";
 import { Session } from "@/services/session/Session"

@@ -6,9 +6,9 @@ import { OperationResult } from "./OperationResult";
 import { FormError } from "./FormError";
 import { IPasswordValidation } from "@/services/IPasswordValidation";
 import { Services } from "@/services/Services";
-import { IEncryption } from "../Utils/Encryption/IEncryption";
+import { IEncryption } from "../utils/encryption/IEncryption";
 import { SimpleError } from "./SimpleError";
-import { StringUtils } from "../Utils/StringUtils";
+import { StringUtils } from "../utils/StringUtils";
 import { AccountStatus } from "@/models/types/AccountStatus";
 
 export class UserManager extends EntityManager<User>

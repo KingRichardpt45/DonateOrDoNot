@@ -1,4 +1,4 @@
-import { IEncryption } from "./IEncryption";
+import { IEncryption } from "@/core/utils/encryption/IEncryption";
 import { SignJWT, jwtVerify } from "jose"
 
 export class JWTEncryption implements IEncryption

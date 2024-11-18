@@ -1,4 +1,4 @@
-import { Factory } from "@/core/Utils/Factory/Factory";
+import { Factory } from "@/core/utils/factory/Factory";
 import { User } from "@/models/User"
 import { Address } from "@/models/Address";
 import { Notification } from "@/models/Notification";
