@@ -1,4 +1,4 @@
-import { UserManager } from "@/core/Managers/UserManager";
+import { UserManager } from "@/core/managers/UserManager";
 import { User } from "@/models/User";
 import { Services } from "@/services/Services";
 import { ISessionUserCacheService } from "@/services/session/SessionCahingService/ISessionCacheService";

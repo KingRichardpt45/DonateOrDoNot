@@ -3,9 +3,9 @@ import { Session } from "@/services/session/Session";
 import { User } from "@/models/User";
 import { ISessionUserCacheService } from "./ISessionCacheService";
 import { Mutex } from "async-mutex";
-import { RepositoryAsync } from "@/core/Repository/RepositoryAsync";
-import { Constrain } from "@/core/Repository/Constrain";
-import { IncludeNavigation } from "@/core/Repository/IncludeNavigation";
+import { RepositoryAsync } from "@/core/repository/RepositoryAsync";
+import { Constrain } from "@/core/repository/Constrain";
+import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
 
 /**
  * This class manages expired session user cache.

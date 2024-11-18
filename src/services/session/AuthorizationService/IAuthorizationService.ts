@@ -1,4 +1,4 @@
-import { UserRoleTypes } from "@/models/Types/UserRoleTypes";
+import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 /**
  * Interface for authorization.
  */

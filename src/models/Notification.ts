@@ -2,14 +2,14 @@ import {Entity} from "@/core/repository/Entity";
 import {User} from "@/models/User";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {Campaign} from "@/models/Campaign";
-import {NotificationType} from "@/models/types/NotificationType";
+import {NotificationTypes} from "@/models/types/NotificationTypes";
 
 export class Notification extends Entity {
     [key: string]: unknown;
 
     id: number | null = null;
     message: string | null = null;
-    type: NotificationType = NotificationType.Unknown;
+    type: NotificationTypes = NotificationTypes.NewDonation;
 
     user_id: number | null = null;
     campaign_id: number | null = null;

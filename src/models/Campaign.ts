@@ -24,7 +24,7 @@ export class Campaign extends Entity {
     notification_interval: number | null = null;
     last_notified_value: number | null = null;
     interval_notification_value: number | null = null;
-    status: CampaignStatus = CampaignStatus.Unknown;
+    status: CampaignStatus = CampaignStatus.InAnalysis;
 
     campaign_manager_id: number | null = null;
     bank_account_id: number | null = null;

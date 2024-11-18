@@ -5,32 +5,27 @@
  */
 export enum CampaignStatus {
     /**
-     * Status when the campaign status is unknown.
-     */
-    Unknown = 0,
-
-    /**
      * Status when the campaign is in analysis.
      */
-    InAnalysis = 1,
+    InAnalysis = 0,
 
     /**
      * Status when the campaign is approved.
      */
-    Approved = 2,
+    Approved = 1,
 
     /**
      * Status when the campaign is reproved.
      */
-    Reproved = 3,
+    Reproved = 2,
 
     /**
      * Status when the campaign is active.
      */
-    Active = 4,
+    Active = 3,
 
     /**
      * Status when the campaign is closed.
      */
-    Closed = 5,
+    Closed = 4,
 }

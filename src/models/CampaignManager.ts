@@ -1,6 +1,6 @@
 import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
-import {CampaignManagerType} from "@/models/types/CampaignManagerType";
+import {CampaignManagerTypes} from "@/models/types/CampaignManagerTypes";
 import {Campaign} from "@/models/Campaign";
 import {User} from "@/models/User";
 
@@ -11,7 +11,7 @@ export class CampaignManager extends Entity {
     description: string | null = null;
     contact_email: string | null = null;
     verified: boolean | null = null;
-    type: CampaignManagerType = CampaignManagerType.Unknown;
+    type: CampaignManagerTypes = CampaignManagerTypes.Autonomous;
 
     readonly user = new NavigationKey<User>(this, "user", "id", CampaignManager.getTableName(), CampaignManager.getEntityName(), User.getTableName(), User.getEntityName(), "id", null);
     readonly campaigns = new NavigationKey<Campaign>(this, "campaigns", "id", CampaignManager.getTableName(), CampaignManager.getEntityName(), Campaign.getTableName(), Campaign.getEntityName(), "user_id", null);

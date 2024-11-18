@@ -1,19 +1,14 @@
 /**
  * Enum representing different types of users.
  */
-export enum CampaignManagerType {
-    /**
-     * Represents an unknown user type.
-     */
-    Unknown = 0,
-
+export enum CampaignManagerTypes {
     /**
      * Represents an autonomous user.
      */
-    Autonomous = 1,
+    Autonomous = 0,
 
     /**
      * Represents an institution user.
      */
-    Institution = 2,
+    Institution = 1,
 }

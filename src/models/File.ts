@@ -3,7 +3,7 @@ import {User} from "@/models/User";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {Campaign} from "@/models/Campaign";
 import {Badge} from "@/models/Badge";
-import {FileType} from "@/models/types/FileType";
+import {FileTypes} from "@/models/types/FileTypes";
 
 export class File extends Entity {
     [key: string]: unknown;
@@ -14,7 +14,7 @@ export class File extends Entity {
     file_type: number | null = null;
     file_path: string | null = null;
     timestamp: Date | null = null;
-    type: FileType = FileType.Unknown;
+    type: FileTypes = FileTypes.Image;
 
     user_id: number | null = null;
     campaign_id: number | null = null;

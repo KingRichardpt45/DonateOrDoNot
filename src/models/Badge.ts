@@ -1,7 +1,7 @@
 import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {File} from "@/models/File";
-import {BadgeType} from "@/models/types/BadgeType";
+import {BadgeTypes} from "@/models/types/BadgeTypes";
 
 export class Badge extends Entity {
     [key: string]: unknown;
@@ -11,7 +11,7 @@ export class Badge extends Entity {
     description: string | null = null;
     value: number | null = null;
     unit: string | null = null;
-    type: BadgeType = BadgeType.Unknown;
+    type: BadgeTypes = BadgeTypes.TotalValueDonated;
 
     image_id: number | null = null;
 

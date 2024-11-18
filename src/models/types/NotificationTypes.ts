@@ -3,14 +3,10 @@
  *
  * @enum {number}
  */
-export enum NotificationType {
-    /**
-     * Type when the notification type is unknown.
-     */
-    Unknown = 0,
-
+export enum NotificationTypes {
+   
     /**
      * Type for a new donation notification.
      */
-    NewDonation = 1,
+    NewDonation = 0,
 }

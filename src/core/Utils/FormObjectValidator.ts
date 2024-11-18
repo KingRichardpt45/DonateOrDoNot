@@ -1,4 +1,4 @@
-import { FormError } from "../Managers/FormError";
+import { FormError } from "../managers/FormError";
 import { StringUtils } from "./StringUtils";
 
 /**

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { RepositoryAsync } from '@/core/Repository/RepositoryAsync';
+import { RepositoryAsync } from '@/core/repository/RepositoryAsync';
 import { Address } from '@/models/Address';
 import { User } from '@/models/User';
-import { PrimaryKeyPart } from '@/core/Repository/PrimaryKeyPart';
-import { Constrain } from '@/core/Repository/Constrain';
+import { PrimaryKeyPart } from '@/core/repository/PrimaryKeyPart';
+import { Constrain } from '@/core/repository/Constrain';
 import { Notification } from '@/models/Notification';
-import { IncludeNavigation } from '@/core/Repository/IncludeNavigation';
+import { IncludeNavigation } from '@/core/repository/IncludeNavigation';
 
 
 export async function GET() {

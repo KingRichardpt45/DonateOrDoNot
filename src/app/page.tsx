@@ -10,7 +10,7 @@ import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
 import { User } from "@/models/User";
 import { headers } from 'next/headers';
 import { IAuthorizationService } from "@/services/session/AuthorizationService/IAuthorizationService";
-import { UserRoleTypes } from "@/models/Types/UserRoleTypes";
+import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { redirect } from "next/navigation"
 
 export default async function Home() 

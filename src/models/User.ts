@@ -1,11 +1,11 @@
 import {Entity} from "@/core/repository/Entity";
 import {Address} from "./Address";
-import {NavigationKey} from "@/core/repository/NavigationKey";
+import { NavigationKey } from "@/core/repository/NavigationKey";
 import {File} from "@/models/File";
-import {UserType} from "@/models/types/UserType";
+import {UserTypes} from "@/models/types/UserTypes";
 import {Notification} from "@/models/Notification";
-import {UserStatus} from "@/models/types/UserStatus";
 import {UserBadge} from "@/models/UserBadge";
+import { AccountStatus } from "./types/AccountStatus";
 
 export class User extends Entity {
     [key: string]: unknown;
@@ -19,8 +19,8 @@ export class User extends Entity {
     email_confirmed: boolean = false;
     phone_number: string | null = null;
     password: string | null = null;
-    status: UserStatus = UserStatus.Unknown;
-    type: UserType = UserType.Donor;
+    status: AccountStatus = AccountStatus.Pending;
+    type: UserTypes = UserTypes.Donor;
 
     address_id: number | null = null;
     profile_image_id: number | null = null;

@@ -1,9 +1,9 @@
-import { IEntity } from "@/core/Repository/IEntity";
-import { IRepositoryAsync } from "@/core/Repository/IRepositoryAsync";
+import { IEntity } from "@/core/repository/IEntity";
+import { IRepositoryAsync } from "@/core/repository/IRepositoryAsync";
 import { EntityConverter } from "./EntityConverter";
 import { getModelFactory } from "@/core/Utils/Factory/ModelsFactory";
 import { Knex } from "knex";
-import { Constrain } from "@/core/Repository/Constrain";
+import { Constrain } from "@/core/repository/Constrain";
 import { IFactory } from "../Utils/Factory/IFactory";
 import { PrimaryKeyPart } from "./PrimaryKeyPart";
 import { NavigationKey } from "./NavigationKey";

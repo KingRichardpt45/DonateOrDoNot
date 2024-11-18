@@ -1,8 +1,8 @@
-import { Constrain } from "../Repository/Constrain";
-import { IEntity } from "../Repository/IEntity";
-import { IncludeNavigation } from "../Repository/IncludeNavigation";
-import { IRepositoryAsync } from "../Repository/IRepositoryAsync";
-import { RepositoryAsync } from "../Repository/RepositoryAsync";
+import { Constrain } from "../repository/Constrain";
+import { IEntity } from "../repository/IEntity";
+import { IncludeNavigation } from "../repository/IncludeNavigation";
+import { IRepositoryAsync } from "../repository/IRepositoryAsync";
+import { RepositoryAsync } from "../repository/RepositoryAsync";
 
 /**
  * EntityManager is a generic class that manages the operations of entities of type `Entity`.
