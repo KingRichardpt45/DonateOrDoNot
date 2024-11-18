@@ -2,8 +2,8 @@ import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {User} from "@/models/User";
 import {Donation} from "@/models/Donation";
-import {UserBadge} from "@/models/UserBadge";
-import {UserStoreItem} from "@/models/UserStoreItem";
+import {DonorBadge} from "@/models/DonorBadge";
+import {DonorStoreItem} from "@/models/DonorStoreItem";
 import { Notification } from "./Notification";
 
 export class Donor extends Entity {
@@ -19,8 +19,8 @@ export class Donor extends Entity {
 
     readonly user = new NavigationKey<User>(this, "user", "id", Donor.getTableName(), Donor.getEntityName(), User.getTableName(), User.getEntityName(), "id", null);
     readonly donations = new NavigationKey<Donation>(this, "donations", "id", Donor.getTableName(), Donor.getEntityName(), Donation.getTableName(), Donation.getEntityName(), "user_id", null);
-    readonly badges = new NavigationKey<UserBadge>(this, "badges", "id", Donor.getTableName(), Donor.getEntityName(), UserBadge.getTableName(), UserBadge.getEntityName(), "user_id", null);
-    readonly store_items = new NavigationKey<UserStoreItem>(this, "store_items", "id", Donor.getTableName(), Donor.getEntityName(), UserStoreItem.getTableName(), UserStoreItem.getEntityName(), "user_id", null);
+    readonly badges = new NavigationKey<DonorBadge>(this, "badges", "id", Donor.getTableName(), Donor.getEntityName(), DonorBadge.getTableName(), DonorBadge.getEntityName(), "user_id", null);
+    readonly store_items = new NavigationKey<DonorStoreItem>(this, "store_items", "id", Donor.getTableName(), Donor.getEntityName(), DonorStoreItem.getTableName(), DonorStoreItem.getEntityName(), "user_id", null);
     readonly notifications = new NavigationKey<Notification>(this, "notifications", "id", Donor.getTableName(), Donor.getEntityName(), Notification.getTableName(), Notification.getEntityName(), "user_id", []);
 
     getPrimaryKeyParts(): string[] {

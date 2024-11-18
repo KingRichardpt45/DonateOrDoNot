@@ -2,7 +2,6 @@ import {Entity} from "@/core/repository/Entity";
 import {User} from "@/models/User";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {Campaign} from "@/models/Campaign";
-import {Badge} from "@/models/Badge";
 import {FileTypes} from "@/models/types/FileTypes";
 
 export class File extends Entity {
@@ -18,11 +17,9 @@ export class File extends Entity {
 
     user_id: number | null = null;
     campaign_id: number | null = null;
-    badge_id: number | null = null;
 
     readonly user = new NavigationKey<User>(this, "user", "user_id", File.getTableName(), File.getEntityName(), User.getTableName(), User.getEntityName(), "id", null);
     readonly campaign = new NavigationKey<Campaign>(this, "campaign", "campaign_id", File.getTableName(), File.getEntityName(), Campaign.getTableName(), Campaign.getEntityName(), "id", null);
-    readonly badge = new NavigationKey<Badge>(this, "badge", "badge_id", File.getTableName(), File.getEntityName(), Badge.getTableName(), Badge.getEntityName(), "id", null);
 
     getPrimaryKeyParts(): string[] {
         return ["id"];
@@ -30,7 +27,7 @@ export class File extends Entity {
 
     getKeys(): string[] {
         return ["id", "original_name", "file_suffix", "file_type", "file_path", 
-            "timestamp", "user_id", "campaign_id", "badge_id"];
+            "timestamp", "user_id", "campaign_id" ];
     }
 
     getNavigationKeys(): string[] {

@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function(knex) {
+export async function up(knex) {
     return knex.schema
       .createTable('Addresses', function(table) {
         table.increments('id').primary();
@@ -43,10 +43,6 @@ exports.up = function(knex) {
         table.integer('campaign_id').unsigned().nullable().defaultTo(null)
              .references('id').inTable('Campaigns')
              .onDelete('NO ACTION').onUpdate('CASCADE');
-
-        table.integer('badge_id').unsigned().nullable().defaultTo(null)
-             .references('id').inTable('Badges')
-             .onDelete('NO ACTION').onUpdate('CASCADE');
         
         table.string('original_name').notNullable();
         table.string('file_suffix').notNullable();
@@ -84,12 +80,12 @@ exports.up = function(knex) {
         table.integer('unit').nullable();
         table.integer('type').unsigned().notNullable();
       })
-      .createTable('UserBadges', function(table) 
+      .createTable('DonorBadges', function(table) 
       {
         table.increments('id').primary();
 
-        table.integer('user_id').unsigned().notNullable()
-             .references('id').inTable('Users')
+        table.integer('donor_id').unsigned().notNullable()
+             .references('id').inTable('Donors')
              .onDelete('CASCADE').onUpdate('CASCADE');
 
         table.integer('badge_id').unsigned().notNullable()
@@ -103,7 +99,7 @@ exports.up = function(knex) {
         table.increments('id').primary();
 
         table.integer('campaign_id').unsigned().notNullable()
-             .references('id').inTable('Users')
+             .references('id').inTable('Campaigns')
              .onDelete('CASCADE').onUpdate('CASCADE');
 
         table.integer('badge_id').unsigned().notNullable()
@@ -115,7 +111,7 @@ exports.up = function(knex) {
         table.increments('id').primary();
 
         table.integer('campaign_manager_id').notNullable().unsigned()
-              .references('user_id').inTable('CampaignManagers')
+              .references('id').inTable('CampaignManagers')
               .onDelete('NO ACTION').onUpdate('CASCADE');
 
         table.integer("bank_accounts_id").notNullable().unsigned()
@@ -182,12 +178,12 @@ exports.up = function(knex) {
         table.string('description').notNullable().defaultTo(0);
         table.decimal('cost',10,2).notNullable().defaultTo(0);
       })
-      .createTable('UserStoreItems', function(table) 
+      .createTable('DonorStoreItems', function(table) 
       {
         table.integer('id').primary().unsigned();
 
-        table.integer('user_id').unsigned()
-          .references('id').inTable('Users')
+        table.integer('donor_id').unsigned()
+          .references('id').inTable('Donors')
           .onDelete('CASCADE').onUpdate('CASCADE');
 
         table.integer('store_item_id')
@@ -198,8 +194,8 @@ exports.up = function(knex) {
       {
         table.integer('id').primary().unsigned();
 
-        table.integer('user_id').unsigned()
-          .references('id').inTable('Users')
+        table.integer('donor_id').unsigned()
+          .references('id').inTable('Donors')
           .onDelete('NO ACTION').onUpdate('CASCADE');
 
         table.integer('campaign_id').unsigned()
@@ -214,8 +210,8 @@ exports.up = function(knex) {
       {
         table.integer('id').primary().unsigned();
 
-        table.integer('user_id').unsigned()
-          .references('id').inTable('Users')
+        table.integer('donor_id').unsigned()
+          .references('id').inTable('Donors')
           .onDelete('NO ACTION').onUpdate('CASCADE');
 
         table.integer('campaign_id').unsigned()
@@ -230,21 +226,21 @@ exports.up = function(knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function(knex) {
+export async function down(knex) {
     return knex.schema
       .dropTableIfExists("Addresses")
       .dropTableIfExists('Users')
       .dropTableIfExists('Files')
       .dropTableIfExists('Notifications')
       .dropTableIfExists('Badges')
-      .dropTableIfExists('UserBadges')
+      .dropTableIfExists('DonorBadges')
       .dropTableIfExists('CampaignBadges')
       .dropTableIfExists('Campaigns')
       .dropTableIfExists('BankAccounts')
       .dropTableIfExists('CampaignManagers')
       .dropTableIfExists('Donors')
       .dropTableIfExists('StoreItems')
-      .dropTableIfExists('UserStoreItems')
       .dropTableIfExists('Donations')
-      .dropTableIfExists('TotalDonatedValues');
+      .dropTableIfExists('TotalDonatedValues')
+      .dropTableIfExists("DonorStoreItems");
 };

@@ -3,7 +3,6 @@ import {Address} from "./Address";
 import { NavigationKey } from "@/core/repository/NavigationKey";
 import {File} from "@/models/File";
 import {Notification} from "@/models/Notification";
-import {UserBadge} from "@/models/UserBadge";
 import { AccountStatus } from "./types/AccountStatus";
 import { UserRoleTypes } from "./types/UserRoleTypes";
 
@@ -26,7 +25,6 @@ export class User extends Entity {
     profile_image_id: number | null = null;
 
     readonly notifications = new NavigationKey<Notification>(this, "notifications", "id", User.getTableName(), User.getEntityName(), Notification.getTableName(), Notification.getEntityName(), "user_id", []);
-    readonly badges = new NavigationKey<UserBadge>(this, "badges", "id", User.getTableName(), User.getEntityName(), UserBadge.getTableName(), UserBadge.getEntityName(), "user_id", []);
     readonly address = new NavigationKey<Address>(this, "address", "address_id", User.getTableName(), User.getEntityName(), Address.getTableName(), Address.getEntityName(), "id", null);
     readonly profileImage = new NavigationKey<File>(this, "profileImage", "profile_image_id", User.getTableName(), User.getEntityName(), File.getTableName(), File.getEntityName(), "id", null);
 
@@ -51,7 +49,7 @@ export class User extends Entity {
     }
 
     getNavigationKeys(): string[] {
-        return ["notifications", "badges", "address", "profileImage"];
+        return ["notifications", "address", "profileImage"];
     }
 
     getTableName(): string {

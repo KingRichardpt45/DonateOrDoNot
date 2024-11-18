@@ -11,10 +11,10 @@ export class Donation extends Entity {
     value: number | null = null;
     comment: string | null = null
 
-    user_id: number | null = null;
+    donor_id: number | null = null;
     campaign_id: number | null = null;
 
-    readonly user = new NavigationKey<Donor>(this, "user", "user_id", Donation.getTableName(), Donation.getEntityName(), Donor.getTableName(), Donor.getEntityName(), "id", null);
+    readonly donor = new NavigationKey<Donor>(this, "donor", "donor_id", Donation.getTableName(), Donation.getEntityName(), Donor.getTableName(), Donor.getEntityName(), "id", null);
     readonly campaign = new NavigationKey<Campaign>(this, "campaign", "campaign_id", Donation.getTableName(), Donation.getEntityName(), Campaign.getTableName(), Campaign.getEntityName(), "id", null);
 
     getPrimaryKeyParts(): string[] {
@@ -22,11 +22,11 @@ export class Donation extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "is_name_hidden", "value", "user_id", "campaign_id" ,"comment"];
+        return ["id", "is_name_hidden", "value", "donor_id", "campaign_id" ,"comment"];
     }
 
     getNavigationKeys(): string[] {
-        return ["user", "campaign"];
+        return ["donor", "campaign"];
     }
 
     getTableName(): string {
