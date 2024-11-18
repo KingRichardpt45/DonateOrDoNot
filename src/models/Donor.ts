@@ -1,4 +1,3 @@
-import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {User} from "@/models/User";
 import {Donation} from "@/models/Donation";
@@ -6,7 +5,7 @@ import {DonorBadge} from "@/models/DonorBadge";
 import {DonorStoreItem} from "@/models/DonorStoreItem";
 import {Notification} from "./Notification";
 
-export class Donor extends Entity {
+export class Donor extends User {
     [key: string]: unknown;
 
     id: number | null = null;

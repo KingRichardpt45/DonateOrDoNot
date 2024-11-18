@@ -3,81 +3,79 @@ import {IEntity} from "../repository/IEntity";
 import {IncludeNavigation} from "../repository/IncludeNavigation";
 import {IRepositoryAsync} from "../repository/IRepositoryAsync";
 import {RepositoryAsync} from "../repository/RepositoryAsync";
+import {PrimaryKeyPart} from "@/core/repository/PrimaryKeyPart";
 
-/**
- * EntityManager is a generic class that manages the operations of entities of type `Entity`.
- * It acts as a bridge between the application logic and the underlying repository layer,
- * providing a high-level interface for CRUD and query operations.
- *
- * @template Entity - Represents the type of entity this manager handles, which must implement `IEntity`.
- */
 export class EntityManager<Entity extends IEntity> {
     protected readonly repository: IRepositoryAsync<Entity>;
 
-    /**
-     * Constructs an EntityManager instance for the given entity type.
-     *
-     * @param entityConstructor - A constructor function for creating instances of the Entity type.
-     */
     constructor(entityConstructor: new (...args: unknown[]) => Entity) {
         this.repository = new RepositoryAsync(entityConstructor);
     }
 
-    /**
-     * Retrieves a list of entities that match the specified constraints and conditions.
-     *
-     * @param constrains - An array of constraints used to filter the entities.
-     * @param includeFunction - A function defining the navigation properties to include in the result.
-     * @param orderBy - An array specifying the order in which to sort the results.
-     * @param limit - The maximum number of entities to retrieve.
-     * @param offset - The number of entities to skip before starting to collect results.
-     * @returns A promise that resolves to an array of entities matching the specified conditions.
-     */
+    async getById(id: number, id_field: string = "id", includeFunction: (entity: Entity) => IncludeNavigation[] = () => []): Promise<Entity | null> {
+        return this.repository.getByPrimaryKey([new PrimaryKeyPart(id_field, id)], includeFunction);
+    }
+
+    async getAll(includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity[] | null> {
+        return this.repository.getAll(includeFunction, orderBy, limit, offset);
+    }
+
     async getByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity[]> {
-        return await this.repository.getByCondition(constrains, includeFunction, orderBy, limit, offset);
+        return this.repository.getByCondition(constrains, includeFunction, orderBy, limit, offset);
     }
 
-    /**
-     * Retrieves the first entity that matches the specified constraints and conditions.
-     *
-     * @param constrains - An array of constraints used to filter the entities.
-     * @param includeFunction - A function defining the navigation properties to include in the result.
-     * @param orderBy - An array specifying the order in which to sort the results.
-     * @param limit - The maximum number of entities to consider.
-     * @param offset - The number of entities to skip before starting to collect results.
-     * @returns A promise that resolves to the first matching entity or `null` if no match is found.
-     */
     async getFirstByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity | null> {
-        return await this.repository.getFirstByCondition(constrains, includeFunction, orderBy, limit, offset);
+        return this.repository.getFirstByCondition(constrains, includeFunction, orderBy, limit, offset);
     }
 
-    /**
-     * Creates a new entity in the repository.
-     *
-     * @param entity - The entity instance to be created.
-     * @returns A promise that resolves to the created entity.
-     */
+    async exists(id: number): Promise<boolean> {
+        return await this.getById(id) !== null;
+    }
+
     async create(entity: Entity): Promise<Entity> {
-        return await this.repository.create(entity);
+        return this.repository.create(entity);
     }
 
-    /**
-     * Updates an existing entity in the repository.
-     *
-     * @param entity - The entity instance with updated data.
-     * @returns A promise that resolves to a boolean indicating whether the update was successful.
-     */
     async update(entity: Entity): Promise<boolean> {
-        return await this.repository.update(entity);
+        return this.repository.update(entity);
     }
 
-    /**
-     * Deletes an entity from the repository.
-     *
-     * @param entity - The entity instance to be deleted.
-     * @returns A promise that resolves to a boolean indicating whether the deletion was successful.
-     */
+    async updateById(id: number): Promise<boolean> {
+        const entity = await this.getById(id);
+        return entity ? this.repository.update(entity) : false;
+    }
+
+    async updateField(entity: Entity, fields_to_update: { [key: string]: unknown }): Promise<boolean> {
+        let updated = false;
+        for (const field in fields_to_update) {
+            if (field in entity) {
+                (entity as any)[field] = fields_to_update[field];
+                updated = true;
+            }
+        }
+        return updated ? this.repository.update(entity) : false;
+    }
+
+    async updateFieldById(id: number, fields_to_update: { [key: string]: unknown }): Promise<boolean> {
+        const entity = await this.getById(id);
+        if (!entity) return false;
+
+        let updated = false;
+        for (const field in fields_to_update) {
+            if (field in entity) {
+                (entity as any)[field] = fields_to_update[field];
+                updated = true;
+            }
+        }
+        return updated ? this.repository.update(entity) : false;
+    }
+
     async delete(entity: Entity): Promise<boolean> {
-        return await this.repository.delete(entity);
+        return this.repository.delete(entity);
+    }
+
+    async deleteById(id: number): Promise<boolean> {
+        const entity = await this.getById(id);
+        return entity ? this.repository.delete(entity) : false;
     }
 }

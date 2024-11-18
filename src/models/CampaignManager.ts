@@ -1,4 +1,3 @@
-import {Entity} from "@/core/repository/Entity";
 import {NavigationKey} from "@/core/repository/NavigationKey";
 import {Campaign} from "@/models/Campaign";
 import {User} from "@/models/User";
@@ -6,14 +5,14 @@ import {File} from "./File";
 import {Notification} from "./Notification";
 import {CampaignManagerTypes} from "@/models/types/CampaignManagerTypes";
 
-export class CampaignManager extends Entity {
+export class CampaignManager extends User {
     [key: string]: unknown;
 
     id: number | null = null;
     description: string | null = null;
     contact_email: string | null = null;
     verified: boolean | null = null;
-    type: CampaignManagerTypes = CampaignManagerTypes.Autonomous;
+    campaign_manager_type: CampaignManagerTypes = CampaignManagerTypes.Autonomous;
 
     identification_file_id: number | null = null;
 
@@ -27,7 +26,7 @@ export class CampaignManager extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "description", "contact_email", "verified", "type"];
+        return ["id", "description", "contact_email", "verified", "campaign_manager_type"];
     }
 
     getNavigationKeys(): string[] {
