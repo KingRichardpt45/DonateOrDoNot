@@ -96,9 +96,7 @@ export async function POST(request: NextRequest)
         }
 
         const file = createFile(formData,user);
-        console.log("here-1 ?")
         const fileResult = await fileManager.createWithValidation(file);
-        console.log("here0 ?")
 
         if(fileResult.isOK)
             saveFile( fileResult.value! , await (formData.get("identificationFile") as File).arrayBuffer() ) ;
@@ -107,8 +105,6 @@ export async function POST(request: NextRequest)
             userManager.delete(user);
             return NextResponse.json({ errors: fileResult.errors },{status:422,statusText:"Invalid file."});
         }
-
-        console.log("here1 ?")
 
         const CampaignManager = setCampaignInfo(formData,user,fileResult.value!,typeValue);
         const managerResult = await campaignManagerManager.signUp(CampaignManager);
@@ -206,7 +202,6 @@ function createFile( formData: FormData, user:User ) : ModelFile
 async function saveFile(file:ModelFile,fileData: ArrayBuffer)
 {
     const arrayBuffer = fileData
-    console.log("here?");
     const buffer = new Uint8Array(arrayBuffer);
     await fs.writeFile(`${savePath}${file.id}`, buffer);
 }
