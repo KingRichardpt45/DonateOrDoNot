@@ -7,6 +7,7 @@ import Campaign from "../components/campaign"; // Campaign component
 import { Search } from "lucide-react"; // Icon library
 import { useState } from "react"; // React hook for managing state
 import DonationModal from "../components/PopUpDonation/DonationPOP"; // Modal component for donation
+import { HeaderL } from "../components/NavBarLogged";
 
 export default function Home() {
   // Default campaigns array used for testing or displaying sample data
@@ -50,6 +51,7 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <div>
+          <HeaderL/>
           {/* Expandable search bar at the top of the page */}
           <ExpandableSearchBar />
 

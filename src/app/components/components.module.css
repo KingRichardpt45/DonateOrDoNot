@@ -1,22 +1,33 @@
 /*Side Menu CSS*/
-
 .sideMenu {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  width: 250px;
-  background-color: #2D004C;
-  color: white;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
-  z-index: 1000;
+  position: absolute; /* Position it relative to its container */
+  top: 56px; /* Adjust this to match your navbar's height */
+  left: 0px;
+  width: 300px;
+  height: calc(100vh - 60px); /* Full height minus the navbar height */
+  background-color: #8807df;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transform: translateX(-300px); /* Hidden by default */
+  transition: transform 0.3s ease;
+  z-index: 100; /* Ensure it's below the navbar but above other content */
 }
 
 .sideMenu.open {
-  transform: translateX(0);
+  transform: translateX(0); /* Slide in when open */
 }
 
+.sideMenu.closed {
+  transform: translateX(-300px); /* Slide out when closed */
+}
+.closeButton {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
 .sideMenuNav {
   padding: 1rem 0;
 }
@@ -108,6 +119,36 @@
 .menuGroup + .menuGroup {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
+/* Logout Button */
+.logoutButton {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: transparent; /* Match the side menu background */
+  border: none;
+  color: white; /* Match the text color in the menu */
+  padding: 1rem 1.5rem; /* Same padding as other menu items */
+  font-size: 0.95rem; /* Consistent font size */
+  cursor: pointer;
+  text-align: left;
+  gap: 0.75rem; /* Space between icon and text */
+  width: 100%; /* Make it span the full width */
+  transition: background-color 0.2s ease; /* Smooth hover effect */
+}
+
+.logoutButton:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Match hover style for links */
+}
+
+.logoutButton .iconContainer {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 /*----------------------------------*/
 /*----------------Button CSS-----------------*/
 .button {
@@ -217,6 +258,32 @@
   color: white;
   font-size: 1rem;
   font-weight: bold;
+}
+/* Styles for the side menu container */
+.sideMenuContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  background-color: #fff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+}
+
+.hidden {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+/* Burger button */
+.burgerButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 16px;
 }
 
 /*-----------------------------------*/
