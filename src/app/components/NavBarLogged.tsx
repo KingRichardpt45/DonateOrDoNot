@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Menu } from 'lucide-react';
 import { Button } from './Button';
@@ -13,11 +13,24 @@ import { headers } from 'next/headers';
 import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { redirect } from "next/navigation"
+import SideMenu from './SideMenu';
 
 export const HeaderL: React.FC = () => {
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+
+  const toggleSideMenu = () => {
+    setIsSideMenuOpen(!isSideMenuOpen);
+  };
   return (
     <header className={styles.header}>
       <div className={styles.header__left}>
+      <button
+            className={styles.burgerButton}
+            onClick={toggleSideMenu}
+            aria-label="Toggle menu"
+          >
+            <Menu size={24} />
+          </button>
         <Link href="/" className={styles.header__logo}>
           <Image 
             src="/images/logo.png"
@@ -39,6 +52,8 @@ export const HeaderL: React.FC = () => {
             />
             <span className={styles.header__user_name}>{User.name}</span>
           </div>
+          {/* Side Menu */}
+      <SideMenu isOpen={isSideMenuOpen} toggleMenu={toggleSideMenu} />
     </header>
   );
 };

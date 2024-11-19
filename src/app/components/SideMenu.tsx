@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import styles from "./components.module.css";
-import { 
+import {
   Home,
   Search,
   Store,
@@ -11,30 +11,17 @@ import {
   BarChart2,
   DollarSign,
   User,
-  LogOut
+  LogOut,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const SideMenu = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface SideMenuProps {
+  isOpen: boolean;
+  toggleMenu: () => void;
+}
+
+const SideMenu: React.FC<SideMenuProps> = ({ isOpen, toggleMenu }) => {
   const router = useRouter();
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (e.clientX <= 10) {
-      setIsOpen(true);
-    }
-  }, []);
-
-  const handleMouseLeave = () => {
-    setIsOpen(false);
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, [handleMouseMove]);
 
   const handleLogout = async () => {
     try {
@@ -45,10 +32,8 @@ const SideMenu = () => {
         },
       });
 
-      if (response.ok) 
-      {
+      if (response.ok) {
         router.push("/");
-
       } else {
         console.error("Failed to log out");
       }
@@ -58,10 +43,16 @@ const SideMenu = () => {
   };
 
   return (
-    <div 
-      className={`${styles.sideMenu} ${isOpen ? styles.open : ""}`}
-      onMouseLeave={handleMouseLeave}
+    <div
+      className={`${styles.sideMenu} ${isOpen ? styles.open : styles.closed}`}
     >
+      <button
+        className={styles.closeButton}
+        onClick={toggleMenu}
+        aria-label="Close menu"
+      >
+        ✕
+      </button>
       <nav className={styles.sideMenuNav}>
         <div className={styles.menuGroup}>
           <ul>
@@ -145,11 +136,8 @@ const SideMenu = () => {
               </a>
             </li>
             <li>
-            <button 
-                onClick={handleLogout}
-                className={styles.logoutButton} // Optional: Add a style for the button
-              >
-                <span className={styles.iconContainer}>
+              <button onClick={handleLogout} className={styles.logoutButton}>
+                <span className="iconContainer">
                   <LogOut size={20} />
                 </span>
                 Log out
