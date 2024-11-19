@@ -1,7 +1,7 @@
 /**
  * Class containing methods to validate and interact with Enum values.
  */
-export class EnumFieldValidation {
+export class EnumUtils {
     /**
      * Checks if a field exists in the given enumeration and returns its value.
      * @param enumeration The enumeration object to check.
