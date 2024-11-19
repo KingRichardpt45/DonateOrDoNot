@@ -1,0 +1,116 @@
+.page {
+    padding: 20px;
+    background-color: #1e0e34;
+    color: white;
+    font-family: Arial, sans-serif;
+    min-height: 100vh; /* Ensure page height covers the full viewport */
+    display: flex;
+    flex-direction: column;
+}
+
+.sectionTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 20px 0 10px;
+}
+
+.campaignsContainer {
+    display: flex;
+    gap: 20px; /* Increase spacing between cards */
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.campaignCard {
+    width: 250px; /* Increase card width */
+    height: 250px;
+    background-color: #5c2079;
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.campaignCard:hover {
+    transform: scale(1.05);
+}
+
+.campaignImage {
+    width: 100%;
+    object-fit: cover;
+}
+
+.campaignInfo {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-align title, status, and icon */
+}
+
+.campaignTitle {
+    font-size: 16px; /* Slightly larger title */
+    margin: 5px 0;
+}
+
+.campaignStatus {
+    font-size: 14px;
+    color: #ffcc00;
+    margin: 5px 0;
+}
+
+.editIconContainer {
+    margin-top: 5px;
+}
+
+.editIcon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    object-fit: contain; /* Ensure the icon maintains its aspect ratio */
+}
+
+
+
+.searchContainer {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.searchBar {
+    width: 80%;
+    max-width: 500px;
+    padding: 8px;
+    border-radius: 20px;
+    border: none;
+    font-size: 16px;
+    color: black;
+    outline: none;
+    padding-left: 40px;
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+}
+
+.viewMoreButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #b63fd7;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.viewMoreButton:hover {
+    background-color: #8e2ab4;
+}
