@@ -5,35 +5,36 @@ import {User} from '@/models/User';
 import {Constrain} from '@/core/repository/Constrain';
 import {Notification} from '@/models/Notification';
 import {IncludeNavigation} from '@/core/repository/IncludeNavigation';
+import { PrimaryKeyPart } from '@/core/repository/PrimaryKeyPart';
 
 
 export async function GET() {
 // let AddresseRepo = new RepositoryAsync<Address>("Address");
     const UserRepo = new RepositoryAsync(User);
-    const myAddresse = new Address();
+    // const myAddresse = new Address();
 
-    myAddresse.address = "Santo antónio Caminho da miranda";
-    myAddresse.city = "funchal"
-    myAddresse.specification = "29"
-    myAddresse.postal_code = "9020-098"
+    // myAddresse.address = "Santo antónio Caminho da miranda";
+    // myAddresse.city = "funchal"
+    // myAddresse.specification = "29"
+    // myAddresse.postal_code = "9020-098"
 
-    const notification = new Notification();
-    notification.campaign_id = 0;
-    notification.message = "teste1";
-    const notification2 = new Notification();
-    notification2.campaign_id = 0;
-    notification2.message = "teste2";
+    // const notification = new Notification();
+    // notification.campaign_id = 0;
+    // notification.message = "teste1";
+    // const notification2 = new Notification();
+    // notification2.campaign_id = 0;
+    // notification2.message = "teste2";
 
-    //create
-    const user = new User();
-    user.address.value = myAddresse;
-    user.email = "test@test.com";
-    user.first_name = "ricardo";
-    user.middle_names = "F. C.";
-    user.last_name = "Vieira";
-    user.notifications.value = [];
-    user.notifications.value.push(notification);
-    user.notifications.value.push(notification2);
+    // //create
+    // const user = new User();
+    // user.address.value = myAddresse;
+    // user.email = "test@test.com";
+    // user.first_name = "ricardo";
+    // user.middle_names = "F. C.";
+    // user.last_name = "Vieira";
+    // user.notifications.value = [];
+    // user.notifications.value.push(notification);
+    // user.notifications.value.push(notification2);
 
     //let result = await UserRepo.create(user);
 
@@ -48,8 +49,8 @@ export async function GET() {
 
     // gets with includes
     //let result = await UserRepo.getAll((user)=> [ new IncludeNavigation( user.notifications , 0), new IncludeNavigation( user.address , 0) ]);
-    // let result = await AddresseRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],[]);
-    const result = await UserRepo.getFirstByCondition([new Constrain("Addresses.id", "=", "18")], (user) => [new IncludeNavigation(user.address, 0)], [], 0, 0);
+    let result = await UserRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],(user)=>[new IncludeNavigation(user.notifications,0)]);
+    //const result = await UserRepo.getFirstByCondition([new Constrain("Addresses.id", "=", "18")], (user) => [new IncludeNavigation(user.address, 0)], [], 0, 0);
     // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
     // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
 

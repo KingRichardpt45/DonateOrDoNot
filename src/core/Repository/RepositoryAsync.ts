@@ -62,7 +62,8 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         query = this.include(query, includes, selectColumns);
 
         for (const primaryKeyPart of primaryKeyParts) {
-            query = query.where(`${primaryKeyPart.key}`, "=", primaryKeyPart.value);
+            
+            query = query.where(`${this.tableName}.${primaryKeyPart.key}`, "=", primaryKeyPart.value);
         }
 
         const result = await query.select(selectColumns);
