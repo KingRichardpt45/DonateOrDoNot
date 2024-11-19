@@ -47,7 +47,7 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
     private async storeAux(session: Session): Promise<User>
     {   
         const user = await this.userRepository.getFirstByCondition(
-            [new Constrain("id", "=", session.userId)],
+            [new Constrain("id", Operator.EQUALS, session.userId)],
             (user) => [new IncludeNavigation(user.address, 0)],
             [], 0, 0
         );
