@@ -1,3 +1,5 @@
+import "server-only"
+
 import {UserRoleTypes} from "@/models/types/UserRoleTypes";
 
 /**
