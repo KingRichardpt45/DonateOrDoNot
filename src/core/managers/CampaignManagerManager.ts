@@ -16,26 +16,14 @@ export class CampaignManagerManager extends EntityManager<CampaignManager> {
     async signUp(campaignManager: CampaignManager): Promise<OperationResult<CampaignManager | null, FormError>> {
         const errors: FormError[] = [];
 
-        if (campaignManager.type != UserRoleTypes.CampaignManager) {
-            errors.push(new FormError("type", ["User must be a campaign manager"]));
+        if (campaignManager.description!.length > 2000) {
+             errors.push(new FormError("description", ["Max length is 2000 characters."]));
         }
 
-        const userManager = new UserManager();
-        const createdUser = await userManager.signUp(campaignManager as User);
+        if (errors.length > 0 ) 
+            return new OperationResult(null, errors);
 
-        if (createdUser.errors.length == 0 && createdUser.value) {
-            campaignManager.id = createdUser.value.id;
-            const createdDonor = await this.create(campaignManager);
-            return new OperationResult(createdDonor, errors);
-        }
-
-        createdUser.errors.forEach(error => errors.push(error));
-
-        return new OperationResult(null, errors);
-    }
-
-    async signIn(email: string, password: string): Promise<OperationResult<User | null, SimpleError>> {
-        const userManager = new UserManager();
-        return userManager.signIn(email, password);
+        const manager = await this.repository.create(campaignManager);
+        return new OperationResult(manager, errors);
     }
 }

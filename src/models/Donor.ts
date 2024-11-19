@@ -15,8 +15,9 @@ export class Donor extends Entity
     total_donations: number | null = null;
     total_donated_value: number | null = null;
     frequency_of_donation: number | null = null;
-    frequency_of_donation_datetime: number | null = null;
-    best_frequency_of_donation_datetime: number | null = null;
+    frequency_of_donation_datetime: Date | null = null;
+    best_frequency_of_donation_datetime: Date | null = null;
+    best_frequency_of_donation: number | null = null;
 
     readonly user = new NavigationKey<User>(this, "user", "id", Donor.getTableName(), Donor.getEntityName(), User.getTableName(), User.getEntityName(), "id", null);
     readonly donations = new NavigationKey<Donation>(this, "donations", "id", Donor.getTableName(), Donor.getEntityName(), Donation.getTableName(), Donation.getEntityName(), "user_id", null);
@@ -35,7 +36,8 @@ export class Donor extends Entity
             "total_donated_value",
             "frequency_of_donation",
             "frequency_of_donation_datetime",
-            "best_frequency_of_donation_datetime"
+            "best_frequency_of_donation_datetime",
+            "best_frequency_of_donation"
         ];
     }
 

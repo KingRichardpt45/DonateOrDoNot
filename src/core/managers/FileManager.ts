@@ -14,12 +14,12 @@ export class FileManager extends EntityManager<File>
     public async createWithValidation( file : File ): Promise<OperationResult<File | null, FormError>>
     {   
         const errors : FormError[] = [];
-
-        if( !file.file_path || !file.file_suffix || !file.file_type || !file.original_name || !file.size )
-            throw new Error("Trying to create an invalid File instance with has null fields.");
+        
+        if( !file.file_path || !file.file_suffix || !file.file_type || !file.original_name || file.size == null )
+            throw new Error("Trying to create an invalid File. With has null fields.");
         
         const suffix = file.file_suffix.toLocaleLowerCase();
-        if( !(suffix in ["jpeg","png", "pdf"]) )
+        if( !["jpeg","png", "pdf"].find( (v) => suffix.includes(v) ) )
             errors.push( new FormError( "fileType" , [ "Invalid file type, only is allowed jpeg, png and pdf." ] ) );
 
         if ( file.file_suffix.toLocaleLowerCase() in ["jpeg","png"] && file.size > 52428800 )

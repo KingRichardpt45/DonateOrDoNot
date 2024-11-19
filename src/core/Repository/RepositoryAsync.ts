@@ -215,8 +215,9 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     }
 
     private async createAux(entity: IEntity): Promise<IEntity> {
+        
         if (entity.isCreated())
-            throw new Error("Invalid Operation: Trying to create an already created Entity.");
+            return entity;
 
         await this.createDependedNavigationEntities(entity);
 
@@ -243,7 +244,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
             navigationKey = entity[navigationKeyName] as NavigationKey<IEntity>;
 
             if (navigationKey == null)
-                throw new Error("Invalid entity type definition in getNavigationKeys where entity[navigationKeyName] as null instead of NavigationKey<Entity extends IEntity>.")
+                throw new Error(`Invalid entity ${entity.getEntityName()} type definition in getNavigationKeys where entity[navigationKeyName] as null instead of NavigationKey<Entity extends IEntity>.`)
 
             if (navigationKey.value == null || !navigationKey.isDecency)
                 continue;
@@ -265,7 +266,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
             navigationKey = createdEntity[navigationKeyName] as NavigationKey<IEntity>;
 
             if (navigationKey == null)
-                throw new Error("Invalid entity type definition in getNavigationKeys where entity[navigationKeyName] as null instead of NavigationKey<Entity extends IEntity>.")
+                throw new Error(`Invalid created entity ${createdEntity.getEntityName()} type definition in getNavigationKeys where entity[navigationKeyName] as null instead of NavigationKey<Entity extends IEntity>.`)
 
             if (navigationKey.value == null || navigationKey.isDecency)
                 continue;

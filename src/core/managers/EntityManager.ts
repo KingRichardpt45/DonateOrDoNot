@@ -12,8 +12,8 @@ export class EntityManager<Entity extends IEntity> {
         this.repository = new RepositoryAsync(entityConstructor);
     }
 
-    async getById(id: number, id_field: string = "id", includeFunction: (entity: Entity) => IncludeNavigation[] = () => []): Promise<Entity | null> {
-        return this.repository.getByPrimaryKey([new PrimaryKeyPart(id_field, id)], includeFunction);
+    async getById(id: number, includeFunction: (entity: Entity) => IncludeNavigation[] = () => []): Promise<Entity | null> {
+        return this.repository.getByPrimaryKey([new PrimaryKeyPart("id", id)], includeFunction);
     }
 
     async getAll(includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity[] | null> {
@@ -45,7 +45,8 @@ export class EntityManager<Entity extends IEntity> {
         return entity ? this.repository.update(entity) : false;
     }
 
-    async updateField(entity: Entity, fields_to_update: { [key: string]: unknown }): Promise<boolean> {
+    async updateField(entity: Entity, fields_to_update: { [key: string]: unknown }): Promise<boolean> 
+    {
         let updated = false;
         for (const field in fields_to_update) {
             if (field in entity) {
@@ -53,7 +54,7 @@ export class EntityManager<Entity extends IEntity> {
                 updated = true;
             }
         }
-        return updated ? this.repository.update(entity) : false;
+        return updated ? this.repository.updateFields(entity,) : false;
     }
 
     async updateFieldById(id: number, fields_to_update: { [key: string]: unknown }): Promise<boolean> {

@@ -27,11 +27,11 @@ export class File extends Entity {
 
     getKeys(): string[] {
         return ["id", "original_name", "file_suffix", "file_type", "file_path",
-            "timestamp", "user_id", "campaign_id"];
+            "timestamp", "user_id", "campaign_id", "size"];
     }
 
     getNavigationKeys(): string[] {
-        return ["user", "campaign", "badge"];
+        return ["user", "campaign"];
     }
 
     getTableName(): string {
