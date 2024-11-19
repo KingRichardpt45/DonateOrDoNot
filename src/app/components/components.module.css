@@ -285,6 +285,73 @@
   cursor: pointer;
   margin-right: 16px;
 }
+.notificationBell {
+  position: relative;
+  margin-left: 10px;
+}
+
+.bellButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.notificationDropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: #2f024d;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 250px; /* Adjust width as needed */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 10px;
+  max-height: 200px; /* Fixed height */
+  overflow-y: auto; /* Adds scroll if content overflows */
+}
+
+.notificationDropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notificationDropdown li {
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: white;
+}
+
+.notificationDropdown li:last-child {
+  border-bottom: none;
+}
+
+.notificationDropdown p {
+  text-align: center;
+  margin: 0;
+  color: white;
+}
+
+.notificationDropdown::-webkit-scrollbar {
+  width: 5px; /* Scrollbar width */
+  border-radius: 50%;
+}
+
+.notificationDropdown::-webkit-scrollbar-thumb {
+  background: #94008d; /* Scrollbar color */
+  border-radius: 50%;
+
+}
+
+.notificationDropdown::-webkit-scrollbar-thumb:hover {
+  background: #8807df; /* Scrollbar hover color */
+}
+
+.notificationDropdown::-webkit-scrollbar-track {
+  background: #cf7df5; /* Scrollbar track color */
+}
 
 /*-----------------------------------*/
 /*-----------SearchBar.css-----------*/
