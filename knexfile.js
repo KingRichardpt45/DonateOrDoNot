@@ -1,7 +1,7 @@
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
-module.exports = {
+export const knexConfig = {
 
   development: {
     client: 'sqlite3',
@@ -23,3 +23,5 @@ module.exports = {
     }
   },
 };
+
+export default knexConfig;

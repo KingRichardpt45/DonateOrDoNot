@@ -1,0 +1,91 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #2c002b;
+}
+  .main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+  }
+  
+/* Container for the entire page */
+.container {
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+  }
+  
+  /* Campaign container styling */
+  .campaignContainer {
+    margin-top: 30px;
+  }
+  
+  /* Heading for campaigns */
+  .heading {
+    font-size: 28px; /* Increased font size for the heading */
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  
+  /* Campaign list styling */
+  .campaignList {
+    display: flex;
+    gap: 30px; /* Increased gap between cards */
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  /* Individual campaign card */
+  .campaignCard {
+    background: #4b0082;
+    border-radius: 20px; /* Increased border radius */
+    padding: 20px;
+    width: 250px; /* Increased card width */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Hover effect for campaign cards */
+  .campaignCard:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Image styling */
+  .image {
+    width: 100%;
+    border-radius: 15px; /* Slightly rounded image corners */
+    margin-bottom: 15px; /* Space below the image */
+  }
+  
+  /* Campaign title styling */
+  .title {
+    margin-top: 10px;
+    font-size: 18px; /* Increased font size */
+    font-weight: bold;
+    color: #fff;
+  }
+  
+  /* View more button styling */
+  .viewMore {
+    margin-top: 30px; /* Increased margin for spacing */
+    padding: 12px 25px; /* Increased button size */
+    background-color: #ff69b4;
+    border: none;
+    border-radius: 25px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 18px; /* Increased font size */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  /* Hover effect for view more button */
+  .viewMore:hover {
+    background-color: #ff1493;
+    transform: scale(1.05);
+  }

@@ -13,9 +13,11 @@ import {
   User,
   LogOut
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const SideMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (e.clientX <= 10) {
@@ -34,6 +36,27 @@ const SideMenu = () => {
     };
   }, [handleMouseMove]);
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/account/signout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) 
+      {
+        router.push("/");
+
+      } else {
+        console.error("Failed to log out");
+      }
+    } catch (error) {
+      console.error("An error occurred during logout:", error);
+    }
+  };
+
   return (
     <div 
       className={`${styles.sideMenu} ${isOpen ? styles.open : ""}`}
@@ -43,7 +66,7 @@ const SideMenu = () => {
         <div className={styles.menuGroup}>
           <ul>
             <li>
-              <a href="#">
+              <a href="/">
                 <span className={styles.iconContainer}>
                   <Home size={20} />
                 </span>
@@ -51,7 +74,7 @@ const SideMenu = () => {
               </a>
             </li>
             <li>
-              <a href="#">
+              <a href="/Search">
                 <span className={styles.iconContainer}>
                   <Search size={20} />
                 </span>
@@ -122,12 +145,15 @@ const SideMenu = () => {
               </a>
             </li>
             <li>
-              <a href="#">
+            <button 
+                onClick={handleLogout}
+                className={styles.logoutButton} // Optional: Add a style for the button
+              >
                 <span className={styles.iconContainer}>
                   <LogOut size={20} />
                 </span>
                 Log out
-              </a>
+              </button>
             </li>
           </ul>
         </div>
