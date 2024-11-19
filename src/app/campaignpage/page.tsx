@@ -1,19 +1,17 @@
 "use client";
 
-import Image from "next/image"; // Used for optimized image rendering in Next.js
-import { ExpandableSearchBar } from "../components/searchBar"; // Importing the search bar component
-import styles from "./campaignpage.module.css"; // CSS module for styling
-import Campaign from "../components/campaign"; // Campaign component
-import { Search } from "lucide-react"; // Icon library
-import { useState } from "react"; // React hook for managing state
-import DonationModal from "../components/PopUpDonation/DonationPOP"; // Modal component for donation
+import Image from "next/image";
+import { ExpandableSearchBar } from "../components/searchBar";
+import styles from "./campaignpage.module.css";
+import Campaign from "../components/campaign";
+import { useState } from "react";
+import DonationModal from "../components/PopUpDonation/DonationPOP";
 
 export default function Home() {
-  // Default campaigns array used for testing or displaying sample data
   const defaultCampaigns = [
     {
-      title: "Donate Blood & Save a Life", // Campaign title
-      image: "/images/Elephant.png", // Image path for the campaign
+      title: "Donate Blood & Save a Life",
+      image: "/images/Elephant.png",
     },
     {
       title: "Food Drive",
@@ -33,63 +31,99 @@ export default function Home() {
     },
   ];
 
-  // State to control modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentAmount, setCurrentAmount] = useState(5000);
+  const [goal, setGoal] = useState(12000);
+  const progressPercentage = Math.min((currentAmount / goal) * 100, 100);
 
-  // Function to open the donation modal
+  const getProgressColor = (progressPercentage: number) => {
+    if (progressPercentage < 20) return "red";
+    if (progressPercentage < 50) return "yellow";
+    return "green";
+  };
+
+  const progressColor = getProgressColor(progressPercentage);
+
   const handleDonateNowClick = () => {
-    setIsModalOpen(true); // Set modal state to open
+    setIsModalOpen(true);
   };
 
-  // Function to close the donation modal
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Set modal state to closed
+    setIsModalOpen(false);
   };
+
+  // Array of documents (images, pdfs, videos)
+  const documents = [
+    { type: "image", src: "/images/Elephant.png", alt: "Elephant Image" },
+    { type: "pdf", src: "/documents/sample.pdf", alt: "Sample PDF" },
+    { type: "video", src: "/images/ricardo.mp4", alt: "Sample Video" },
+    { type: "image", src: "/images/hunger.png", alt: "Hunger Image" },
+  ];
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <div>
-          {/* Expandable search bar at the top of the page */}
           <ExpandableSearchBar />
-
-          {/* Campaign component to display featured campaigns */}
           <Campaign />
-
-          {/* Container for other campaigns */}
           <div className={styles.container}>
             <div className={styles.campaignContainer}>
-              <h2 className={styles.heading}>Other Campaigns</h2>
               <div className={styles.progressContainer}>
-  <span className={styles.progressText}>90%</span>
-  <span className={styles.progressTextRight}>11000€/12000€</span>
-  <div className={styles.progressBar}>
-    <div className={styles.progress}></div>
-  </div>
-</div>
-              {/* List of campaigns rendered dynamically from defaultCampaigns */}
-              <div className={styles.campaignList}>
-                {defaultCampaigns.map((campaign, index) => (
-                  <div key={index} className={styles.campaignCard}>
-                    <Image
-                      src={campaign.image} // Campaign image
-                      alt={campaign.title} // Alt text for accessibility
-                      width={180} // Fixed width
-                      height={100} // Fixed height
-                      className={styles.image} // Style for the image
-                    />
-                    <h3 className={styles.title}>{campaign.title}</h3>
+                <span className={styles.progressText}>
+                  {Math.round(progressPercentage)}%
+                </span>
+                <span className={styles.progressTextRight}>
+                  {currentAmount}€/{goal}€
+                </span>
+                <div className={styles.progressBar}>
+                  <div
+                    className={styles.progress}
+                    style={{
+                      width: `${progressPercentage}%`,
+                      backgroundColor: progressColor,
+                    }}
+                  ></div>
+                </div>
+              </div>
+              <h2 className={styles.heading}>Documents</h2>
+
+              {/* Gallery container */}
+              <div className={styles.gallery}>
+                {documents.map((doc, index) => (
+                  <div className={styles.galleryItem} key={index}>
+                    {doc.type === "image" && (
+                      <Image
+                        src={doc.src}
+                        alt={doc.alt}
+                        width={150}
+                        height={150}
+                        className={styles.galleryImage}
+                        onClick={() => alert(`Viewing image: ${doc.alt}`)}
+                      />
+                    )}
+                    {doc.type === "pdf" && (
+                      <div className={styles.pdfPreview}>
+                        <a href={doc.src} target="_blank" rel="noopener noreferrer">
+                          <button className={styles.viewPDF}>View PDF</button>
+                        </a>
+                      </div>
+                    )}
+                    {doc.type === "video" && (
+                      <div className={styles.videoPreview}>
+                        <video width="150" height="150" controls>
+                          <source src={doc.src} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
 
-              {/* Button to open donation modal */}
               <div>
                 <button className={styles.viewMore} onClick={handleDonateNowClick}>
-                  Donate Now
+                  View More
                 </button>
-
-                {/* Donation modal with open/close state controlled by isModalOpen */}
                 <DonationModal isOpen={isModalOpen} onClose={handleCloseModal} />
               </div>
             </div>

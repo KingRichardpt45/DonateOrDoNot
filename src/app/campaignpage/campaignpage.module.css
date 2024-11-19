@@ -74,7 +74,7 @@
   .viewMore {
     margin-top: 30px; /* Increased margin for spacing */
     padding: 12px 25px; /* Increased button size */
-    background-color: #ff69b4;
+    background-color: #bd00ce;
     border: none;
     border-radius: 25px;
     color: #fff;
@@ -86,35 +86,33 @@
   
   /* Hover effect for view more button */
   .viewMore:hover {
-    background-color: #ff1493;
+    background-color: #6f0079;
     transform: scale(1.05);
   }
 
 
   .progressContainer {
     width: 100%;
-    max-width: 600px; /* Adjust max width */
+    max-width: 600px;
     margin: 20px auto;
     position: relative;
     font-family: Arial, sans-serif;
-    color: white; /* Text color for labels */
+    color: white;
   }
   
   .progressBar {
     width: 100%;
-    height: 10px; /* Adjust height to make it sleek */
+    height: 10px;
     background-color: transparent;
-    border: 1px solid white; /* Border color */
+    border: 1px solid white;
     border-radius: 10px;
     overflow: hidden;
     position: relative;
   }
   
   .progress {
-    width: 90%; /* Adjust percentage dynamically */
     height: 100%;
-    background: linear-gradient(to right, #0f0, #0a0); /* Green gradient for the bar */
-    transition: width 0.3s ease-in-out;
+    transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out; /* Smooth width and color changes */
   }
   
   .progressText {
@@ -130,5 +128,84 @@
     right: 0;
     font-size: 14px;
   }
+  
+/* Gallery container */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centers the gallery */
+  gap: 20px;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+/* Gallery item styling */
+.galleryItem {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Image styling */
+.galleryImage {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+/* Optional: Add a zoom effect on hover */
+.galleryImage:hover {
+  transform: scale(1.05);
+}
+
+/* PDF preview button styling */
+.pdfPreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.viewPDF {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.viewPDF:hover {
+  background-color: #0056b3;
+}
+
+/* Video preview container */
+.videoPreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* Optional: Make sure the gallery looks good on mobile */
+@media (max-width: 768px) {
+  .gallery {
+    gap: 15px;
+  }
+
+  .galleryItem {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+
   
   
