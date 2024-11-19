@@ -1,0 +1,3 @@
+# .env
+COOKIE_SECRET="thisissecretevn?"
+PW_ENCRYPTION_KEY="1Kc`Mr*0jW.cD@46#~6kt4*b=?[RrgaK"

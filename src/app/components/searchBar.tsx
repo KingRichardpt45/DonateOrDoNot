@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react';
 import styles from './components.module.css';
 import { Search } from 'lucide-react';
