@@ -4,15 +4,16 @@ import {User} from "@/models/User";
 import {File} from "./File";
 import {Notification} from "./Notification";
 import {CampaignManagerTypes} from "@/models/types/CampaignManagerTypes";
+import { Entity } from "@/core/repository/Entity";
 
-export class CampaignManager extends User {
+export class CampaignManager extends Entity {
     [key: string]: unknown;
 
     id: number | null = null;
     description: string | null = null;
     contact_email: string | null = null;
     verified: boolean | null = null;
-    campaign_manager_type: CampaignManagerTypes = CampaignManagerTypes.Autonomous;
+    type: CampaignManagerTypes = CampaignManagerTypes.Autonomous;
 
     identification_file_id: number | null = null;
 
@@ -26,7 +27,7 @@ export class CampaignManager extends User {
     }
 
     getKeys(): string[] {
-        return ["id", "description", "contact_email", "verified", "campaign_manager_type"];
+        return ["id", "description", "contact_email", "verified", "type"];
     }
 
     getNavigationKeys(): string[] {

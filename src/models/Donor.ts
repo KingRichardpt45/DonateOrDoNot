@@ -4,8 +4,10 @@ import {Donation} from "@/models/Donation";
 import {DonorBadge} from "@/models/DonorBadge";
 import {DonorStoreItem} from "@/models/DonorStoreItem";
 import {Notification} from "./Notification";
+import { Entity } from "@/core/repository/Entity";
 
-export class Donor extends User {
+export class Donor extends Entity 
+{
     [key: string]: unknown;
 
     id: number | null = null;

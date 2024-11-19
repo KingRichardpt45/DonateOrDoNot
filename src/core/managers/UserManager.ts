@@ -22,7 +22,8 @@ export class UserManager extends EntityManager<User> {
      * and retrieval of user data. This class handles password validation, encryption,
      * and form error handling during user operations.
      */
-    constructor() {
+    constructor() 
+    {
         super(User);
         this.passwordValidator = Services.getInstance().get<IPasswordValidation>("IPasswordValidation");
         this.passwordEncryption = Services.getInstance().get<IEncryption>("PasswordEncryption");
@@ -35,7 +36,8 @@ export class UserManager extends EntityManager<User> {
      * @param user - The User object to be created (must include at least name, email, and password).
      * @returns A promise that resolves to an OperationResult containing the created user or null, and any validation errors.
      */
-    async signUp(user: User): Promise<OperationResult<User | null, FormError>> {
+    async signUp(user: User): Promise<OperationResult<User | null, FormError>> 
+    {
         const errors: FormError[] = [];
 
         if (StringUtils.stringIsNullOrEmpty(user.first_name))
@@ -45,24 +47,22 @@ export class UserManager extends EntityManager<User> {
 
         if (StringUtils.stringIsNullOrEmpty(user.email))
             errors.push(new FormError("email", ["A email must be provided!"]));
-        else {
-            const existingUserWithEmail = await this.getFirstByCondition([new Constrain("email", Operator.EQUALS, user.email)],
-                (user) => [new IncludeNavigation(user.address, 0)], [], 0, 0)
+        else 
+        {
+            const existingUserWithEmail = await this.getFirstByCondition([new Constrain("email", Operator.EQUALS, user.email)],(user) => [], [], 0, 0);
 
             if (existingUserWithEmail != null)
                 errors.push(new FormError("email", ["A user with this email already exists!"]));
         }
 
         if (StringUtils.stringIsNullOrEmpty(user.password))
-            errors.push(new FormError("password", ["A name must be provided!"]));
+            errors.push( new FormError("password", ["A name must be provided!"]));
         else {
             const validationResult = await this.passwordValidator.validate(user.password);
             if (validationResult.length > 0)
                 errors.push(new FormError("password", validationResult));
             else
                 user.password = await this.passwordEncryption.encrypt(user.password);
-
-            console.log(user.password);
         }
 
         user.status = AccountStatus.Pending;
@@ -81,7 +81,8 @@ export class UserManager extends EntityManager<User> {
      * @param password - The plain-text password entered by the user.
      * @returns A promise that resolves to an OperationResult containing the authenticated user or null, and any errors.
      */
-    async signIn(email: string, password: string): Promise<OperationResult<User | null, SimpleError>> {
+    async signIn(email: string, password: string): Promise<OperationResult<User | null, SimpleError>> 
+    {
         const user = await this.repository.getFirstByCondition([new Constrain("email", Operator.EQUALS, email)],
             (user) => [new IncludeNavigation(user.address, 0)],
             [], 0, 0

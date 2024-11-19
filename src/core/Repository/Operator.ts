@@ -42,5 +42,11 @@ export enum Operator {
      * Represents the pattern-matching operator (`like`).
      * Used to check if the left operand matches a pattern defined by the right operand.
      */
-    LIKE = "like"
+    LIKE = "like",
+
+    /**
+     * Represents the in operator.
+     * Used to check if the left operand is in a set of values.
+     */
+    IN = "like"
 }
