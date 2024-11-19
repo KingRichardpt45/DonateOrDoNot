@@ -10,6 +10,7 @@ import {NavigationKey} from "./NavigationKey";
 import {IncludeNavigation} from "./IncludeNavigation";
 import {Services} from "@/services/Services";
 import {DBConnectionService} from "@/services/DBConnectionService";
+import {Operator} from "@/core/repository/Operator";
 
 export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync<Entity> {
     readonly tableName: string;
@@ -61,7 +62,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         query = this.include(query, includes, selectColumns);
 
         for (const primaryKeyPart of primaryKeyParts) {
-            query = query.where(`entity.{primaryKeyPart.key}`, "=", primaryKeyPart.value);
+            query = query.where(`${primaryKeyPart.key}`, "=", primaryKeyPart.value);
         }
 
         const result = await query.select(selectColumns);
@@ -374,13 +375,16 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     private addConstrainByType(query: Knex.QueryBuilder, constrain: Constrain): Knex.QueryBuilder {
         switch (constrain.op) {
-            case "like":
+            case Operator.LIKE:
                 if (typeof constrain.value !== 'string')
                     throw new Error("Invalid where like. Value is not a string");
                 query = query.whereLike(constrain.key, constrain.value);
                 break;
-            case "!=":
+            case Operator.NOT_EQUALS:
                 query = query.whereNot(constrain.key, constrain.value);
+                break;
+            case Operator.IN:
+                query = query.whereIn(constrain.key, constrain.value);
                 break;
             default:
                 query = query.where(constrain.key, constrain.op, constrain.value);

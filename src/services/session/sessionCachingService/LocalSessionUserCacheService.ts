@@ -6,6 +6,7 @@ import {Mutex} from "async-mutex";
 import {RepositoryAsync} from "@/core/repository/RepositoryAsync";
 import {Constrain} from "@/core/repository/Constrain";
 import {IncludeNavigation} from "@/core/repository/IncludeNavigation";
+import {Operator} from "@/core/repository/Operator";
 
 /**
  * This class manages expired session user cache.
