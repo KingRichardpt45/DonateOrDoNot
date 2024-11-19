@@ -24,14 +24,14 @@ export default async function Home()
       redirect("signin");
       return;
   } 
-  else
+  else{
     return (
       <div className={styles.page}>
-        "test"
-        {/* <main className={styles.main}>
+        
+        <main className={styles.main}>
         <ExpandableSearchBar/>  
         <Campaign/>
-        </main> */}
+        </main> 
       </div>
-    );
+    );}
 }

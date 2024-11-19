@@ -1,0 +1,150 @@
+/* Modal Wrapper */
+.modalWrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent overlay */
+  z-index: 50;
+}
+
+/* Modal Content */
+.modalContent {
+  background: linear-gradient(145deg, #4b007d, #9c27b0); /* Gradient purple */
+  padding: 32px;
+  border-radius: 16px; /* Softer edges */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+  max-width: 450px;
+  width: 100%;
+  color: white;
+  border: 2px solid white; /* White border */
+  text-align: center;
+}
+
+/* Close Button */
+.modalClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 1.8rem;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Modal Title */
+.modalTitle {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 24px; /* Increased spacing for clarity */
+}
+
+/* Confirmation Text */
+.confirmationText {
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+  line-height: 1.6; /* Improved readability */
+}
+
+/* Donation Details Section */
+.donationDetails {
+  background-color: #6a0dad;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px; /* Space below details */
+  border: 2px solid white;
+  text-align: left; /* Align details text to the left */
+}
+
+.donationDetails p {
+  font-size: 1.1rem;
+  margin: 12px 0; /* Spacing between each detail line */
+  font-weight: bold;
+}
+
+/* Donacoins Text */
+.donacoinsText {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ff69b4; /* Highlighted pink */
+  margin-top: 12px;
+}
+
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px; /* Space between buttons */
+  margin-top: 32px; /* Space above buttons */
+}
+
+.actionButton {
+  flex: 1; /* Equal width for buttons */
+  padding: 16px; /* Increased padding for larger buttons */
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 50px; /* Rounded buttons */
+  text-transform: uppercase; /* Consistent text style */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+/* Confirm Button */
+.confirmButton {
+  background-color: #ff69b4; /* Pink confirm button */
+  color: white;
+}
+
+.confirmButton:hover {
+  background-color: #ff85c0; /* Lighter pink on hover */
+  transform: translateY(-2px);
+}
+
+/* Cancel Button */
+.cancelButton {
+  background-color: #6a0dad; /* Purple cancel button */
+  color: white;
+  border: 2px solid white;
+}
+
+.cancelButton:hover {
+  background-color: #9c27b0; /* Brighter purple on hover */
+  transform: translateY(-2px);
+}
+/* Modal Text */
+.modalText {
+    font-size: 1.2rem; /* Slightly larger for better readability */
+    margin: 16px 0; /* Spacing above and below the text */
+    line-height: 1.6; /* Better spacing between lines for multi-line text */
+    color: white; /* Ensures consistent text color */
+    text-align: center; /* Centers the text */
+  }
+/* Button Group */
+.buttonGroup {
+    display: flex;
+    justify-content: space-around; /* Spread buttons evenly */
+    gap: 20px; /* Add space between buttons */
+    margin: 24px 0; /* Add space above and below the group */
+  }
+  
+  .buttonGroup button {
+    padding: 12px 24px; /* Adjust padding for a balanced look */
+    background-color: #ff69b4; /* Button background color */
+    color: white; /* Button text color */
+    font-size: 1.1rem; /* Font size */
+    font-weight: bold; /* Bold text for emphasis */
+    border: none; /* Remove default border */
+    border-radius: 25px; /* Fully rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: all 0.3s ease; /* Smooth hover effect */
+  }
+  
+  .buttonGroup button:hover {
+    background-color: #ff85c0; /* Lighter color on hover */
+    transform: translateY(-2px); /* Subtle lift effect */
+  }
+  

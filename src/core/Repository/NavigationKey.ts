@@ -1,4 +1,4 @@
-import {IEntity} from "./IEntity";
+import {IEntity} from "@/core/repository/IEntity";
 
 /**
  * Represents a navigation key that links to a referenced entity or collection of entities.
