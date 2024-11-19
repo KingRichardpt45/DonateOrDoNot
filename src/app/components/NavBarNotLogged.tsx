@@ -22,7 +22,7 @@ export const Header: React.FC = () => {
           Donate Or Donot
         </Link>
       </div>
-      <Link href="/SignUp">
+      <Link href="/signup">
       <Button variant="ghost" className={styles.header__signup_button}>
         Sign Up
       </Button>

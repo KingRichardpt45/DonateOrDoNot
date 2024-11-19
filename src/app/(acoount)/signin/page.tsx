@@ -32,7 +32,7 @@ export default function SignIn() {
             </div>
 
             <button type="submit" className={styles.submitButton}>
-              Sign Ip
+              Sign in
             </button>
           </form>
         </div>
