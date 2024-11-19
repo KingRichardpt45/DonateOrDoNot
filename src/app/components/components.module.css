@@ -196,6 +196,28 @@
 .header__login_button {
   color: white;
 }
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header__user_info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header__user_photo {
+  border-radius: 50%; /* Deixa a imagem em formato circular */
+  border: 2px solid white; /* Borda branca para destacar */
+}
+
+.header__user_name {
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+}
 
 /*-----------------------------------*/
 /*-----------SearchBar.css-----------*/

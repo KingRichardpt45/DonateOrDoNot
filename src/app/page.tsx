@@ -12,24 +12,28 @@ import { headers } from 'next/headers';
 import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { redirect } from "next/navigation"
-
+import {HeaderL} from "./components/NavBarLogged";
 export default async function Home() 
 {
 
   let a = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
    
   if ( !await a.hasRole(UserRoleTypes.Donor))
-  {
-      console.log("no user");
-      redirect("signin");
-      return;
+  { return (
+    <div className={styles.page}>
+        
+    <main className={styles.main}> 
+      <Header/>
+    <Campaign/>
+    </main> 
+  </div>);
   } 
   else{
     return (
       <div className={styles.page}>
         
-        <main className={styles.main}>
-        <ExpandableSearchBar/>  
+        <main className={styles.main}> 
+          <HeaderL/>
         <Campaign/>
         </main> 
       </div>
