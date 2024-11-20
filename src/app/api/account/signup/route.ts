@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     if (typeValue == UserRoleTypes.Donor) {
         const donor = setDonorInfo(user);
-        await donorManager.signUp(donor); //does't have restrictions
+        await donorManager.signUp(donor); //doesn't have restrictions
     } else {
         const errors = validatorCampaignManagerForm.validateFormParams(formData);
         if (errors.length > 0) {
@@ -83,8 +83,7 @@ export async function POST(request: NextRequest) {
 
         const file = createFile(formData, user);
         const fileResult = await fileManager.createWithValidation(file);
-
-        if (fileResult.isOK) saveFile(fileResult.value!, await (formData.get("identificationFile") as File).arrayBuffer()); else {
+        if (fileResult.isOK) await saveFile(fileResult.value!, await (formData.get("identificationFile") as File).arrayBuffer()); else {
             await userManager.delete(user);
             return NextResponse.json({errors: fileResult.errors}, {status: 422, statusText: "Invalid file."});
         }
@@ -178,7 +177,14 @@ function createFile(formData: FormData, user: User): ModelFile {
 }
 
 async function saveFile(file: ModelFile, fileData: ArrayBuffer) {
-    const arrayBuffer = fileData
+    const arrayBuffer = fileData;
     const buffer = new Uint8Array(arrayBuffer);
-    await fs.writeFile(`${savePath}${file.id}`, buffer);
+
+    try {
+        await fs.access(savePath);
+    } catch {
+        await fs.mkdir(savePath, { recursive: true });
+    }
+
+    await fs.writeFile(`${savePath}${file.id}-${file.original_name}`, buffer);
 }

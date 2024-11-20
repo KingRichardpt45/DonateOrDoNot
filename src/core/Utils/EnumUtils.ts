@@ -17,15 +17,11 @@ export class EnumUtils {
      * const missingResult = EnumFieldValidation.hasField(MyEnum, "FIELD_THREE"); // returns null
      */
     static getEnumValue<T>(enumType: T, value: string): number | null {
-        // let a = (Object.values(enumType as Object) as string[]).includes(value) ? value as T[keyof T] : undefined;
-        // console.log("aaaaaaaaaaaa", a)
-
         const array = Object.values(enumType as object) as string[];
         for (let index = 0; index < array.length; index++) {
             if ((enumType as [])[index] == value) {
                 return index;
             }
-
         }
 
         return null;
