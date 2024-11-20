@@ -68,19 +68,24 @@
 
 .gallery {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 items per row */
-  gap: 1.5rem; /* Space between items */
-  justify-content: center;
+  grid-template-columns: repeat(4, 1fr); /* 4 equal-width columns */
+  gap: 1rem; /* Equal spacing between grid items */
+  justify-content: center; /* Center the grid horizontally */
+  align-content: center; /* Center the grid vertically if needed */
+  width: fit-content; /* Ensures the grid content is tightly wrapped */
+  margin: 0 auto; /* Centers the grid in the parent container */
 }
 
+
 .galleryItem {
-  width: 250px; /* Let grid control the size */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 250px; /* Define item size */
   height: 250px;
-  position: relative;
-  overflow: hidden;
-  border: 2px solid #ffffff; /* White border for contrast */
-  border-radius: 8px;
-  cursor: pointer;
+  background-color: #f0f0f0; /* Optional background for visualization */
+  border-radius: 8px; /* Optional styling */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional styling */
 }
 
 
@@ -90,7 +95,15 @@
   object-fit: cover;
 }
 
-.pdfPreview,
+.pdfPreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
 .videoPreview {
   display: flex;
   justify-content: center;
@@ -159,7 +172,6 @@
 .page {
   background-color: #2c002b; /* Purple background */
   min-height: 100vh; /* Ensure it covers the full viewport */
-  display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0;
@@ -169,7 +181,6 @@
 .main {
   background-color:  #2c002b;  /* Purple background for the main section */
   width: 100%;
-  display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem 0;
@@ -199,38 +210,39 @@
   font-weight: bold;
   margin-bottom: 30px;
   color:white;
+  position: relative;
+  margin-left: 46%;
 }
 
 .progressContainer {
   width: 100%;
-  max-width: 600px;
+  max-width: 600px; /* Limit to a reasonable size */
   margin: 20px auto;
+  text-align: center; /* Center-align the container content */
   position: relative;
-  font-family: Arial, sans-serif;
-  color: white;
-  text-align: center; /* Center-align text */
+  color: white; /* Text color for percentages */
 }
 
 .progressBar {
   width: 100%;
-  height: 12px;
-  background-color: #444; /* Slightly darker background for contrast */
-  border: 1px solid white;
+  height: 20px; /* Increased height for visibility */
+  background-color: #ddd; /* Light gray background */
+  border: 1px solid #fff; /* Add border for better definition */
   border-radius: 10px;
-  overflow: hidden;
-  position: relative;
+  overflow: hidden; /* Ensure progress stays within bounds */
 }
 
 .progress {
   height: 100%;
-  transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+  background-color: green; /* Default progress color */
+  transition: width 0.3s ease-in-out;
 }
 
 .progressText,
 .progressTextRight {
   position: absolute;
-  top: -25px;
-  font-size: 14px;
+  top: -30px; /* Position above the progress bar */
+  font-size: 14px; /* Small font size */
 }
 
 .progressText {

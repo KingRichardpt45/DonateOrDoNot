@@ -10,17 +10,17 @@ import DonationModal from "../components/PopUpDonation/DonationPOP";
 export default function Home() {
   const documents = [
     { type: "image", src: "/images/Elephant.png", alt: "Elephant Image" },
-    { type: "pdf", src: "/documents/sample.pdf", alt: "Sample PDF" },
-    { type: "video", src: "/images/Musiquence DLC 2024-07-05 18-02-16.mp4", alt: "Sample Video" },
     { type: "image", src: "/images/hunger.png", alt: "Hunger Image" },
     { type: "image", src: "/images/Elephant.png", alt: "Elephant Image" },
-    { type: "pdf", src: "/documents/sample.pdf", alt: "Sample PDF" },
-    { type: "video", src: "/images/Musiquence DLC 2024-07-05 18-02-16.mp4", alt: "Sample Video" },
+    { type: "image", src: "/images/hunger.png", alt: "Hunger Image" },
     { type: "image", src: "/images/hunger.png", alt: "Hunger Image" },
     { type: "image", src: "/images/Elephant.png", alt: "Elephant Image" },
-    { type: "pdf", src: "/documents/sample.pdf", alt: "Sample PDF" },
     { type: "video", src: "/images/Musiquence DLC 2024-07-05 18-02-16.mp4", alt: "Sample Video" },
-    { type: "image", src: "/images/hunger.png", alt: "Hunger Image" },
+    { type: "video", src: "/images/Musiquence DLC 2024-07-05 18-02-16.mp4", alt: "Sample Video" },
+    { type: "video", src: "/images/Musiquence DLC 2024-07-05 18-02-16.mp4", alt: "Sample Video" },
+    { type: "pdf", src: "/documents/PMS-Project-2024.pdf", alt: "Sample PDF" },
+    { type: "pdf", src: "/documents/PMS-Project-2024.pdf", alt: "Sample PDF" },
+    { type: "pdf", src: "/documents/PMS-Project-2024.pdf", alt: "Sample PDF" },
   ];
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function Home() {
 
   const progressColor = getProgressColor(progressPercentage);
 
-  const handleImageClick = (doc) => {
+  const handleImageClick = (doc: React.SetStateAction<{ type: string; src: string; alt: string; }>) => {
     setModalContent(doc);
     setModalOpen(true);
   };
@@ -89,8 +89,13 @@ export default function Home() {
               )}
               {doc.type === "pdf" && (
                 <div className={styles.pdfPreview}>
-                  <a href={doc.src} target="_blank" rel="noopener noreferrer">
-                    <button className={styles.viewPDF}>View PDF</button>
+                  <a download>
+                    <Image
+                      src="/images/pdficon.png" // Replace with your PDF icon path
+                      alt="Download PDF"
+                      width={50}
+                      height={50}
+                    />
                   </a>
                 </div>
               )}
