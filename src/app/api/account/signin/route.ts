@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     } 
     else {
         const formData = await request.formData();
-        const errors = validatorSingInForm.validate(formData);
+        const errors = validatorSingInForm.validateFormParams(formData);
 
         if (errors.length > 0)
             return NextResponse.json({errors}, {status: 422, statusText: "Invalid form fields."})
