@@ -6,6 +6,7 @@ import { ExpandableSearchBar } from "../components/searchBar";
 import styles from "./campaignpage.module.css";
 import Campaign from "../components/campaign";
 import DonationModal from "../components/PopUpDonation/DonationPOP";
+import { HeaderL } from "../components/NavBarLogged";
 
 export default function Home() {
   const documents = [
@@ -51,7 +52,8 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <ExpandableSearchBar />
+        <div>
+        <HeaderL/>
         <Campaign />
 
         <div className={styles.container}>
@@ -130,6 +132,7 @@ export default function Home() {
             </div>
           </div>
         )}
+        </div>
       </main>
     </div>
   );

@@ -8,6 +8,7 @@ import { Search } from "lucide-react"; // Icon library
 import { useState } from "react"; // React hook for managing state
 import DonationModal from "../components/PopUpDonation/DonationPOP"; // Modal component for donation
 import { HeaderL } from "../components/NavBarLogged";
+import Link from "next/link";
 
 export default function Home() {
   // Default campaigns array used for testing or displaying sample data
@@ -51,7 +52,7 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <div>
-          <HeaderL/>
+          <HeaderL />
           {/* Expandable search bar at the top of the page */}
           <ExpandableSearchBar />
 
@@ -66,13 +67,19 @@ export default function Home() {
               <div className={styles.campaignList}>
                 {defaultCampaigns.map((campaign, index) => (
                   <div key={index} className={styles.campaignCard}>
-                    <Image
-                      src={campaign.image} // Campaign image
-                      alt={campaign.title} // Alt text for accessibility
-                      width={180} // Fixed width
-                      height={100} // Fixed height
-                      className={styles.image} // Style for the image
-                    />
+                    <Link href={"/campaignpage"}>
+                      {" "}
+                      {/* Link para a campanha */}
+                      <a>
+                        <Image
+                          src={campaign.image} // Campaign image
+                          alt={campaign.title} // Alt text for accessibility
+                          width={180} // Fixed width
+                          height={100} // Fixed height
+                          className={styles.image} // Style for the image
+                        />
+                      </a>
+                    </Link>
                     <h3 className={styles.title}>{campaign.title}</h3>
                   </div>
                 ))}
@@ -80,12 +87,18 @@ export default function Home() {
 
               {/* Button to open donation modal */}
               <div>
-                <button className={styles.viewMore} onClick={handleDonateNowClick}>
+                <button
+                  className={styles.viewMore}
+                  onClick={handleDonateNowClick}
+                >
                   Donate Now
                 </button>
 
                 {/* Donation modal with open/close state controlled by isModalOpen */}
-                <DonationModal isOpen={isModalOpen} onClose={handleCloseModal} />
+                <DonationModal
+                  isOpen={isModalOpen}
+                  onClose={handleCloseModal}
+                />
               </div>
             </div>
           </div>
