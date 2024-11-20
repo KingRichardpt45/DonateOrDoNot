@@ -4,11 +4,6 @@ import {EntityManager} from "@/core/managers/EntityManager";
 import {BankAccount} from "@/models/BankAccount";
 
 const bankAccountManager = new EntityManager<BankAccount>(BankAccount);
-/**
- * iban: string | null = null;
- *     account_holder: string | null = null;
- *     bank_name: string | null = null;
- */
 const formValidator = new FormObjectValidator("iban", "account_holder", "bank_name");
 
 export async function POST(request: NextRequest) {
