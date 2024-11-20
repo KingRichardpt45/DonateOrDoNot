@@ -50,7 +50,7 @@ const campaigns = [
   },
 ];
 
-export default function Campaign({ hasDonorRole }: { hasDonorRole: boolean }){
+export default function Campaign(){
   const [currentCampaign, setCurrentCampaign] = useState(0);
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false); // State for modal visibility
 
