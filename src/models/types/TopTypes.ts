@@ -1,0 +1,8 @@
+export enum TopTypes
+{
+    TOTAL_VALUE_DONATED = 0,
+
+    FREQUENCY_OF_DONATIONS = 1,
+
+    NUMBER_OF_DONATIONS = 2
+}

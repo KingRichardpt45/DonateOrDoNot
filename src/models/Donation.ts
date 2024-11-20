@@ -7,9 +7,9 @@ export class Donation extends Entity {
     [key: string]: unknown;
 
     id: number | null = null;
-    is_name_hidden: boolean | null = null
+    is_name_hidden: boolean | null = false
     value: number | null = null;
-    comment: string | null = null
+    comment: string | null = "";
 
     donor_id: number | null = null;
     campaign_id: number | null = null;
