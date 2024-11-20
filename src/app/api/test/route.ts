@@ -1,11 +1,8 @@
 import {NextResponse} from 'next/server';
 import {RepositoryAsync} from '@/core/repository/RepositoryAsync';
-import {Address} from '@/models/Address';
 import {User} from '@/models/User';
-import {Constrain} from '@/core/repository/Constrain';
-import {Notification} from '@/models/Notification';
 import {IncludeNavigation} from '@/core/repository/IncludeNavigation';
-import { PrimaryKeyPart } from '@/core/repository/PrimaryKeyPart';
+import {PrimaryKeyPart} from '@/core/repository/PrimaryKeyPart';
 
 
 export async function GET() {
@@ -49,7 +46,7 @@ export async function GET() {
 
     // gets with includes
     //let result = await UserRepo.getAll((user)=> [ new IncludeNavigation( user.notifications , 0), new IncludeNavigation( user.address , 0) ]);
-    let result = await UserRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],(user)=>[new IncludeNavigation(user.notifications,0)]);
+    const result = await UserRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],(user)=>[new IncludeNavigation(user.notifications,0)]);
     //const result = await UserRepo.getFirstByCondition([new Constrain("Addresses.id", "=", "18")], (user) => [new IncludeNavigation(user.address, 0)], [], 0, 0);
     // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
     // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);

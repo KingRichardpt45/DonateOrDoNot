@@ -1,123 +1,105 @@
-import { DonorManager } from "@/core/managers/DonorManager";
+import {DonorManager} from "@/core/managers/DonorManager";
 import {FormError} from "@/core/managers/FormError";
 import {UserManager} from "@/core/managers/UserManager";
 import {EnumUtils} from "@/core/utils/EnumUtils";
 import {FormObjectValidator} from "@/core/utils/FormObjectValidator";
 import {Address} from "@/models/Address";
-import { CampaignManager } from "@/models/CampaignManager";
-import { Donor } from "@/models/Donor";
-import { CampaignManagerTypes } from "@/models/types/CampaignManagerTypes";
+import {CampaignManager} from "@/models/CampaignManager";
+import {Donor} from "@/models/Donor";
+import {CampaignManagerTypes} from "@/models/types/CampaignManagerTypes";
 import {UserRoleTypes} from "@/models/types/UserRoleTypes";
 import {User} from "@/models/User";
 import {Services} from "@/services/Services";
 import {SessionService} from "@/services/session/SessionService";
 import {NextRequest, NextResponse} from "next/server";
 import {File as ModelFile} from "@/models/File"
-import { FileTypes } from "@/models/types/FileTypes";
+import {FileTypes} from "@/models/types/FileTypes";
 import fs from "node:fs/promises";
-import { FileManager } from "@/core/managers/FileManager";
-import { CampaignManagerManager } from "@/core/managers/CampaignManagerManager";
+import {FileManager} from "@/core/managers/FileManager";
+import {CampaignManagerManager} from "@/core/managers/CampaignManagerManager";
 
 
 const savePath = "./public/documents/";
 
-const validatorUserForm = new FormObjectValidator(
-    "name",
-    "email",
-    "password",
-    "passwordConfirm",
-    "postalCode",
-    "city",
-    "address",
-    "addressSpecification",
-    "type"
-);
+const validatorUserForm = new FormObjectValidator("name", "email", "password", "passwordConfirm", "postalCode", "city", "address", "addressSpecification", "type");
 
-const validatorCampaignManagerForm = new FormObjectValidator(
-    "contactEmail",
-    "description",
-    "managerType",
-    "identificationFile"
-);
+const validatorCampaignManagerForm = new FormObjectValidator("contactEmail", "description", "managerType", "identificationFile");
 
 const userManager = new UserManager();
 const donorManager = new DonorManager();
 const fileManager = new FileManager();
 const campaignManagerManager = new CampaignManagerManager();
 const sessionService = Services.getInstance().get<SessionService>("SessionService")
+const redirectOnSuccessSignUp = "/signin"
 
-export async function POST(request: NextRequest) 
-{
-    if (await sessionService.verify())
-        await sessionService.delete();
+export async function POST(request: NextRequest) {
+    if (await sessionService.verify()) await sessionService.delete();
 
     const formData = await request.formData();
     const errors = validatorUserForm.validateFormParams(formData);
 
-    if (errors.length > 0)
-        return NextResponse.json({errors: errors}, {status: 422, statusText: "Invalid form fields."});
+    if (errors.length > 0) return NextResponse.json({errors: errors}, {
+        status: 422,
+        statusText: "Invalid form fields."
+    });
 
     const typeValue = EnumUtils.getEnumValue(UserRoleTypes, formData.get("type")!.toString());
-    if (typeValue == null)
-        return NextResponse.json({errors: [{errorMessage: "Invalid type for user."}]},
-            {status: 400, statusText: "Invalid type for user."}
-        );
+    if (typeValue == null) return NextResponse.json({errors: [{errorMessage: "Invalid type for user."}]}, {
+        status: 400,
+        statusText: "Invalid type for user."
+    });
 
-    if (formData.get("password")!.toString() !== formData.get("passwordConfirm")!.toString())
-        return NextResponse.json({errors: [new FormError("passwordConfirm", ["Password Confirmation doesn't match with password."])]},
-            {status: 422, statusText: "Invalid form data."}
-        );
+    if (formData.get("password")!.toString() !== formData.get("passwordConfirm")!.toString()) return NextResponse.json({errors: [new FormError("passwordConfirm", ["Password Confirmation doesn't match with password."])]}, {
+        status: 422,
+        statusText: "Invalid form data."
+    });
 
     const user = setUserInfo(formData, typeValue as number);
     const result = await userManager.signUp(user);
-    
-    if (!result.isOK)
-        return NextResponse.json({errors: result.errors}, {status: 422, statusText: "Invalid form data."});
-    
-    if( typeValue == UserRoleTypes.Donor )
-    {
+
+    if (!result.isOK) return NextResponse.json({errors: result.errors}, {
+        status: 422,
+        statusText: "Invalid form data."
+    });
+
+    if (typeValue == UserRoleTypes.Donor) {
         const donor = setDonorInfo(user);
         await donorManager.signUp(donor); //does't have restrictions
-    }
-    else
-    {
+    } else {
         const errors = validatorCampaignManagerForm.validateFormParams(formData);
-        if (errors.length > 0)
-        {
-            userManager.delete(user);
+        if (errors.length > 0) {
+            await userManager.delete(user);
             return NextResponse.json({errors: errors}, {status: 422, statusText: "Invalid form fields."});
         }
-        
+
         const managerTypeValue = EnumUtils.getEnumValue(CampaignManagerTypes, formData.get("managerType")!.toString());
-        if (managerTypeValue == null)
-        {
-            userManager.delete(user);
-            return NextResponse.json({errors: [{errorMessage: "Invalid type for manager."}]},{status: 400, statusText: "Invalid type for manager."});
+        if (managerTypeValue == null) {
+            await userManager.delete(user);
+            return NextResponse.json({errors: [{errorMessage: "Invalid type for manager."}]}, {
+                status: 400,
+                statusText: "Invalid type for manager."
+            });
         }
 
-        const file = createFile(formData,user);
+        const file = createFile(formData, user);
         const fileResult = await fileManager.createWithValidation(file);
 
-        if(fileResult.isOK)
-            saveFile( fileResult.value! , await (formData.get("identificationFile") as File).arrayBuffer() ) ;
-        else
-        {
-            userManager.delete(user);
-            return NextResponse.json({ errors: fileResult.errors },{status:422,statusText:"Invalid file."});
+        if (fileResult.isOK) saveFile(fileResult.value!, await (formData.get("identificationFile") as File).arrayBuffer()); else {
+            await userManager.delete(user);
+            return NextResponse.json({errors: fileResult.errors}, {status: 422, statusText: "Invalid file."});
         }
 
-        const CampaignManager = setCampaignInfo(formData,user,fileResult.value!,typeValue);
-        const managerResult = await campaignManagerManager.signUp(CampaignManager);
+        const campaignManager = setCampaignInfo(formData, user, fileResult.value!, typeValue);
+        const managerResult = await campaignManagerManager.signUp(campaignManager);
 
-        if(!managerResult.isOK)
-        {
-            fileManager.delete(fileResult.value!);
-            userManager.delete(user);
-            return NextResponse.json({errors:managerResult.errors},{status:422,statusText:"Invalid form fields."})    
+        if (!managerResult.isOK) {
+            await fileManager.delete(fileResult.value!);
+            await userManager.delete(user);
+            return NextResponse.json({errors: managerResult.errors}, {status: 422, statusText: "Invalid form fields."})
         }
     }
 
-    return NextResponse.json({}, {status: 200});
+    return NextResponse.redirect(new URL(redirectOnSuccessSignUp, request.url));
 }
 
 function mergeMiddleNames(names: string[]): string {
@@ -128,8 +110,7 @@ function mergeMiddleNames(names: string[]): string {
         }
         middle_names += names[names.length - 2];
         return middle_names;
-    } else
-        return names[1];
+    } else return names[1];
 }
 
 function setUserInfo(formData: FormData, type: number): User {
@@ -156,8 +137,7 @@ function setUserInfo(formData: FormData, type: number): User {
     return user;
 }
 
-function setDonorInfo( user:User ): Donor 
-{
+function setDonorInfo(user: User): Donor {
     const donor = new Donor();
 
     donor.donacoins = 0;
@@ -167,24 +147,22 @@ function setDonorInfo( user:User ): Donor
     donor.best_frequency_of_donation = 0;
     donor.frequency_of_donation_datetime = new Date();
     donor.user.value = user;
-    
+
     return donor;
 }
 
-function setCampaignInfo ( formData:FormData, user:User, file:ModelFile ,type:CampaignManagerTypes): CampaignManager
-{
+function setCampaignInfo(formData: FormData, user: User, file: ModelFile, type: CampaignManagerTypes): CampaignManager {
     const campaignManager = new CampaignManager();
 
     campaignManager.contact_email = formData.get("contactEmail")!.toString().trim();
     campaignManager.description = formData.get("description")!.toString().trim();
     campaignManager.verified = false;
     campaignManager.type = type;
-    
+
     return campaignManager;
 }
 
-function createFile( formData: FormData, user:User ) : ModelFile
-{
+function createFile(formData: FormData, user: User): ModelFile {
     const file = new ModelFile();
     const uploadedFile = formData.get("identificationFile")!.valueOf() as File;
 
@@ -199,8 +177,7 @@ function createFile( formData: FormData, user:User ) : ModelFile
     return file;
 }
 
-async function saveFile(file:ModelFile,fileData: ArrayBuffer)
-{
+async function saveFile(file: ModelFile, fileData: ArrayBuffer) {
     const arrayBuffer = fileData
     const buffer = new Uint8Array(arrayBuffer);
     await fs.writeFile(`${savePath}${file.id}`, buffer);
