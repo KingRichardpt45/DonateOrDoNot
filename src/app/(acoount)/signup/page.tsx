@@ -1,8 +1,6 @@
 "use client";
 
 import styles from "../../components/authentication.module.css";
-import SideMenu from "../../components/SideMenu";
-import { Header } from "../../components/NavBarNotLogged";
 import { useState } from "react";
 
 export default function SignUp() {

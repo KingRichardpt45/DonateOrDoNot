@@ -4,11 +4,21 @@ import {FormError} from "@/core/managers/FormError";
 import {OperationResult} from "@/core/managers/OperationResult";
 import {UserManager} from "@/core/managers/UserManager";
 import {BankAccount} from "@/models/BankAccount";
+import { RepositoryAsync } from "../repository/RepositoryAsync";
+import { TotalDonatedValue } from "@/models/TotalDonatedValue";
+import { Constrain } from "../repository/Constrain";
+import { Operator } from "../repository/Operator";
+import { Donor } from "@/models/Donor";
+import { SimpleError } from "./SimpleError";
+import { IncludeNavigation } from "../repository/IncludeNavigation";
 
 export class DonationCampaignManager extends EntityManager<Campaign> {
 
+    private readonly totalValuesDonatedRepository : RepositoryAsync<TotalDonatedValue>;
+
     constructor() {
         super(Campaign);
+        this.totalValuesDonatedRepository = new RepositoryAsync(TotalDonatedValue);
     }
 
     async createCampaign(campaign: Campaign): Promise<OperationResult<Campaign | null, FormError>> {
@@ -55,5 +65,24 @@ export class DonationCampaignManager extends EntityManager<Campaign> {
 
         const createdCampaign = errors.length == 0 ? await this.create(campaign) : null;
         return new OperationResult(createdCampaign, errors);
+    }
+
+    async getTopDonors( campaign_id:number, page:number, pageSize:number ): Promise< OperationResult< Donor[] | null, SimpleError> >
+    {
+        const totalValuesDonated = await this.totalValuesDonatedRepository.getByCondition(
+            [new Constrain("id",Operator.EQUALS,campaign_id)],
+            (totalDonatedValue)=>[new IncludeNavigation(totalDonatedValue.donor,0)],
+            [{ column: `${TotalDonatedValue.getTableName()}.total_value`, order: "desc" }],
+            pageSize,
+            page*pageSize,
+        )
+
+        const donors : Donor[] = [];
+        totalValuesDonated.forEach( (totalValueDonated)=> donors.push( totalValueDonated.donor.value! as Donor ) )
+
+        if( donors.length == 0)
+            return new OperationResult(null,[new SimpleError("No results where fount.")]);
+        else
+            return new OperationResult(donors,[]);
     }
 }

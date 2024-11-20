@@ -52,7 +52,7 @@ export async function POST(request: NextRequest)
         await sessionService.delete();
 
     const formData = await request.formData();
-    const errors = validatorUserForm.validate(formData);
+    const errors = validatorUserForm.validateFormParams(formData);
 
     if (errors.length > 0)
         return NextResponse.json({errors: errors}, {status: 422, statusText: "Invalid form fields."});
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest)
     }
     else
     {
-        const errors = validatorCampaignManagerForm.validate(formData);
+        const errors = validatorCampaignManagerForm.validateFormParams(formData);
         if (errors.length > 0)
         {
             userManager.delete(user);
