@@ -1,15 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
-import DonationModal from "./PopUpDonation/DonationPOP"; // Import DonationModal
+import React, { useState } from "react";
 import styles from "./components.module.css";
-import { Services } from "@/services/Services";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
-import { User } from "@/models/User";
-import { headers } from 'next/headers';
-import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { redirect } from "next/navigation"
-
+import DonationModal from "./PopUpDonation/DonationPOP";
+import Carousel from "./caroussel"; // Importa o novo componente
 
 const campaigns = [
   {
@@ -50,73 +43,20 @@ const campaigns = [
   },
 ];
 
-export default function Campaign(){
-  const [currentCampaign, setCurrentCampaign] = useState(0);
-  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false); // State for modal visibility
+export default function Campaign() {
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
 
-  const nextCampaign = () => {
-    setCurrentCampaign((prev) => (prev + 1) % campaigns.length);
-  };
-
-  const prevCampaign = () => {
-    setCurrentCampaign((prev) => (prev - 1 + campaigns.length) % campaigns.length);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(nextCampaign, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const campaign = campaigns[currentCampaign];
   return (
     <>
       <section className={styles.campaign}>
-        <div className={styles.carousel}>
-          {/* Indicators */}
-          <div className={styles.indicators}>
-            {campaigns.map((_, index) => (
-              <span
-                key={index}
-                className={`${styles.dot} ${
-                  currentCampaign === index ? styles.activeDot : ""
-                }`}
-                onClick={() => setCurrentCampaign(index)}
-              ></span>
-            ))}
-          </div>
-
-          <button className={styles.navButton} onClick={prevCampaign}>
-            &lt;
-          </button>
-          <div
-            className={styles.imageTrain}
-            style={{ transform: `translateX(-${currentCampaign * 100}%)` }}
-          >
-            {campaigns.map((campaign, index) => (
-              <img key={index} src={campaign.image} alt={campaign.title} />
-            ))}
-          </div>
-          <button className={styles.navButton} onClick={nextCampaign}>
-            &gt;
-          </button>
-        </div>
-
-        <div className={styles.overlay}>
-          <h2 className={styles.title}>{campaign.title}</h2>
-          <p className={styles.description}>{campaign.description}</p>
-          <div className={styles.donationGoals}>
-            {campaign.donationGoals.map((goal, index) => (
-              <p key={index}>{goal}</p>
-            ))}
-          </div>
-        </div>
+        <Carousel items={campaigns} />
 
         {/* Bottom Overlay */}
         <div className={styles.bottomOverlay}>
           <p>Be one of this campaign's top Donors!</p>
           <button
             className={styles.donateNowButton}
-            onClick={() => setIsDonationModalOpen(true)} // Open modal on click
+            onClick={() => setIsDonationModalOpen(true)}
           >
             Donate Now
           </button>
@@ -125,8 +65,8 @@ export default function Campaign(){
 
       {/* Donation Modal */}
       <DonationModal
-        isOpen={isDonationModalOpen} // Modal visibility
-        onClose={() => setIsDonationModalOpen(false)} // Close handler
+        isOpen={isDonationModalOpen}
+        onClose={() => setIsDonationModalOpen(false)}
       />
     </>
   );
