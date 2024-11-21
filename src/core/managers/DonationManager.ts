@@ -7,12 +7,20 @@ import {Donor} from "@/models/Donor";
 import { SimpleError } from "./SimpleError";
 import { Constrain } from "../repository/Constrain";
 import { Operator } from "../repository/Operator";
+import { TotalDonatedValue } from "@/models/TotalDonatedValue";
+import { RepositoryAsync } from "../repository/RepositoryAsync";
+import { PrimaryKeyPart } from "../repository/PrimaryKeyPart";
 
 export class DonationManager extends EntityManager<Donation> 
 {
+    private readonly totalDonatedValueRepo : RepositoryAsync<TotalDonatedValue>;
+    private readonly donorRepo : RepositoryAsync<Donor>;
 
-    constructor() {
+    constructor() 
+    {
         super(Donation);
+        this.totalDonatedValueRepo = new RepositoryAsync(TotalDonatedValue);
+        this.donorRepo = new RepositoryAsync(Donor);
     }
 
     async createWithValidation(donation: Donation): Promise<OperationResult<Donation | null, FormError>> 
@@ -49,8 +57,70 @@ export class DonationManager extends EntityManager<Donation>
             }
         }
 
-        const createdDonation = errors.length == 0 ? await this.create(donation) : null;
+        if(errors.length != 0 )
+            return new OperationResult(null, errors);
+
+        const createdDonation = await this.create(donation);
+        this.updateTotalDonatedValue(createdDonation.donor_id!,createdDonation.campaign_id!,createdDonation.value!);
+        this.updateDonorTotalDonatedValue(createdDonation.donor_id!,createdDonation.value!);
+
         return new OperationResult(createdDonation, errors);
+    }
+
+    private async updateTotalDonatedValue(donor_id:number,campaign_id:number,donatedValue:number)
+    {
+        let totalDonatedValue = await this.totalDonatedValueRepo.getFirstByCondition(
+            [new Constrain("donor_id",Operator.EQUALS,donor_id),new Constrain("campaign_id",Operator.EQUALS,campaign_id)],
+            (u)=>[],
+            [],0,0
+        )
+
+        if( totalDonatedValue != null)
+        {
+            totalDonatedValue.total_value = totalDonatedValue.total_value ? totalDonatedValue.total_value + donatedValue : donatedValue;
+        }
+        else
+        {
+            totalDonatedValue = new TotalDonatedValue();
+            totalDonatedValue.campaign_id = campaign_id;
+            totalDonatedValue.donor_id = donor_id;
+            totalDonatedValue.total_value = donatedValue;
+            this.totalDonatedValueRepo.create(totalDonatedValue);
+        }
+    }
+
+    private async updateDonorTotalDonatedValue(donor_id:number,donatedValue:number)
+    {
+        const donor = await this.donorRepo.getByPrimaryKey([new PrimaryKeyPart("id",donor_id)]) as Donor;
+        donor.total_donated_value! += donatedValue;
+        donor.total_donations! += 1;
+   
+        let endDate = new Date(donor.frequency_of_donation_datetime!);
+        endDate.setHours(endDate.getHours() + 168);
+
+        const dateNow = new Date();
+        if( dateNow > endDate )
+            donor.frequency_of_donation! += 1;
+        else
+        {
+            donor.frequency_of_donation = 1;
+            donor.frequency_of_donation_datetime = dateNow;
+        }
+
+        if(donor.frequency_of_donation! > donor.best_frequency_of_donation!)
+        {
+            donor.best_frequency_of_donation = donor.frequency_of_donation
+            donor.best_frequency_of_donation_datetime = dateNow;
+        }
+
+        this.donorRepo.updateFields(donor,
+            "total_donated_value",
+            "total_donations",
+            "frequency_of_donation",
+            "frequency_of_donation_datetime",
+            "best_frequency_of_donation",
+            "best_frequency_of_donation_datetime"
+        );
     }
 
     async getDonationsOfDonor(donor_id:number, page:number, pageSize:number): Promise< OperationResult< Donation[]| null,SimpleError> >

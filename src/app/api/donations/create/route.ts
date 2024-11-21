@@ -8,7 +8,7 @@ import { Donation } from "@/models/Donation";
 
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
 const donationManager = new DonationManager();
-const donationFormValidator = new FormObjectValidator("type","file","userId");
+const donationFormValidator = new FormObjectValidator("campaignId","donorId","comment","value,nameHidden");
 
 export async function POST( request : NextRequest )
 {
@@ -60,7 +60,7 @@ function createDonation( formData: FormData) : Donation
     donation.donor_id = formData.get("donorId")?.valueOf() as number;
     donation.comment = formData.get("comment")?.valueOf() as string;
     donation.value = formData.get("value")?.valueOf() as number;
-    donation.is_name_hidden = formData.get("value")?.valueOf() as boolean;
+    donation.is_name_hidden = formData.get("nameHidden")?.valueOf() as boolean;
     
     return donation;
 }
