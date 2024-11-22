@@ -43,23 +43,4 @@ export class FormObjectValidator {
 
         return missingFields;
     }
-
-    /**
-     * Checks if a value matches the expected type.
-     * @param value The value to validate.
-     * @param type The expected type ('string', 'number', or 'boolean').
-     * @returns True if the value matches the type, otherwise false.
-     */
-   //private isValidType(value: any): boolean {
-        // switch (type) {
-        //     case 'string':
-        //         return typeof value === 'string';
-        //     case 'number':
-        //         return !isNaN(Number(value));
-        //     case 'boolean':
-        //         return value === 'true' || value === 'false';
-        //     default:
-        //         return false; // Unknown types are invalid
-        // }
-   // }
 }

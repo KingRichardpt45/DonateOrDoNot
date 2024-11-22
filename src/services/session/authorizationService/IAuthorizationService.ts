@@ -19,5 +19,5 @@ export interface IAuthorizationService {
      * @param role - The required user role.
      * @returns True if the user has the specified role, false otherwise.
      */
-    hasRole(role: UserRoleTypes): Promise<boolean>
+    hasRole(...roles: UserRoleTypes[]): Promise<boolean>
 }
