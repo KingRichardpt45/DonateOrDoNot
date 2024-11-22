@@ -15,6 +15,17 @@ export class StoreItemManager extends EntityManager<StoreItem> implements Search
         super(StoreItem);
     }
 
+    async create( name:string, description:string, cost:number,image_id:number ) : Promise<StoreItem>
+    {
+        const stoItemToCreate = new StoreItem();
+        stoItemToCreate.name = name;
+        stoItemToCreate.description = description;
+        stoItemToCreate.cost = cost;
+        stoItemToCreate.image_id = image_id;
+
+        return this.add(stoItemToCreate);
+    }
+
     async search(query: string, page: number, pageSize: number): Promise<OperationResult<StoreItem[], SimpleError>> 
     {   
         return this.searchWithConstrains(query,[],page,pageSize);

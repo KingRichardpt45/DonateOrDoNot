@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { StoreItemManager } from "@/core/managers/StoreItemManager";
 import * as yup from 'yup';
 import { StoreItem } from "@/models/StoreItem";
@@ -6,86 +6,59 @@ import { FormValidator } from "@/core/utils/FormValidator";
 import { DonorManager } from "@/core/managers/DonorManager";
 import { FileManager } from "@/core/managers/FileManager"; 
 import { File as ModelFile} from "@/models/File";
-import fs from "node:fs/promises";
 import { FileTypes } from "@/models/types/FileTypes";
 import { Services } from "@/services/Services";
 import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
+import { FileService } from "@/services/FIleService";
+import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
+import { Responses } from "@/core/utils/Responses";
 
 const storeItemManager = new StoreItemManager();
 const donorManager = new DonorManager();
 const fileManager = new FileManager();
-const savePath = "./public/documents/";
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
+const fileService = Services.getInstance().get<FileService>("FileService");
+const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 
 const putFormSchema = yup.object().shape(
     {
-        cost: yup.number().required().integer().positive().nonNullable(),
+        cost: yup.number().required().positive().nonNullable(),
         description: yup.string().lowercase().trim().required().nonNullable().min(1).max(200),
         name: yup.string().lowercase().trim().required().nonNullable().min(1).max(100),
-        imageFile: yup.mixed().required() 
-        .test('fileSize', 'The file is too large', (value) => {
-          if (value && (value as File).size ) 
-            return (value as File).size <= 50 * 1024 * 1024;
-          
-          return false;
-        })
-        .test('fileType', 'Unsupported file type', (value) => {
-          if (value && (value as File).type) 
-            return ['image/jpeg', 'image/png'].includes((value as File).type);
-          
-          return false;
-        })
+        imageFile: fileService.filesSchema,
     }
 );
 const putFormValidator = new FormValidator(putFormSchema);
 
 export async function PUT( request:NextRequest )
 {
-    if( ! await authorizationService.hasRole(UserRoleTypes.Admin) )
-        return NextResponse.json({error:"Not authorized to do this operation."},{status:401,statusText:"Unauthorized."})
+    const user = await userProvider.getUser();
+    if( ! user || user.type != UserRoleTypes.Admin )
+        return Responses.createUnauthorizedResponse();
 
     const bodyData = await request.formData();
     const validatorResult = await putFormValidator.validate( Object.fromEntries( bodyData.entries() ) );
 
     if(!validatorResult.isOK)
-        return NextResponse.json({errors:validatorResult.errors},{status:422,statusText:"Form fields error."});
+        return Responses.createValidationErrorResponse(validatorResult.errors);
 
     const formData = validatorResult.value!
-    const uploadedFile = formData.imageFile as File;
-    const fileToCreate = new ModelFile();
-    fileToCreate.original_name = uploadedFile.name;
-    fileToCreate.file_path = savePath;
-    fileToCreate.file_suffix = uploadedFile.type;
-    fileToCreate.file_type = FileTypes.Image;
-    fileToCreate.timestamp = new Date();
-    fileToCreate.campaign_id = null;
-    fileToCreate.user_id = null;
-    const fileResult = await fileManager.createWithValidation(fileToCreate);
-    
+    const uploadedFile : File = formData.imageFile as File;
+    const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,user.id!);
     if(!fileResult.isOK)
-        return NextResponse.json({errors:fileResult.errors},{status:422,statusText:"Form fields error."});
+        return Responses.createValidationErrorResponse(fileResult.errors);
 
-    await saveFile(fileResult.value!,await uploadedFile.arrayBuffer());
+    if (!await fileService.save(fileResult.value!,uploadedFile))
+    {
+        await fileManager.delete(fileResult.value!);
+        return Responses.createValidationErrorResponse(fileResult.errors);
+    }
 
-    const stoItemToCreate = new StoreItem();
-    stoItemToCreate.name = formData.name;
-    stoItemToCreate.description = formData.description;
-    stoItemToCreate.cost = formData.cost;
-    stoItemToCreate.image_id = fileResult.value!.id;
-    const createdStoreItem = await storeItemManager.create(stoItemToCreate);
+    const createdStoreItem = await storeItemManager.create(formData.name,formData.description,formData.cost,fileResult.value!.id!);
 
-    return NextResponse.json({item:createdStoreItem},{status:200,statusText:"Success."})
+    return Responses.createSuccessResponse(createdStoreItem);
 }
-
-async function saveFile(file:ModelFile,fileData: ArrayBuffer)
-{
-    const arrayBuffer = fileData
-    const buffer = new Uint8Array(arrayBuffer);
-
-    await fs.writeFile(`${savePath}${file.id}`, buffer);
-}
-
 
 
 
@@ -99,22 +72,21 @@ const deleteFormValidator = new FormValidator(deleteFormSchema);
 
 export async function DELETE( request:NextRequest )
 {
-    if( ! await authorizationService.hasRole(UserRoleTypes.Admin) )
-        return NextResponse.json({error:"Not authorized to do this operation."},{status:401,statusText:"Unauthorized."})
+    if( ! await authorizationService.hasRoles(UserRoleTypes.Admin) )
+        return Responses.createUnauthorizedResponse();
 
     const { searchParams } = request.nextUrl;
     const validatorResult = await deleteFormValidator.validate( Object.fromEntries(searchParams.entries()) );
 
     if(!validatorResult.isOK)
-        return NextResponse.json({errors:validatorResult.errors},{status:422,statusText:"Form fields error."});
+        return Responses.createValidationErrorResponse(validatorResult.errors);
     
     const formData = validatorResult.value!;
     
-    if ( await storeItemManager.deleteById(formData.store_item_id) )
-        return NextResponse.json({},{status:200,statusText:"Success"});
+    if ( !await storeItemManager.deleteById(formData.store_item_id) )
+        return Responses.createNotFoundResponse("No item was found with the provided id.");
     else
-        return NextResponse.json({errors:"No item was found with the provided id."},{status:404,statusText:"Item not found."});
-
+        return Responses.createSuccessResponse();
 }
 
 
@@ -135,13 +107,15 @@ export async function GET( request:NextRequest )
     const validatorResult = await searchFormValidator.validate( Object.fromEntries(searchParams.entries()) );
 
     if(!validatorResult.isOK)
-        return NextResponse.json({errors:validatorResult.errors},{status:422,statusText:"Form fields error."});
+        return Responses.createValidationErrorResponse(validatorResult.errors);
 
     const formData = validatorResult.value!;
     const result = await storeItemManager.search(formData.query,formData.page,formData.pageSize);
 
     if(result.isOK)
-        return NextResponse.json({items:result.value},{status:200,statusText:"Success"});
+        return Responses.createSuccessResponse(result.value);
+    else
+        return Responses.createNotFoundResponse("No item where found with the provided search.");
 }
 
 
@@ -157,18 +131,81 @@ const byFormValidator = new FormValidator(byFormSchema);
 
 export async function POST( request:NextRequest )
 {
-    if( ! await authorizationService.hasRole(UserRoleTypes.Donor) )
-        return NextResponse.json({error:"Not authorized to do this operation."},{status:401,statusText:"Unauthorized."})
+    if( ! await authorizationService.hasRoles(UserRoleTypes.Donor) )
+        return Responses.createUnauthorizedResponse();
 
     const bodyData = await request.formData();
     const validationResult = await byFormValidator.validate( Object.fromEntries( bodyData.entries() ) );
 
     if(!validationResult.isOK)
-        return NextResponse.json({errors:validationResult.errors},{status:422,statusText:"Form fields error."});
+        return Responses.createValidationErrorResponse(validationResult.errors);
 
     const formData = validationResult.value!;
     const result = await donorManager.byStoreItem(formData.donor_id,formData.store_item_id,);
 
     if(result.isOK)
-        return NextResponse.json({items:result.value},{status:200,statusText:"Success"});
+        return Responses.createSuccessResponse();
+    else
+        return Responses.createValidationErrorResponse(result.errors);
+}
+
+
+
+
+const updateFormSchema = yup.object().shape(
+    {
+        id: yup.number().required().integer().positive().nonNullable(),
+        cost: yup.number().integer().positive().nonNullable(),
+        description: yup.string().lowercase().trim().nonNullable().min(1).max(200),
+        name: yup.string().lowercase().trim().nonNullable().min(1).max(100),
+        imageFile: fileService.filesSchema
+    }
+);
+const updateFormValidator = new FormValidator(updateFormSchema);
+
+export async function PATCH( request:NextRequest )
+{
+    const user = await userProvider.getUser();
+    if( ! user || user.type != UserRoleTypes.Admin )
+        return Responses.createUnauthorizedResponse();
+
+    const { searchParams } = request.nextUrl;
+    const validatorResult = await updateFormValidator.validate( Object.fromEntries(searchParams.entries()) );
+
+    if(!validatorResult.isOK)
+        return Responses.createValidationErrorResponse(validatorResult.errors);
+    
+    const formData = validatorResult.value!;
+    const storeItem = await storeItemManager.getById(formData.id);
+    if(storeItem == null)
+        return Responses.createValidationErrorResponse(["Id not fount."],"Badge not found.");
+
+    const updatedFields = [];
+    for (const key in formData) 
+    {
+        if (key == "imageFile" ) 
+        {   
+            const oldFile = await fileManager.getById(storeItem.image_id!) as ModelFile;
+            const uploadedFile = formData.imageFile as File;
+            const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,user.id!);
+            if(!fileResult.isOK)
+                return Responses.createValidationErrorResponse(fileResult.errors);
+            fileService.update(oldFile,fileResult.value!,uploadedFile)
+        }
+        else
+        {
+            storeItem[key] = formData[key as keyof typeof formData];
+            updatedFields.push(key);
+        }
+    }
+
+    if(updatedFields.length == 0)
+        return Responses.createValidationErrorResponse(["Id can not be updated.","No other fields to update."],"No fields for updated.")
+
+    const updated = await storeItemManager.updateField(storeItem,updatedFields);
+
+    if(updated)
+        return Responses.createSuccessResponse();
+    else
+        return Responses.createServerErrorResponse();
 }
