@@ -1,6 +1,7 @@
 import { FileManager } from "@/core/managers/FileManager";
 import { FormValidator } from "@/core/utils/FormValidator";
 import { Responses } from "@/core/utils/Responses";
+import { YupUtils } from "@/core/utils/YupUtils";
 import { FileTypes } from "@/models/types/FileTypes";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { FileService } from "@/services/FIleService";
@@ -89,7 +90,7 @@ export async function DELETE( request : NextRequest )
 
 const getFormSchema = yup.object().shape(
     {
-        id: yup.number().required().nonNullable().positive().integer(),
+        id: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer(),
     }
 );
 const getFormValidator = new FormValidator(getFormSchema);
