@@ -16,15 +16,15 @@ export class EntityManager<Entity extends IEntity> {
         return this.repository.getByPrimaryKey([new PrimaryKeyPart("id", id)], includeFunction);
     }
 
-    async getAll(includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity[] | null> {
+    async getAll(includeFunction: (entity: Entity) => IncludeNavigation[] = ()=>[], orderBy: any[] = [], limit: number = 0, offset: number = 0): Promise<Entity[] | null> {
         return this.repository.getAll(includeFunction, orderBy, limit, offset);
     }
 
-    async getByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity[]> {
+    async getByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[] = ()=>[], orderBy: any[] = [], limit: number = 0, offset: number = 0): Promise<Entity[]> {
         return this.repository.getByCondition(constrains, includeFunction, orderBy, limit, offset);
     }
 
-    async getFirstByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity | null> {
+    async getFirstByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[] = ()=>[], orderBy: any[] = [], limit: number = 0, offset: number = 0): Promise<Entity | null> {
         return this.repository.getFirstByCondition(constrains, includeFunction, orderBy, limit, offset);
     }
 
@@ -32,7 +32,7 @@ export class EntityManager<Entity extends IEntity> {
         return await this.getById(id) !== null;
     }
 
-    async create(entity: Entity): Promise<Entity> {
+    async add(entity: Entity): Promise<Entity> {
         return this.repository.create(entity);
     }
 
@@ -45,30 +45,9 @@ export class EntityManager<Entity extends IEntity> {
         return entity ? this.repository.update(entity) : false;
     }
 
-    async updateField(entity: Entity, fields_to_update: { [key: string]: unknown }): Promise<boolean> 
+    async updateField(entity: Entity, fields_to_update:string[]): Promise<boolean> 
     {
-        let updated = false;
-        for (const field in fields_to_update) {
-            if (field in entity) {
-                (entity as any)[field] = fields_to_update[field];
-                updated = true;
-            }
-        }
-        return updated ? this.repository.updateFields(entity,) : false;
-    }
-
-    async updateFieldById(id: number, fields_to_update: { [key: string]: unknown }): Promise<boolean> {
-        const entity = await this.getById(id);
-        if (!entity) return false;
-
-        let updated = false;
-        for (const field in fields_to_update) {
-            if (field in entity) {
-                (entity as any)[field] = fields_to_update[field];
-                updated = true;
-            }
-        }
-        return updated ? this.repository.update(entity) : false;
+        return  this.repository.updateFields(entity, ...fields_to_update ) ;
     }
 
     async delete(entity: Entity): Promise<boolean> {
