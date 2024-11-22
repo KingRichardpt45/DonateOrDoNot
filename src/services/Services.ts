@@ -1,4 +1,4 @@
-import "server only"
+import "server-only"
 
 import {DBConnectionService} from "@/services/DBConnectionService";
 import {SessionService} from "@/services/session/SessionService";

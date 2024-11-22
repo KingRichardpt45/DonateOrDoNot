@@ -64,11 +64,13 @@ export class FormValidator<T extends AnyObject>
             errorText = error.slice( index + 1 );
             formFieldErrors.push(errorText);
             
-            if( (lastField !== field && lastField != null) || ( count == validationErrors.length-1  && lastField !== field) )
+            if( lastField !== field )
             {
                 formErrors.push( new FormError(field,formFieldErrors) );
                 formFieldErrors = [];
             }
+
+            lastField = field;
             count++;
         }
 

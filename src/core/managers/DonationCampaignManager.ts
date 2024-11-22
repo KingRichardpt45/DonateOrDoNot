@@ -63,7 +63,7 @@ export class DonationCampaignManager extends EntityManager<Campaign> {
             }
         }
 
-        const createdCampaign = errors.length == 0 ? await this.create(campaign) : null;
+        const createdCampaign = errors.length == 0 ? await this.add(campaign) : null;
         return new OperationResult(createdCampaign, errors);
     }
 

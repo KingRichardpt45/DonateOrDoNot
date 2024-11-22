@@ -23,23 +23,16 @@ export class DonationManager extends EntityManager<Donation>
         this.donorRepo = new RepositoryAsync(Donor);
     }
 
-    async createWithValidation(donation: Donation): Promise<OperationResult<Donation | null, FormError>> 
+    async create(campaignId:number, donorId:number, comment:string, value:number, isNameHidden:boolean): Promise<OperationResult<Donation | null, FormError>> 
     {
+        const donation = new Donation();
+        donation.campaign_id = campaignId;
+        donation.donor_id = donorId;
+        donation.comment = comment;
+        donation.value = value;
+        donation.is_name_hidden = isNameHidden;
+
         const errors: FormError[] = [];
-
-        if (!donation.value) {
-            errors.push(new FormError("value", ["Value is required"]));
-        } else if (donation.value < 0) {
-            errors.push(new FormError("value", ["Value must be greater than 0"]));
-        }
-        if (!donation.donor_id) 
-            errors.push(new FormError("donor_id", ["Donor is required"]));
-
-        if (!donation.campaign_id) 
-            errors.push(new FormError("campaign_id", ["Campaign is required"]));
-        
-        if ( donation.comment!.length > 200 ) 
-            errors.push(new FormError("comment", ["Maxim number of characters is 200."]));
 
         if (donation.donor_id) {
             const donorManager = new EntityManager(Donor);
@@ -60,7 +53,7 @@ export class DonationManager extends EntityManager<Donation>
         if(errors.length != 0 )
             return new OperationResult(null, errors);
 
-        const createdDonation = await this.create(donation);
+        const createdDonation = await this.add(donation);
         this.updateTotalDonatedValue(createdDonation.donor_id!,createdDonation.campaign_id!,createdDonation.value!);
         this.updateDonorTotalDonatedValue(createdDonation.donor_id!,createdDonation.value!);
 

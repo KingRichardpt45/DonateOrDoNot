@@ -1,4 +1,4 @@
-import "server only";
+import "server-only";
 
 import * as yup from 'yup';
 import fs from "node:fs/promises";
