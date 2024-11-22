@@ -13,6 +13,7 @@ import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { FileService } from "@/services/FIleService";
 import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
 import { Responses } from "@/core/utils/Responses";
+import { YupUtils } from "@/core/utils/YupUtils";
 
 const storeItemManager = new StoreItemManager();
 const donorManager = new DonorManager();
@@ -95,8 +96,8 @@ export async function DELETE( request:NextRequest )
 const searchFormSchema = yup.object().shape(
     {
         query: yup.string().lowercase().trim().required().nonNullable().min(1),
-        page: yup.number().required().integer().positive().nonNullable(),
-        pageSize: yup.number().required().integer().positive().nonNullable(),
+        page: yup.number().transform(YupUtils.convertToNumber).required().integer().positive().nonNullable(),
+        pageSize: yup.number().transform(YupUtils.convertToNumber).required().integer().positive().nonNullable(),
     }
 );
 const searchFormValidator = new FormValidator(searchFormSchema);
