@@ -25,8 +25,8 @@ const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const putFormSchema = yup.object().shape(
     {
         cost: yup.number().required().positive().nonNullable(),
-        description: yup.string().lowercase().trim().required().nonNullable().min(1).max(200),
-        name: yup.string().lowercase().trim().required().nonNullable().min(1).max(100),
+        description: yup.string().trim().required().nonNullable().min(1).max(200),
+        name: yup.string().trim().required().nonNullable().min(1).max(100),
         imageFile: fileService.filesSchema,
     }
 );
@@ -95,7 +95,7 @@ export async function DELETE( request:NextRequest )
 
 const searchFormSchema = yup.object().shape(
     {
-        query: yup.string().lowercase().trim().required().nonNullable().min(1),
+        query: yup.string().trim().required().nonNullable().min(1),
         page: yup.number().transform(YupUtils.convertToNumber).required().integer().positive().nonNullable(),
         pageSize: yup.number().transform(YupUtils.convertToNumber).required().integer().positive().nonNullable(),
     }
@@ -157,8 +157,8 @@ const updateFormSchema = yup.object().shape(
     {
         id: yup.number().required().integer().positive().nonNullable(),
         cost: yup.number().integer().positive().nonNullable(),
-        description: yup.string().lowercase().trim().nonNullable().min(1).max(200),
-        name: yup.string().lowercase().trim().nonNullable().min(1).max(100),
+        description: yup.string().trim().nonNullable().min(1).max(200),
+        name: yup.string().trim().nonNullable().min(1).max(100),
         imageFile: fileService.filesSchema
     }
 );
@@ -170,8 +170,8 @@ export async function PATCH( request:NextRequest )
     if( ! user || user.type != UserRoleTypes.Admin )
         return Responses.createUnauthorizedResponse();
 
-    const { searchParams } = request.nextUrl;
-    const validatorResult = await updateFormValidator.validate( Object.fromEntries(searchParams.entries()) );
+    const formBody = await request.formData();
+    const validatorResult = await updateFormValidator.validate( Object.fromEntries(formBody.entries()) );
 
     if(!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
@@ -179,7 +179,7 @@ export async function PATCH( request:NextRequest )
     const formData = validatorResult.value!;
     const storeItem = await storeItemManager.getById(formData.id);
     if(storeItem == null)
-        return Responses.createValidationErrorResponse(["Id not fount."],"Badge not found.");
+        return Responses.createNotFoundResponse();
 
     const updatedFields = [];
     for (const key in formData) 

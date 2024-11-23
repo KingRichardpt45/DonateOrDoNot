@@ -1,8 +1,8 @@
 import {EntityManager} from "@/core/managers/EntityManager";
-import {OperationResult} from "@/core/managers/OperationResult";
-import {FormError} from "@/core/managers/FormError";
+import {OperationResult} from "@/core/utils/operation_result/OperationResult";
+import {FormError} from "@/core/utils/operation_result/FormError";
 import {Donor} from "@/models/Donor";
-import {SimpleError} from "@/core/managers/SimpleError";
+import {SimpleError} from "@/core/utils/operation_result/SimpleError";
 import { RepositoryAsync } from "../repository/RepositoryAsync";
 import { StoreItem } from "@/models/StoreItem";
 import { PrimaryKeyPart } from "../repository/PrimaryKeyPart";

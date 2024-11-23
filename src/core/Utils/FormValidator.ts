@@ -1,6 +1,6 @@
 import {AnyObject, ObjectSchema , ValidationError}  from 'yup';
-import { OperationResult } from '../managers/OperationResult';
-import { FormError } from '../managers/FormError';
+import { OperationResult } from './operation_result/OperationResult';
+import { FormError } from './operation_result/FormError';
 
 /**
  * Class that validates an object against a Yup schema and processes validation errors.

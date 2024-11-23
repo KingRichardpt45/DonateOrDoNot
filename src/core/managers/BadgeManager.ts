@@ -3,8 +3,8 @@ import { EntityManager } from "./EntityManager";
 import { BadgeTypes } from "@/models/types/BadgeTypes";
 import { SearchableEntity } from "./SerachableEntity";
 import { Constrain } from "../repository/Constrain";
-import { OperationResult } from "./OperationResult";
-import { SimpleError } from "./SimpleError";
+import { OperationResult } from "../utils/operation_result/OperationResult";
+import { SimpleError } from "../utils/operation_result/SimpleError";
 import { IncludeNavigation } from "../repository/IncludeNavigation";
 import { Operator } from "../repository/Operator";
 
@@ -41,7 +41,7 @@ export class BadgeManager extends EntityManager<Badge> implements SearchableEnti
 
         const inDescriptionResult = await this.repository.getByCondition(
             [new Constrain("description",Operator.LIKE,`%${query}%`),...constrains],
-            (storeItem)=>[new IncludeNavigation(storeItem.image,0)],[],pageSize,page*pageSize);
+            (badge)=>[new IncludeNavigation(badge.image,0)],[],pageSize,page*pageSize);
         
         inDescriptionResult.forEach( (value)=>inNamesResult.push(value) );
         

@@ -2,8 +2,8 @@ import { StoreItem } from "@/models/StoreItem";
 import { EntityManager } from "./EntityManager";
 import { SearchableEntity } from "./SerachableEntity";
 import { Constrain } from "../repository/Constrain";
-import { OperationResult } from "./OperationResult";
-import { SimpleError } from "./SimpleError";
+import { OperationResult } from "../utils/operation_result/OperationResult";
+import { SimpleError } from "../utils/operation_result/SimpleError";
 import { Operator } from "../repository/Operator";
 import { IncludeNavigation } from "../repository/IncludeNavigation";
 
@@ -34,7 +34,7 @@ export class StoreItemManager extends EntityManager<StoreItem> implements Search
     async searchWithConstrains(query: string, constrains: Constrain[], page: number, pageSize: number): Promise<OperationResult<StoreItem[], SimpleError>> 
     {
         const inNamesResult = await this.repository.getByCondition(
-            [new Constrain("description",Operator.LIKE,`%${query}%`),...constrains],
+            [new Constrain("name",Operator.LIKE,`%${query}%`),...constrains],
             (storeItem)=>[new IncludeNavigation(storeItem.image,0)],[],pageSize,page*pageSize);
 
         const inDescriptionResult = await this.repository.getByCondition(

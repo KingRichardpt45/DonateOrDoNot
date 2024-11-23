@@ -1,7 +1,7 @@
 import { Constrain } from "../repository/Constrain";
 import { IEntity } from "../repository/IEntity";
-import { OperationResult } from "./OperationResult";
-import { SimpleError } from "./SimpleError";
+import { OperationResult } from "../utils/operation_result/OperationResult";
+import { SimpleError } from "../utils/operation_result/SimpleError";
 
 /* Represents a generic interface for searchable entities.
 * The entity type must extend `IEntity`.

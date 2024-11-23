@@ -26,12 +26,17 @@ export class AuthorizationService implements IAuthorizationService {
         return await this.userProvider.getUser() != null;
     }
 
-    async hasRole(...roles: UserRoleTypes[]): Promise<boolean> {
+    async hasRoles(...roles: UserRoleTypes[]): Promise<boolean> {
         const user = await this.userProvider.getUser();
 
         if (!user)
             return false;
         else
             return roles.includes(user.type) ;
+    }
+
+    async hasRole( role: UserRoleTypes): Promise<boolean> 
+    {
+        return this.hasRoles(role);
     }
 }

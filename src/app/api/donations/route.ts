@@ -17,7 +17,7 @@ const putFormSchema = yup.object().shape(
     {
         campaign_id: yup.number().required().nonNullable().positive().integer(),
         donor_id: yup.number().required().nonNullable().positive().integer(),
-        comment: yup.string().required().nonNullable().lowercase().trim().min(1).max(2000),
+        comment: yup.string().required().nonNullable().trim().min(1).max(2000),
         value: yup.number().required().nonNullable().positive(),
         nameHidden: yup.boolean().required().nonNullable(),
     }

@@ -1,10 +1,10 @@
 import {EntityManager} from "@/core/managers/EntityManager";
 import {Campaign} from "@/models/Campaign";
-import {FormError} from "@/core/managers/FormError";
-import {OperationResult} from "@/core/managers/OperationResult";
+import {FormError} from "@/core/utils/operation_result/FormError";
+import {OperationResult} from "@/core/utils/operation_result/OperationResult";
 import {Donation} from "@/models/Donation";
 import {Donor} from "@/models/Donor";
-import { SimpleError } from "./SimpleError";
+import { SimpleError } from "../utils/operation_result/SimpleError";
 import { Constrain } from "../repository/Constrain";
 import { Operator } from "../repository/Operator";
 import { TotalDonatedValue } from "@/models/TotalDonatedValue";

@@ -1,10 +1,10 @@
 import {User} from "@/models/User";
 import {EntityManager} from "@/core/managers/EntityManager";
-import {OperationResult} from "@/core/managers/OperationResult";
-import {FormError} from "@/core/managers/FormError";
+import {OperationResult} from "@/core/utils/operation_result/OperationResult";
+import {FormError} from "@/core/utils/operation_result/FormError";
 import {UserManager} from "@/core/managers/UserManager";
 import {UserRoleTypes} from "@/models/types/UserRoleTypes";
-import {SimpleError} from "@/core/managers/SimpleError";
+import {SimpleError} from "@/core/utils/operation_result/SimpleError";
 import {CampaignManager} from "@/models/CampaignManager";
 
 export class CampaignManagerManager extends EntityManager<CampaignManager> {

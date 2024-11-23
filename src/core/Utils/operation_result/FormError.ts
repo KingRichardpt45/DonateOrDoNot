@@ -1,4 +1,4 @@
-import {IOperationError} from "@/core/managers/IOperationError";
+import {IOperationError} from "@/core/utils/operation_result/IOperationError";
 
 export class FormError implements IOperationError {
     readonly field: string;

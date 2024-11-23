@@ -1,4 +1,4 @@
-import {FormError} from "@/core/managers/FormError";
+import {FormError} from "@/core/utils/operation_result/FormError";
 import {StringUtils} from "./StringUtils";
 
 /**

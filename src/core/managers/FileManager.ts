@@ -1,7 +1,7 @@
 import {File} from "@/models/File";
 import {EntityManager} from "./EntityManager";
-import {OperationResult} from "./OperationResult";
-import {FormError} from "./FormError";
+import {OperationResult} from "../utils/operation_result/OperationResult";
+import {FormError} from "../utils/operation_result/FormError";
 import { FileTypes } from "@/models/types/FileTypes";
 
 export class FileManager extends EntityManager<File>
