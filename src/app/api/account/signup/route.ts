@@ -1,8 +1,6 @@
 import {DonorManager} from "@/core/managers/DonorManager";
-import {FormError} from "@/core/managers/FormError";
+import {FormError} from "@/core/utils/operation_result/FormError";
 import {UserManager} from "@/core/managers/UserManager";
-import {EnumUtils} from "@/core/utils/EnumUtils";
-import {FormObjectValidator} from "@/core/utils/FormObjectValidator";
 import {Address} from "@/models/Address";
 import {CampaignManager} from "@/models/CampaignManager";
 import {Donor} from "@/models/Donor";
@@ -12,19 +10,35 @@ import {User} from "@/models/User";
 import {Services} from "@/services/Services";
 import {SessionService} from "@/services/session/SessionService";
 import {NextRequest, NextResponse} from "next/server";
-import {File as ModelFile} from "@/models/File"
 import {FileTypes} from "@/models/types/FileTypes";
-import fs from "node:fs/promises";
 import {FileManager} from "@/core/managers/FileManager";
 import {CampaignManagerManager} from "@/core/managers/CampaignManagerManager";
+import * as yup from 'yup';
+import { FormValidator } from "@/core/utils/FormValidator";
+import { Responses } from "@/core/utils/Responses";
+import { FileService } from "@/services/FIleService";
+
+interface PostUserObject {
+    name: string;
+    email: string;
+    password: string;
+    postalCode: string;
+    city: string;
+    address: string;
+    addressSpecification: string;
+    type: number;
+}
+
+interface PostManagerObject 
+{
+    contactEmail: string;
+    description: string;
+    managerType: number;
+    identificationFile: any;
+}
 
 
-const savePath = "./public/documents/";
-
-const validatorUserForm = new FormObjectValidator("name", "email", "password", "passwordConfirm", "postalCode", "city", "address", "addressSpecification", "type");
-
-const validatorCampaignManagerForm = new FormObjectValidator("contactEmail", "description", "managerType", "identificationFile");
-
+const fileService = Services.getInstance().get<FileService>("FileService");
 const userManager = new UserManager();
 const donorManager = new DonorManager();
 const fileManager = new FileManager();
@@ -32,74 +46,97 @@ const campaignManagerManager = new CampaignManagerManager();
 const sessionService = Services.getInstance().get<SessionService>("SessionService")
 const redirectOnSuccessSignUp = "/signin"
 
-export async function POST(request: NextRequest) {
+const postUserFormSchema = yup.object().shape(
+    {
+        name: yup.string().trim().required().nonNullable().min(1),
+        email: yup.string().trim().required().nonNullable().min(1),
+        password: yup.string().trim().required().nonNullable().min(1),
+        passwordConfirm: yup.string().trim().required().nonNullable().min(1),
+        postalCode: yup.string().trim().required().nonNullable().min(1),
+        city: yup.string().trim().required().nonNullable().min(1),
+        address: yup.string().trim().required().nonNullable().min(1),
+        addressSpecification: yup.string().trim().required().nonNullable().min(1),
+        type: yup.number().required().nonNullable().min(0).max(1),
+    }
+);
+const postUserFormValidator = new FormValidator(postUserFormSchema);
+
+
+const postManagerFormSchema = yup.object().shape(
+    {
+        contactEmail: yup.string().trim().required().nonNullable().min(1),
+        description: yup.string().trim().required().nonNullable().min(1).max(200),
+        managerType: yup.number().required().nonNullable().min(0).max( Object.keys(CampaignManagerTypes).length/2 -1 ),
+        identificationFile: fileService.filesSchema
+    }
+);
+const postManagerFormValidator = new FormValidator(postManagerFormSchema);
+
+
+
+export async function POST(request: NextRequest) 
+{
     if (await sessionService.verify()) await sessionService.delete();
 
-    const formData = await request.formData();
-    const errors = validatorUserForm.validateFormParams(formData);
+    const formBody = await request.formData();
+    const validatorResult = await postUserFormValidator.validate(formBody);
 
-    if (errors.length > 0) return NextResponse.json({errors: errors}, {
-        status: 422,
-        statusText: "Invalid form fields."
-    });
+    if (!validatorResult.isOK) 
+        return Responses.createValidationErrorResponse(validatorResult.errors);
 
-    const typeValue = EnumUtils.getEnumValue(UserRoleTypes, formData.get("type")!.toString());
-    if (typeValue == null) return NextResponse.json({errors: [{errorMessage: "Invalid type for user."}]}, {
-        status: 400,
-        statusText: "Invalid type for user."
-    });
+    const formData = validatorResult.value!;
+    if (formData.password !== formData.passwordConfirm ) 
+        return Responses.createValidationErrorResponse([new FormError("passwordConfirm", ["Password Confirmation doesn't match with password."])]);
 
-    if (formData.get("password")!.toString() !== formData.get("passwordConfirm")!.toString()) return NextResponse.json({errors: [new FormError("passwordConfirm", ["Password Confirmation doesn't match with password."])]}, {
-        status: 422,
-        statusText: "Invalid form data."
-    });
+    const user = setUserInfo(formData as PostUserObject);
+    const userResult = await userManager.signUp(user);
 
-    const user = setUserInfo(formData, typeValue as number);
-    const result = await userManager.signUp(user);
+    if (!userResult.isOK) 
+        return Responses.createValidationErrorResponse(userResult.errors);
 
-    if (!result.isOK) return NextResponse.json({errors: result.errors}, {
-        status: 422,
-        statusText: "Invalid form data."
-    });
-
-    if (typeValue == UserRoleTypes.Donor) {
+    if (formData.type == UserRoleTypes.Donor) 
+    {
         const donor = setDonorInfo(user);
         await donorManager.signUp(donor); //doesn't have restrictions
-    } else {
-        const errors = validatorCampaignManagerForm.validateFormParams(formData);
-        if (errors.length > 0) {
+    } 
+    else 
+    {
+        const managerFormValidatorResult = await postManagerFormValidator.validate(formData);
+        if (!managerFormValidatorResult.isOK) 
+            return Responses.createValidationErrorResponse(managerFormValidatorResult.errors);
+
+        const managerFormData = managerFormValidatorResult.value!;
+        const uploadedFile = managerFormData.identificationFile as File;
+        const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Identification,user.id!);
+        if (!fileResult.isOK) 
+        {
             await userManager.delete(user);
-            return NextResponse.json({errors: errors}, {status: 422, statusText: "Invalid form fields."});
+            return Responses.createValidationErrorResponse(fileResult.errors);
+        }
+        
+        if( ! await fileService.save(fileResult.value!,uploadedFile) )
+        {
+            await userManager.delete(user);
+            return Responses.createServerErrorResponse();
         }
 
-        const managerTypeValue = EnumUtils.getEnumValue(CampaignManagerTypes, formData.get("managerType")!.toString());
-        if (managerTypeValue == null) {
-            await userManager.delete(user);
-            return NextResponse.json({errors: [{errorMessage: "Invalid type for manager."}]}, {
-                status: 400,
-                statusText: "Invalid type for manager."
-            });
-        }
-
-        const file = createFile(formData, user);
-        const fileResult = await fileManager.createWithValidation(file);
-        if (fileResult.isOK) await saveFile(fileResult.value!, await (formData.get("identificationFile") as File).arrayBuffer()); else {
-            await userManager.delete(user);
-            return NextResponse.json({errors: fileResult.errors}, {status: 422, statusText: "Invalid file."});
-        }
-
-        const campaignManager = setCampaignInfo(formData, user, fileResult.value!, typeValue);
+        const campaignManager = setCampaignManagerInfo(managerFormData);
         const managerResult = await campaignManagerManager.signUp(campaignManager);
 
-        if (!managerResult.isOK) {
+        if (!managerResult.isOK) 
+        {
             await fileManager.delete(fileResult.value!);
             await userManager.delete(user);
-            return NextResponse.json({errors: managerResult.errors}, {status: 422, statusText: "Invalid form fields."})
+            return Responses.createValidationErrorResponse(managerResult.errors);
         }
     }
 
-    return NextResponse.redirect(new URL(redirectOnSuccessSignUp, request.url));
+    return Responses.createRedirectResponse(redirectOnSuccessSignUp,request);
 }
+
+
+
+
 
 function mergeMiddleNames(names: string[]): string {
     if (names.length > 3) {
@@ -112,16 +149,17 @@ function mergeMiddleNames(names: string[]): string {
     } else return names[1];
 }
 
-function setUserInfo(formData: FormData, type: number): User {
+function setUserInfo(formData:PostUserObject): User 
+{
     const user = new User();
 
     user.address.value = new Address();
-    user.address.value.address = formData.get("address")!.toString().trim();
-    user.address.value.specification = formData.get("addressSpecification")!.toString().trim();
-    user.address.value.city = formData.get("city")!.toString().trim();
-    user.address.value.postal_code = formData.get("postalCode")!.toString().trim();
+    user.address.value.address = formData.address;
+    user.address.value.specification = formData.addressSpecification
+    user.address.value.city = formData.city
+    user.address.value.postal_code = formData.postalCode;
 
-    const names = formData.get("name")!.toString().split(" ");
+    const names = formData.name.split(" ");
 
     user.first_name = names[0].trim();
     if (names.length > 1) {
@@ -129,9 +167,9 @@ function setUserInfo(formData: FormData, type: number): User {
         user.last_name = names[names.length - 1].trim();
     }
 
-    user.email = (formData.get("email") as string).trim();
-    user.type = type;
-    user.password = (formData.get("password") as string).trim();
+    user.email = formData.email;
+    user.type = formData.type;
+    user.password = formData.password;
 
     return user;
 }
@@ -150,41 +188,14 @@ function setDonorInfo(user: User): Donor {
     return donor;
 }
 
-function setCampaignInfo(formData: FormData, user: User, file: ModelFile, type: CampaignManagerTypes): CampaignManager {
+function setCampaignManagerInfo(formData:PostManagerObject): CampaignManager 
+{
     const campaignManager = new CampaignManager();
 
-    campaignManager.contact_email = formData.get("contactEmail")!.toString().trim();
-    campaignManager.description = formData.get("description")!.toString().trim();
+    campaignManager.contact_email = formData.contactEmail;
+    campaignManager.description = formData.description;
     campaignManager.verified = false;
-    campaignManager.type = type;
+    campaignManager.type = formData.managerType;
 
     return campaignManager;
-}
-
-function createFile(formData: FormData, user: User): ModelFile {
-    const file = new ModelFile();
-    const uploadedFile = formData.get("identificationFile")!.valueOf() as File;
-
-    file.original_name = uploadedFile.name;
-    file.file_path = savePath;
-    file.file_suffix = uploadedFile.type;
-    file.file_type = FileTypes.Identification;
-    file.size = uploadedFile.size;
-    file.timestamp = new Date();
-    file.user_id = user.id;
-
-    return file;
-}
-
-async function saveFile(file: ModelFile, fileData: ArrayBuffer) {
-    const arrayBuffer = fileData;
-    const buffer = new Uint8Array(arrayBuffer);
-
-    try {
-        await fs.access(savePath);
-    } catch {
-        await fs.mkdir(savePath, { recursive: true });
-    }
-
-    await fs.writeFile(`${savePath}${file.id}-${file.original_name}`, buffer);
 }
