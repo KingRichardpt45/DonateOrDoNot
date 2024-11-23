@@ -6,6 +6,11 @@ import { NextRequest, NextResponse } from "next/server";
 export class Responses
 {
     // Method to create an Unauthorized response
+    static createBadRequestResponse(message: string = "The request is invalid.", statusText:string = "Unprocessable"): NextResponse {
+        return NextResponse.json({ error: message }, { status: 400, statusText });
+    }
+
+    // Method to create an Unauthorized response
     static createUnauthorizedResponse(message: string = "Not authorized to do this operation.", statusText:string = "Unauthorized"): NextResponse {
         return NextResponse.json({ error: message }, { status: 401, statusText });
     }
