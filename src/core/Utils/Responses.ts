@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { File } from "@/models/File";
 
 /**
  *  This class contains methods to create responses.
@@ -27,7 +28,7 @@ export class Responses
 
     // Method to create a Success response
     static createSuccessResponse(data?: any, statusText: string = "Success"): NextResponse {
-        return NextResponse.json(data ? data : {}, { status: 200, statusText });
+        return NextResponse.json(data != null ? {data:data} : {}, { status: 200, statusText });
     }
 
     // Method to create a Validation Error response
@@ -43,5 +44,16 @@ export class Responses
     // Method to create a Server Redirect response.
     static createRedirectResponse(redirectPath:string , request:NextRequest): NextResponse {
         return NextResponse.redirect(new URL(redirectPath, request.url));
+    }
+
+    // Method to create a stream response
+    static createResponseStream(stream: ReadableStream, fileModel: File): Response 
+    {
+        return new Response(stream, {
+            headers: {
+                "Content-Type": fileModel.file_suffix || "application/octet-stream",
+                "Content-Disposition": `attachment; filename="${fileModel.original_name}"`,
+            },
+        });
     }
 }

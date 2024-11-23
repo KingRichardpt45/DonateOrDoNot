@@ -1,7 +1,8 @@
 import "server-only";
 
 import * as yup from 'yup';
-import fs from "node:fs/promises";
+import fs, { FileReadResult } from "node:fs/promises";
+import { createReadStream } from "node:fs";
 import { File as ModelFile} from '@/models/File';
 import path from "node:path";
 
@@ -64,7 +65,7 @@ export class FileService
     {
         try {
             const buffer = new Uint8Array( await file.arrayBuffer() );
-            await fs.writeFile(`${this.savePath}${dbFile.id}`, buffer);
+            await fs.writeFile(`${this.savePath}/${dbFile.id}`, buffer);
             return true;
         }
         catch(error)
@@ -83,7 +84,7 @@ export class FileService
     async load(file:ModelFile) : Promise<File| null>
     {
         try {
-            const byteArray = await fs.readFile(`${this.savePath}${file.id}-${file.original_name}`);
+            const byteArray = await fs.readFile(`${this.savePath}/${file.id}`);
             const uint8Array = new Uint8Array(byteArray);
             return new File ( [uint8Array] ,file.original_name!, { type:file.file_suffix! } );
         } catch (error) {
@@ -91,6 +92,47 @@ export class FileService
             return null;
         }
     }
+
+    /**
+     * Create a readable stream for the file stored on disk.
+     * @param file - The model file containing the file's metadata.
+     * @returns {ReadableStream | null} - Returns a readable stream for the file, or null if the file does not exist.
+     */
+    async createStream(file: ModelFile): Promise<ReadableStream | null> 
+    {
+        try {
+            const fileHandle = await fs.open(`${this.savePath}/${file.id}`, "r");
+    
+            return new ReadableStream(
+                {
+                    async start(controller) {
+                        try {
+                            const buffer = new Uint8Array(64 * 1024); // Read in 64KB chunks
+                            let bytesRead: FileReadResult<Uint8Array>;
+                            do
+                            {
+                                bytesRead = await fileHandle.read(buffer, 0, buffer.length);
+                                controller.enqueue(buffer.subarray(0, bytesRead.bytesRead));
+                            }
+                            while(bytesRead.bytesRead > 0);
+
+                            controller.close(); 
+                            
+                        } catch (error) 
+                        {
+                            console.error(`Error while streaming file: ${error}`);
+                            controller.error(error); // Propagate error to the web stream
+                        } finally {
+                            await fileHandle.close();
+                        }
+                    },
+                }
+            );
+        } catch (error) {
+            console.error(`Failed to create stream for file: ${error}`);
+            return null;
+        }
+    } 
 
     /**
      * Delete a file from the disk.

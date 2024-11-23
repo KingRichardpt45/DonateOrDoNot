@@ -108,9 +108,12 @@ export async function GET( request : NextRequest )
     if(! resultFileModel )
         return Responses.createNotFoundResponse("No file where found with the provided id.");
 
-    const file = fileService.load(resultFileModel);
-    if(!file)
+    const stream = await fileService.createStream(resultFileModel);
+
+    if(!stream)
         return Responses.createServerErrorResponse();
     else
-        return Responses.createSuccessResponse(file);
+    {
+        return Responses.createResponseStream(stream,resultFileModel);
+    }
 }
