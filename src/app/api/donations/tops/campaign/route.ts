@@ -1,5 +1,4 @@
 import { DonationCampaignManager } from "@/core/managers/DonationCampaignManager";
-import { FormObjectValidator } from "@/core/utils/FormObjectValidator";
 import { FormValidator } from "@/core/utils/FormValidator";
 import { Responses } from "@/core/utils/Responses";
 import { YupUtils } from "@/core/utils/YupUtils";

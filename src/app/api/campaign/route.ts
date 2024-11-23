@@ -1,4 +1,3 @@
-import {FormObjectValidator} from "@/core/utils/FormObjectValidator";
 import {NextRequest, NextResponse} from "next/server";
 import {DonationCampaignManager} from "@/core/managers/DonationCampaignManager";
 import {Campaign} from "@/models/Campaign";

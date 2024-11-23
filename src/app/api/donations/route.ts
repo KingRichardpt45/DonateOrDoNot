@@ -3,8 +3,6 @@ import { Services } from "@/services/Services";
 import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
 import { NextRequest } from "next/server";
 import { DonationManager } from "@/core/managers/DonationManager";
-import { FormObjectValidator } from "@/core/utils/FormObjectValidator";
-import { Donation } from "@/models/Donation";
 import { FormValidator } from "@/core/utils/FormValidator";
 import * as yup from 'yup';
 import { Responses } from "@/core/utils/Responses";
