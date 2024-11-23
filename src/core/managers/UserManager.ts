@@ -7,9 +7,9 @@ import {IEncryption} from "@/core/utils/encryption/IEncryption";
 import {StringUtils} from "../utils/StringUtils";
 import {AccountStatus} from "@/models/types/AccountStatus";
 import {EntityManager} from "@/core/managers/EntityManager";
-import {OperationResult} from "@/core/managers/OperationResult";
-import {FormError} from "@/core/managers/FormError";
-import {SimpleError} from "@/core/managers/SimpleError";
+import {OperationResult} from "@/core/utils/operation_result/OperationResult";
+import {FormError} from "@/core/utils/operation_result/FormError";
+import {SimpleError} from "@/core/utils/operation_result/SimpleError";
 import {Operator} from "@/core/repository/Operator";
 
 export class UserManager extends EntityManager<User> {

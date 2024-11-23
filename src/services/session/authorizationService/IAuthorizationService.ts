@@ -14,6 +14,14 @@ export interface IAuthorizationService {
     hasSession(): Promise<boolean>
 
     /**
+     * Checks if the current user has the specified roles.
+     *
+     * @param role - The required user role.
+     * @returns True if the user has the specified role, false otherwise.
+     */
+    hasRoles(...roles: UserRoleTypes[]): Promise<boolean>
+
+    /**
      * Checks if the current user has the specified role.
      *
      * @param role - The required user role.

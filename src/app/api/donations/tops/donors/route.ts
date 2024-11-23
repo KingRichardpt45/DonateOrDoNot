@@ -1,41 +1,49 @@
 import { DonorManager } from "@/core/managers/DonorManager";
-import { EnumUtils } from "@/core/utils/EnumUtils";
-import { FormObjectValidator } from "@/core/utils/FormObjectValidator";
+import { FormError } from "@/core/utils/operation_result/FormError";
+import { FormValidator } from "@/core/utils/FormValidator";
+import { Responses } from "@/core/utils/Responses";
+import { YupUtils } from "@/core/utils/YupUtils";
 import { TopTypes } from "@/models/types/TopTypes";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import * as yup from 'yup';
 
-const queryValidator = new FormObjectValidator("type","page","pageSize")
 const donorManager = new DonorManager();
 
-export async function GET( request : NextRequest )
-{
-    const { searchParams } = request.nextUrl;
+const getFormSchema = yup.object().shape(
+    {
+        type: yup.number().transform(YupUtils.convertToNumber).required().integer().positive().nonNullable().min(0).max( Object.keys(TopTypes).length /2 - 1),
+        page: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer(),
+        pageSize: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer()
+    }
+);
+const getFormValidator = new FormValidator(getFormSchema);
 
-    const errors = queryValidator.validateSearchParams(searchParams);
-    if( errors.length > 0 )
-        return NextResponse.json({errors}, {status: 400, statusText: "Invalid form fields."});
+export async function GET( request : NextRequest )
+{   
+    const {searchParams} = await request.nextUrl;
+    const validatorResult = await getFormValidator.validate( Object.fromEntries( searchParams.entries() ) );
+    if(! validatorResult.isOK )
+        return Responses.createValidationErrorResponse(validatorResult.errors);
     
-    const page = Number(searchParams.get("page")!.valueOf());
-    const pageSize = Number(searchParams.get("pageSize")!.valueOf());
+    const formData = validatorResult.value!;
     let donors;
-    const typeValue = EnumUtils.getEnumValue(TopTypes, searchParams.get("type")!.valueOf() );
-    switch( typeValue )
+    switch( formData.type )
     {
         case TopTypes.FREQUENCY_OF_DONATIONS:
-            donors = await donorManager.getTopFrequencyOfDonationsDonors(page,pageSize)
+            donors = await donorManager.getTopFrequencyOfDonationsDonors(formData.page,formData.pageSize)
             break;
         case TopTypes.TOTAL_VALUE_DONATED:
-            donors = await donorManager.getTopTotalValueDonors(page,pageSize)
+            donors = await donorManager.getTopTotalValueDonors(formData.page,formData.pageSize)
             break;
         case TopTypes.TOTAL_VALUE_DONATED:
-            donors = await donorManager.getTopTotalValueDonors(page,pageSize)
+            donors = await donorManager.getTopTotalValueDonors(formData.page,formData.pageSize)
             break;
         default:
-            return NextResponse.json({},{status:400,statusText:"Invalid type of top."});
+            return Responses.createValidationErrorResponse([new FormError("type",["Invalid type of top."])],);
     }
 
     if(!donors.isOK)
-        NextResponse.json({ errors: ["No results found."]},{status:404,statusText:"No results."});
+        Responses.createNotFoundResponse();
 
-    return NextResponse.json({top:donors.value},{status:200,statusText:"Success."});
+    return Responses.createSuccessResponse();
 }
