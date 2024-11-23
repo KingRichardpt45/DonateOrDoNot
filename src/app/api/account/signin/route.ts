@@ -27,7 +27,7 @@ export async function POST(request: NextRequest)
         return Responses.createRedirectResponse(redirectOnSuccessLogin,request);
     
     const formBody = await request.formData();
-    const validatorResult = await postFormValidator.validate(formBody);
+    const validatorResult = await postFormValidator.validate( Object.fromEntries( formBody.entries() ) );
 
     if ( !validatorResult.isOK ) 
         return Responses.createValidationErrorResponse(validatorResult.errors);
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest)
     const result = await userManager.signIn(formData.email, formData.password);
 
     if (!result.isOK) 
-        return Responses.createUnauthorizedResponse();
+        return Responses.createValidationErrorResponse(result.errors);
 
     const newSession = await sessionService.create( result.value!.id! );
 
