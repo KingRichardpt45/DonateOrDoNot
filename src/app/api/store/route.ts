@@ -46,7 +46,7 @@ export async function PUT( request:NextRequest )
 
     const formData = validatorResult.value!
     const uploadedFile : File = formData.imageFile as File;
-    const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,user.id!);
+    const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,uploadedFile.size,user.id!);
     if(!fileResult.isOK)
         return Responses.createValidationErrorResponse(fileResult.errors);
 
@@ -188,7 +188,7 @@ export async function PATCH( request:NextRequest )
         {   
             const oldFile = await fileManager.getById(storeItem.image_id!) as ModelFile;
             const uploadedFile = formData.imageFile as File;
-            const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,user.id!);
+            const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,uploadedFile.size,user.id!);
             if(!fileResult.isOK)
                 return Responses.createValidationErrorResponse(fileResult.errors);
             fileService.update(oldFile,fileResult.value!,uploadedFile)

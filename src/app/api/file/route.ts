@@ -39,7 +39,7 @@ export async function PUT( request : NextRequest )
 
     const formData = validatorResult.value!;
     const uploadedFile = formData.imageFile as File;
-    const resultFile = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,formData.type,formData.user_id,formData.campaign_id);
+    const resultFile = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,formData.type,uploadedFile.size,formData.user_id,formData.campaign_id);
 
     if(!resultFile.isOK)
         return Responses.createValidationErrorResponse(resultFile.errors);

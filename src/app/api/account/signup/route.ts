@@ -17,6 +17,7 @@ import * as yup from 'yup';
 import { FormValidator } from "@/core/utils/FormValidator";
 import { Responses } from "@/core/utils/Responses";
 import { FileService } from "@/services/FIleService";
+import { EntityManager } from "@/core/managers/EntityManager";
 
 interface PostUserObject {
     name: string;
@@ -41,6 +42,7 @@ interface PostManagerObject
 const fileService = Services.getInstance().get<FileService>("FileService");
 const userManager = new UserManager();
 const donorManager = new DonorManager();
+const addressManager = new EntityManager(Address);
 const fileManager = new FileManager();
 const campaignManagerManager = new CampaignManagerManager();
 const sessionService = Services.getInstance().get<SessionService>("SessionService")
@@ -79,7 +81,8 @@ export async function POST(request: NextRequest)
     if (await sessionService.verify()) await sessionService.delete();
 
     const formBody = await request.formData();
-    const validatorResult = await postUserFormValidator.validate(formBody);
+    const objectFormBody = Object.fromEntries( formBody.entries() );
+    const validatorResult = await postUserFormValidator.validate( objectFormBody );
 
     if (!validatorResult.isOK) 
         return Responses.createValidationErrorResponse(validatorResult.errors);
@@ -101,21 +104,27 @@ export async function POST(request: NextRequest)
     } 
     else 
     {
-        const managerFormValidatorResult = await postManagerFormValidator.validate(formData);
+        const managerFormValidatorResult = await postManagerFormValidator.validate( objectFormBody );
         if (!managerFormValidatorResult.isOK) 
+        {
+            await addressManager.delete(user.address.value as Address);
+            await userManager.delete(user);
             return Responses.createValidationErrorResponse(managerFormValidatorResult.errors);
+        }
 
         const managerFormData = managerFormValidatorResult.value!;
         const uploadedFile = managerFormData.identificationFile as File;
-        const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Identification,user.id!);
+        const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Identification,uploadedFile.size,user.id!);
         if (!fileResult.isOK) 
         {
+            await addressManager.delete(user.address.value as Address);
             await userManager.delete(user);
             return Responses.createValidationErrorResponse(fileResult.errors);
         }
         
         if( ! await fileService.save(fileResult.value!,uploadedFile) )
         {
+            await addressManager.delete(user.address.value as Address);
             await userManager.delete(user);
             return Responses.createServerErrorResponse();
         }
@@ -126,6 +135,7 @@ export async function POST(request: NextRequest)
         if (!managerResult.isOK) 
         {
             await fileManager.delete(fileResult.value!);
+            await addressManager.delete(user.address.value as Address);
             await userManager.delete(user);
             return Responses.createValidationErrorResponse(managerResult.errors);
         }

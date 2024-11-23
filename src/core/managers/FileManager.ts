@@ -16,6 +16,7 @@ export class FileManager extends EntityManager<File>
         filePath:string,
         fileSuffix:string,
         file_type:FileTypes,
+        size:number,
         user_id:number,
         campaign_id:number | null = null,
     ): Promise<OperationResult<File | null, FormError>>
@@ -26,12 +27,13 @@ export class FileManager extends EntityManager<File>
         fileToCreate.file_path = filePath;
         fileToCreate.file_suffix = fileSuffix;
         fileToCreate.file_type = file_type;
+        fileToCreate.size = size;
         fileToCreate.timestamp = new Date();
         fileToCreate.campaign_id = campaign_id? campaign_id: null;
         fileToCreate.user_id = user_id;
 
         const errors : FormError[] = [];
-        
+
         if( !fileToCreate.file_path || !fileToCreate.file_suffix || !fileToCreate.file_type || !fileToCreate.original_name || fileToCreate.size == null )
             throw new Error("Trying to create an invalid File. With has null fields.");
         
