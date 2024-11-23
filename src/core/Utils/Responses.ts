@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  *  This class contains methods to create responses.
@@ -33,5 +33,10 @@ export class Responses
     // Method to create a Server Error response
     static createServerErrorResponse(message: string = "An error occurred, please try again later.", statusText:string = "Internal Server Error" ): NextResponse {
         return NextResponse.json({ error: message }, { status: 500, statusText });
+    }
+
+    // Method to create a Server Redirect response.
+    static createRedirectResponse(redirectPath:string , request:NextRequest): NextResponse {
+        return NextResponse.redirect(new URL(redirectPath, request.url));
     }
 }
