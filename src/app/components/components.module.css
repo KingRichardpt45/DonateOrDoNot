@@ -12,6 +12,12 @@
   z-index: 100; /* Ensure it's below the navbar but above other content */
 }
 
+.header__signup_button
+{
+  padding-left: 0 !important;
+  padding-right: 0px !important;
+}
+
 .sideMenu.open {
   transform: translateX(0); /* Slide in when open */
 }
@@ -48,7 +54,7 @@
   align-items: center;
   text-decoration: none;
   color: white;
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1.5rem;
   transition: background-color 0.2s;
   gap: 0.75rem;
   font-size: 0.95rem;
@@ -226,6 +232,17 @@
   gap: 8px;
 }
 
+.headerRight
+{
+    display: flex;
+    align-items: center;
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    gap: 5px;
+}
+
 .logo_image {
   border-radius: 4px; 
 }
@@ -245,6 +262,7 @@
 
 .header__user_info {
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: 10px;
 }
@@ -525,7 +543,7 @@
   border-radius: 0px; /* Optional for a rounded look */
   margin-bottom: 0;
   margin-top: 0;
-  height: 90vh;
+  
 }
 
 .carousel {
@@ -654,7 +672,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  height: 80px; /* Adjust the height to control the arc */
+  height: 120px; /* Adjust the height to control the arc */
   background: linear-gradient(180deg, #4b007d, #2c002b); /* Gradient colors */
   border-radius: 50% 50% 0 0; /* Semi-circle shape */
   display: flex;

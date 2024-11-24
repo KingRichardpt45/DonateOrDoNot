@@ -1,41 +1,22 @@
 import Image from "next/image";
 import styles from "./page.module.css";
-
-import SideMenu from "./components/SideMenu";
 import {Header} from "./components/NavBarNotLogged";
-import {ExpandableSearchBar} from "./components/searchBar";
 import Campaign from "./components/campaign"
 import { Services } from "@/services/Services";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
-import { User } from "@/models/User";
-import { headers } from 'next/headers';
 import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { redirect } from "next/navigation"
 import {HeaderL} from "./components/NavBarLogged";
+import { MainLayout } from "./components/coreComponents/mainLayout";
+
 export default async function Home() 
 {
-
-  let a = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
-   
-  if ( !await a.hasRole(UserRoleTypes.Donor))
-  { return (
+  return (
+    <MainLayout setUser={()=>{}}>
     <div className={styles.page}>
-        
-    <main className={styles.main}> 
-      <Header/>
-    <Campaign/>
-    </main> 
-  </div>);
-  } 
-  else{
-    return (
-      <div className={styles.page}>
-        
-        <main className={styles.main}> 
-          <HeaderL/>
+      <main className={styles.main}> 
         <Campaign/>
-        </main> 
-      </div>
-    );}
+      </main> 
+    </div>
+    </MainLayout>
+  );
 }

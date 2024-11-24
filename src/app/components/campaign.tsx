@@ -2,14 +2,6 @@
 import { useState, useEffect } from "react";
 import DonationModal from "./PopUpDonation/DonationPOP"; // Import DonationModal
 import styles from "./components.module.css";
-import { Services } from "@/services/Services";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
-import { User } from "@/models/User";
-import { headers } from 'next/headers';
-import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { redirect } from "next/navigation"
-
 
 const campaigns = [
   {

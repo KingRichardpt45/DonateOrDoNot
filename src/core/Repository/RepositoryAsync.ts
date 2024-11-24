@@ -199,7 +199,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         if (!navigationKey.isArray() && mergeEntitiesList.length > 1)
             throw new Error("Cannot merge navigationKey is not an array and has more then one item to be added.");
 
-        if (entityToAddIncludes[navigationKey.key] == null)
+        if (entityToAddIncludes[navigationKey.key] === undefined)
             throw new Error(`Invalid NavigationKey object ${entityToAddIncludes.getEntityName()} does not contain ${navigationKey.key} `);
 
         if (navigationKey.isArray())

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { LogIn, Menu } from "lucide-react";
 import { Button } from "./Button";
 import styles from "./components.module.css";
 import Image from "next/image";
@@ -37,10 +37,13 @@ export const Header: React.FC = () => {
             Donate Or Donot
           </Link>
         </div>
-        <Link href="/signup">
+        <Link href="/signin" className={styles.headerRight}>
           <Button variant="ghost" className={styles.header__signup_button}>
-            Sign Up
+            Sign In
           </Button>
+          <span className={styles.iconContainer}>
+            <LogIn size={20} />
+          </span>
         </Link>
       </header>
 

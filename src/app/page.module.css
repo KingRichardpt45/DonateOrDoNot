@@ -1,0 +1,14 @@
+.page{
+    display: flex;
+    flex-direction: column;
+    background-image: url('/images/backgroundSigns.png'); /* Path to your page background */
+    background-size: cover;
+    background-position: center;
+    flex-grow: 1;
+}
+
+.main{
+    
+    color: white;
+    flex-grow: 1;
+}
