@@ -1,0 +1,17 @@
+.MainContainer
+{
+    width: 100vw;
+    height: 100vh; 
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.PageContentContainer
+{
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex-grow: 1;
+}

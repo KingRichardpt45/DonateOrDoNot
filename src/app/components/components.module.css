@@ -5,7 +5,7 @@
   left: 0px;
   width: 300px;
   height: calc(100vh - 60px); /* Full height minus the navbar height */
-  background-color: #8807df;
+  background-color: var(--MainColor);
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   transform: translateX(-300px); /* Hidden by default */
   transition: transform 0.3s ease;
@@ -206,7 +206,7 @@
   height: 56px;
   align-items: center;
   justify-content: space-between;
-  background-color: #8807df;
+  background-color: var(--MainColor);
   padding: 0 16px;
 
 }
@@ -506,7 +506,7 @@
   bottom: 0;
   width: 100%;
   padding: 1rem;
-  background-color: #2c002b; /* You can customize the color */
+  background-color: var(--MainColor);
   color: white;
   text-align: center;
   font-size: 0.9rem;

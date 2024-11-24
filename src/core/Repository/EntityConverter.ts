@@ -75,7 +75,6 @@ export class EntityConverter {
         entries.forEach(
             (key) => {
                 if (!excluding.includes(key)) {
-                    console.log(key, excluding);
                     object[key] = entity[key];
                 }
             }

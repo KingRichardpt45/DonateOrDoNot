@@ -43,8 +43,6 @@ export class UserManager extends EntityManager<User> {
         if (StringUtils.stringIsNullOrEmpty(user.first_name))
             errors.push(new FormError("name", ["A name must be provided!"]));
 
-        console.log(user.first_name, user.middle_names, "aa", user.last_name);
-
         if (StringUtils.stringIsNullOrEmpty(user.email))
             errors.push(new FormError("email", ["A email must be provided!"]));
         else 
