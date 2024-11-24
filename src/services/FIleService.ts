@@ -65,7 +65,7 @@ export class FileService
     {
         try {
             const buffer = new Uint8Array( await file.arrayBuffer() );
-            await fs.writeFile(`${this.savePath}/${dbFile.id}`, buffer);
+                await fs.writeFile(`${this.savePath}/${dbFile.id}_${dbFile.original_name}`, buffer);
             return true;
         }
         catch(error)
@@ -84,7 +84,7 @@ export class FileService
     async load(file:ModelFile) : Promise<File| null>
     {
         try {
-            const byteArray = await fs.readFile(`${this.savePath}/${file.id}`);
+            const byteArray = await fs.readFile(`${this.savePath}/${file.id}_${file.original_name}`);
             const uint8Array = new Uint8Array(byteArray);
             return new File ( [uint8Array] ,file.original_name!, { type:file.file_suffix! } );
         } catch (error) {
@@ -101,7 +101,7 @@ export class FileService
     async createStream(file: ModelFile): Promise<ReadableStream | null> 
     {
         try {
-            const fileHandle = await fs.open(`${this.savePath}/${file.id}`, "r");
+            const fileHandle = await fs.open(`${this.savePath}/${file.id}_${file.original_name}`, "r");
     
             return new ReadableStream(
                 {
