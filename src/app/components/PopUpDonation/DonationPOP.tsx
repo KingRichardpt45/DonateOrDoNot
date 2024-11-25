@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react"; // Import React and hooks
 import styles from "./Modal.module.css"; // Import CSS module for styling
 import { TextArea } from "../textArea"; // Import the TextArea component
