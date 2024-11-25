@@ -3,7 +3,7 @@ import SignUpForm from "@/app/components/signup/signupForm";
 
 export default function SignUp() {
   return (
-    <MainLayout setUser={()=>{}}>
+    <MainLayout passUser={null}>
       <SignUpForm/>
     </MainLayout>
   );

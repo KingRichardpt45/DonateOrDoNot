@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { ExpandableSearchBar } from "../components/searchBar";
+import { ExpandableSearchBar } from "../../components/searchBar";
 import styles from "./campaignpage.module.css";
-import Campaign from "../components/campaign";
-import DonationModal from "../components/PopUpDonation/DonationPOP";
-import { HeaderL } from "../components/NavBarLogged";
+import Campaign from "../../components/campaign";
+import DonationModal from "../../components/PopUpDonation/DonationPOP";
+import { HeaderL } from "../../components/NavBarLogged";
 
 export default function Home() {
   const documents = [

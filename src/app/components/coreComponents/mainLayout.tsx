@@ -10,15 +10,15 @@ import { File } from "@/models/File";
 type PropType =
 {
     children:React.ReactNode
-    setUser: ( user:User | null ) => void
+    passUser:User | null 
 }
 
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 
-export const MainLayout: React.FC<PropType> = async ({ children , setUser}) => {
+export const MainLayout: React.FC<PropType> = async ({ children , passUser}) => {
     
-    const user = await userProvider.getUser();
-    setUser(user);
+    const user = passUser ? passUser : await userProvider.getUser();
+    
     let image : string | null = null;
     if(user && user.profileImage.value && (user.profileImage.value as File).id != null)
     {

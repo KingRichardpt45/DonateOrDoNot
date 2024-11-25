@@ -17,12 +17,12 @@ export enum CampaignStatus {
     /**
      * Status when the campaign is reproved.
      */
-    Reproved = 2,
+    Reproved = 3,
 
     /**
      * Status when the campaign is active.
      */
-    Active = 3,
+    Active = 2,
 
     /**
      * Status when the campaign is closed.

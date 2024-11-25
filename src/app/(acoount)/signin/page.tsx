@@ -3,7 +3,7 @@ import { MainLayout } from "@/app/components/coreComponents/mainLayout";
 
 export default function SignIn() {
   return (
-    <MainLayout setUser={()=>{}}>
+    <MainLayout passUser={null}>
       <div className={styles.main}>
         <main className={styles.page}>
           <div className={styles.signContainer}>

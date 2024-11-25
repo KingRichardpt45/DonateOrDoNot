@@ -209,7 +209,8 @@
 
 .header {
   display: flex;
-  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
   align-items: center;
   justify-content: space-between;
   background-color: var(--MainColor);
