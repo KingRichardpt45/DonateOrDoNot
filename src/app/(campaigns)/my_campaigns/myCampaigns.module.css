@@ -1,30 +1,71 @@
 .page {
     padding: 20px;
-    background-color: #1e0e34;
     color: white;
     font-family: Arial, sans-serif;
-    min-height: 100vh; /* Ensure page height covers the full viewport */
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 
 .sectionTitle {
     font-size: 24px;
     font-weight: bold;
-    margin: 20px 0 10px;
+    margin: 0;
+    background-color: #000000;
+    padding: 5px;
+    padding-left: 5px;
+    border-radius: 5px;
+}
+.campaignsContainer
+{
+    display: flex;
+    flex-direction: row;
+    gap: 20px; 
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding-top:25px;
+    padding-bottom: 25px;
+    max-width: 100%;
+    overflow-x: scroll;
 }
 
-.campaignsContainer {
+.ButtonCreateLink
+{
+    text-decoration: none;
+    width: 20%;
+    min-width: 200px;
+}
+
+.ButtonCreate
+{   
+    width: 100%;
+    background-color: rgba(171, 18, 232,0.3);
+    border-radius: 25px;
+    height: 250px;
     display: flex;
-    gap: 20px; /* Increase spacing between cards */
-    flex-wrap: wrap;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+    gap:10px;
+    border: solid 2px;
+}
+
+.ButtonCreate:hover
+{
+    color: #ff00d4 !important;
+    box-shadow: 0 0 25px 10px rgba(106, 13, 173, 0.85);
+}
+
+.ButtonCreateIcon
+{
+    width: 70px;
+    height: 70px;
 }
 
 .campaignCard {
-    width: 250px; /* Increase card width */
+    width: 250px; 
     height: 250px;
-    background-color: #5c2079;
+    
     border-radius: 10px;
     overflow: hidden;
     text-align: center;
@@ -50,11 +91,11 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center-align title, status, and icon */
+    align-items: center; 
 }
 
 .campaignTitle {
-    font-size: 16px; /* Slightly larger title */
+    font-size: 16px; 
     margin: 5px 0;
 }
 
@@ -72,31 +113,10 @@
     width: 20px;
     height: 20px;
     cursor: pointer;
-    object-fit: contain; /* Ensure the icon maintains its aspect ratio */
+    object-fit: contain; 
 }
 
 
-
-.searchContainer {
-    display: flex;
-    justify-content: center;
-    margin: 15px 0;
-}
-
-.searchBar {
-    width: 80%;
-    max-width: 500px;
-    padding: 8px;
-    border-radius: 20px;
-    border: none;
-    font-size: 16px;
-    color: black;
-    outline: none;
-    padding-left: 40px;
-    background-color: white;
-    background-repeat: no-repeat;
-    background-position: 10px center;
-}
 
 .viewMoreButton {
     display: block;
@@ -109,8 +129,4 @@
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.viewMoreButton:hover {
-    background-color: #8e2ab4;
 }

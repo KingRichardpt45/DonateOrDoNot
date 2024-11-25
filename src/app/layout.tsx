@@ -4,6 +4,7 @@ import "./globals.css";
 import SideMenu from "./components/SideMenu";
 import {Header} from "./components/NavBarNotLogged";
 import Footer from "./components/footer";
+import styles from "./layoutcss.module.css"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,9 +30,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${styles.fixBody}`} >
         {children}
-      <Footer/>
       </body>
     </html>
   );

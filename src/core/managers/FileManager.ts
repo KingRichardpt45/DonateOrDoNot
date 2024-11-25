@@ -34,7 +34,7 @@ export class FileManager extends EntityManager<File>
 
         const errors : FormError[] = [];
 
-        if( !fileToCreate.file_path || !fileToCreate.file_suffix || !fileToCreate.file_type || !fileToCreate.original_name || fileToCreate.size == null )
+        if( !fileToCreate.file_path || !fileToCreate.file_suffix || !fileToCreate.file_type == null || !fileToCreate.original_name || fileToCreate.size == null )
             throw new Error("Trying to create an invalid File. With has null fields.");
         
         const suffix = fileToCreate.file_suffix.toLocaleLowerCase();

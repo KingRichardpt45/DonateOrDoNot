@@ -45,8 +45,7 @@ const donorManager = new DonorManager();
 const addressManager = new EntityManager(Address);
 const fileManager = new FileManager();
 const campaignManagerManager = new CampaignManagerManager();
-const sessionService = Services.getInstance().get<SessionService>("SessionService")
-const redirectOnSuccessSignUp = "/signin"
+const sessionService = Services.getInstance().get<SessionService>("SessionService");
 
 const postUserFormSchema = yup.object().shape(
     {
@@ -141,7 +140,7 @@ export async function POST(request: NextRequest)
         }
     }
 
-    return Responses.createRedirectResponse(redirectOnSuccessSignUp,request);
+    return Responses.createSuccessResponse();
 }
 
 

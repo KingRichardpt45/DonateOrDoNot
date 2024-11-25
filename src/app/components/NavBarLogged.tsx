@@ -2,20 +2,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Menu, Bell } from 'lucide-react';
-import { Button } from './Button';
 import styles from './components.module.css';
 import Image from 'next/image';
-import { ExpandableSearchBar } from './searchBar';
-import { Services } from "@/services/Services";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
-import { User } from "@/models/User";
-import { headers } from 'next/headers';
-import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { redirect } from "next/navigation";
 import SideMenu from './SideMenu';
 
-export const HeaderL: React.FC = () => {
+export const HeaderL: React.FC<{ userName:string, userImage:string | null, userType:number}> = ( {userName,userImage,userType} )  => 
+{
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
@@ -57,14 +49,27 @@ export const HeaderL: React.FC = () => {
         </Link>
       </div>
       <div className={styles.header__user_info}>
-        <Image
-          src={""}
-          alt={`${User.name}'s profile`}
-          width={40}
-          height={40}
-          className={styles.header__user_photo}
-        />
-        <span className={styles.header__user_name}>{User.name}</span>
+        {
+          userImage != null &&
+          <Image
+            src={`/documents/${userImage}`}
+            alt={`${userName}'s profile`}
+            width={40}
+            height={40}
+            className={styles.header__user_photo}
+          />
+        }
+        {
+          userImage == null &&
+          <Image
+            src={"/images/ProfileImageDefault.png"}
+            alt={`${userName}'s profile`}
+            width={40}
+            height={40}
+            className={styles.header__user_photo}
+          />
+        }
+        <span className={styles.header__user_name}>{userName}</span>
         <div className={styles.notificationBell}>
           <button
             className={styles.bellButton}
@@ -89,7 +94,7 @@ export const HeaderL: React.FC = () => {
         </div>
       </div>
       {/* Side Menu */}
-      <SideMenu isOpen={isSideMenuOpen} toggleMenu={toggleSideMenu} />
+      <SideMenu  userType={userType} isOpen={isSideMenuOpen} toggleMenu={toggleSideMenu} />
     </header>
   );
 };

@@ -132,10 +132,12 @@ export async function PATCH( request: NextRequest )
 const searchFormSchema = yup.object().shape(
     {
         query: yup.string().lowercase().trim().required().nonNullable().min(1),
-        page: yup.number().transform(YupUtils.convertToNumber).required().integer().positive().nonNullable(),
-        pageSize: yup.number().transform(YupUtils.convertToNumber).required().integer().positive().nonNullable(),
+        pageSize: yup.number().transform(YupUtils.convertToNumber).required().integer().min(0),
+        page: yup.number().transform(YupUtils.convertToNumber).required().integer().min(0),
         category: yup.string().trim().nonNullable().min(1),
         value: yup.number().transform(YupUtils.convertToNumber).positive().nonNullable(),
+        managerId: yup.number().transform(YupUtils.convertToNumber).min(0).nonNullable(),
+        status: yup.number().transform(YupUtils.convertToNumber).nonNullable(),
     }
 );
 const searchFormValidator = new FormValidator(searchFormSchema);
@@ -156,6 +158,12 @@ export async function GET( request:NextRequest )
 
     if(formData.category)
         constrains.push(new Constrain("category",Operator.EQUALS,formData.category));
+
+    if(formData.managerId)
+        constrains.push(new Constrain("campaign_manager_id",Operator.EQUALS,formData.managerId));
+
+    if(formData.status)
+        constrains.push(new Constrain("status",Operator.EQUALS,formData.status));
 
     const result = await donationCampaignManager.searchWithConstrains(formData.query,constrains,formData.page,formData.pageSize);
 

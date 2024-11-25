@@ -48,5 +48,5 @@ export enum Operator {
      * Represents the in operator.
      * Used to check if the left operand is in a set of values.
      */
-    IN = "like"
+    IN = "in"
 }

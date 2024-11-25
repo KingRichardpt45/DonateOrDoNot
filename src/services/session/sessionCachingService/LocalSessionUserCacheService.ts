@@ -48,7 +48,7 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
     {   
         const user = await this.userRepository.getFirstByCondition(
             [new Constrain("id", Operator.EQUALS, session.userId)],
-            (user) => [new IncludeNavigation(user.address, 0)],
+            (user) => [new IncludeNavigation(user.address, 0),new IncludeNavigation(user.profileImage, 0)],
             [], 0, 0
         );
 

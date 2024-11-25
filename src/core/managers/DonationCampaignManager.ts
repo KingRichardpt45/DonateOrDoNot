@@ -100,7 +100,7 @@ export class DonationCampaignManager extends EntityManager<Campaign>  implements
     async searchWithConstrains(query: string, constrains: Constrain[], page: number, pageSize: number): Promise<OperationResult<Campaign[], SimpleError>> 
     {
         const inNamesResult = await this.repository.getByCondition(
-            [new Constrain("name",Operator.LIKE,`%${query}%`),...constrains],
+            [new Constrain("title",Operator.LIKE,`%${query}%`),...constrains],
             (campaign)=>[new IncludeNavigation(campaign.files,0)],[],pageSize,page*pageSize);
 
         const inDescriptionResult = await this.repository.getByCondition(
