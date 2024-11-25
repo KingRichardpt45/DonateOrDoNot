@@ -57,7 +57,7 @@ export default async function Home() {
       }
       {
         authorized &&
-          <><ExpandableSearchBar /><Campaign /><div className={styles.container}>
+          <><Campaign /><div className={styles.container}>
           <div className={styles.campaignContainer}>
             <h2 className={styles.heading}>Other Campaigns</h2>
             {/* List of campaigns rendered dynamically from defaultCampaigns */}
