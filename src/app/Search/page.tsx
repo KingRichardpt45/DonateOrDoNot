@@ -6,7 +6,6 @@ import styles from "./search.module.css"; // CSS module for styling
 import Campaign from "../components/campaign"; // Campaign component
 import { HeaderL } from "../components/NavBarLogged";
 import Link from "next/link";
-import DonationModalClient from "./donateM";
 import { MainLayout } from "../components/coreComponents/mainLayout";
 import { Services } from "@/services/Services";
 import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
