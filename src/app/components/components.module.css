@@ -674,7 +674,7 @@
   transform: translateX(-50%);
   width: 100%;
   height: 120px; /* Adjust the height to control the arc */
-  background: linear-gradient(180deg, #4b007d, #2c002b); /* Gradient colors */
+  background: linear-gradient(180deg, #4b007d, var(--MainColor)); /* Gradient colors */
   border-radius: 50% 50% 0 0; /* Semi-circle shape */
   display: flex;
   flex-direction: column;

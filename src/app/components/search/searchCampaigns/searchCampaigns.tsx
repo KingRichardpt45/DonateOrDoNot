@@ -143,7 +143,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
                     {
                         campaigns.map( (campaign:Campaign) => 
                         (
-                            <CampaignItem campaign={campaign} width={350} height={250}></CampaignItem>
+                            <CampaignItem campaign={campaign} customStyle={{width:350, height:250}}></CampaignItem>
                         )
                         )
                     }
