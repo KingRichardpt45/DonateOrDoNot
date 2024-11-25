@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "../components/authentication.module.css";
+import styles from "@/app/components/authentication.module.css";
 
 export default function SignIn() {
   return (
