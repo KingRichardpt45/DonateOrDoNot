@@ -1,16 +1,22 @@
-import styles from "./Modal.module.css"; // Import CSS module for styling
 import React, { useState } from "react"; // Import React and hooks
+import styles from "./Modal.module.css"; // Import CSS module for styling
 import { TextArea } from "../textArea"; // Import the TextArea component
-import ConfirmationModal from "./popupdetails/popupdetail"; // Import the ConfirmationModal
 
 // Props type for the modal, defining whether it's open and the function to close it
 type DonationModalProps = {
   isOpen: boolean; // Controls the visibility of the modal
   onClose: () => void; // Function to close the modal
+  campaignId: number; // ID of the campaign to donate to
+  donorId: number; // ID of the logged-in donor
 };
 
 // DonationModal functional component
-const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
+const DonationModal: React.FC<DonationModalProps> = ({
+  isOpen,
+  onClose,
+  campaignId,
+  donorId,
+}) => {
   const [amount, setAmount] = useState(18); // State for donation amount
   const [selectedMethod, setSelectedMethod] = useState<string>(""); // State for selected payment method
   const [anonymous, setAnonymous] = useState<boolean>(false); // State for anonymous donation
@@ -18,10 +24,6 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false); // State for loading status
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error messages
   const [successMessage, setSuccessMessage] = useState<string | null>(null); // State for success message
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); // State for confirmation modal
-
-  // Donation details for confirmation modal
-  const donationDetails = { amount, method: selectedMethod, anonymous, comment };
 
   // Function to handle donation submission
   const handleDonate = async () => {
@@ -29,31 +31,28 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    const donationData = {
-      campaignId: 1, // Replace with the correct campaign ID
-      donorId: 1, // Replace with the actual donor ID
-      value: amount,
-      comment,
-      isNameHidden: anonymous,
-    };
-
     try {
+      // Send donation data to the API
       const response = await fetch("/api/donations", {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(donationData),
+        body: JSON.stringify({
+          campaign_id: campaignId,
+          donor_id: donorId,
+          comment: comment.trim(),
+          value: amount,
+          nameHidden: anonymous,
+        }),
       });
 
       if (response.ok) {
-        setSuccessMessage("Donation successful! Thank you!");
-        setTimeout(() => {
-          onClose(); // Close the modal after a short delay
-        }, 2000);
+        const data = await response.json();
+        setSuccessMessage("Thank you for your donation!");
       } else {
         const error = await response.json();
-        setErrorMessage(error.errors?.[0] || "Failed to complete the donation.");
+        setErrorMessage(error.errors?.[0] || "Failed to process your donation.");
       }
     } catch (error) {
       setErrorMessage("An error occurred. Please try again.");
@@ -142,22 +141,14 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
           {errorMessage && <p className={styles.error}>{errorMessage}</p>}
           {successMessage && <p className={styles.success}>{successMessage}</p>}
           <button
-            onClick={() => setIsConfirmationModalOpen(true)}
+            onClick={handleDonate}
             className={styles.modalSubmit}
-            disabled={isLoading}
+            disabled={isLoading || !selectedMethod}
           >
-            {isLoading ? "Processing..." : "Donate Now"}
+            {isLoading ? "Processing..." : "Donate"}
           </button>
         </div>
       </div>
-
-      {/* Confirmation Modal */}
-      <ConfirmationModal
-        isOpen={isConfirmationModalOpen}
-        onClose={() => setIsConfirmationModalOpen(false)}
-        onConfirm={handleDonate}
-        donationDetails={donationDetails}
-      />
     </>
   );
 };

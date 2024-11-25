@@ -127,7 +127,7 @@ export default function Campaign(){
       <DonationModal
         isOpen={isDonationModalOpen} // Modal visibility
         onClose={() => setIsDonationModalOpen(false)} // Close handler
-      />
+        campaignId={1} donorId={1}      />
     </>
   );
 }

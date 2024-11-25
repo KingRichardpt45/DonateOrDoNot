@@ -12,7 +12,7 @@ const getFormSchema = yup.object().shape(
         id: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer(),
         page: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer(),
         pageSize: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer()
-    }
+    }   
 );
 const getFormValidator = new FormValidator(getFormSchema);
 
