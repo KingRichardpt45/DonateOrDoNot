@@ -1,54 +1,56 @@
-"use client"
+"use client";
 import React, { useState } from "react";
-import styles from "./profile.module.css";
-import { User } from "@/models/User";
+import styles from "./sideProfile.module.css";
 
+const SideProfile: React.FC<{ initialUser: any }> = ({ initialUser }) => {
+  // Using useState to manage the editable fields
+  const [user, setUser] = useState(initialUser);
 
-
-
-const SideProfile: React.FC<{initialUser:any}> = ({ initialUser }) => {
-    const [user, setUser] = useState<User>(initialUser);
-    setUser(initialUser as User);
-
+  // Handler to update the user data when input fields change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setUser((prevUser: any) => ({
+      ...prevUser,
+      [name]: value,
+    }));
   };
 
+  // Handler for saving changes (you can integrate with backend/API here)
   const handleSaveChanges = () => {
-    console.log("Saving changes...", user);
+    console.log("Saved changes:", user);
     alert("Your changes have been saved.");
   };
 
   return (
     <div className={styles.Sidebar}>
       <img
-        src={"/images/logo.png"}
+        src={user.profileImage}
         alt="Profile"
         className={styles.ProfileImage}
       />
       <div className={styles.UserInfo}>
-        <h1>
+        <h1 className={styles.h1}>
           <input
             type="text"
             name="first_name"
-            value={user.first_name!}
+            value={user.first_name}
             onChange={handleInputChange}
             className={styles.InputField}
           />{" "}
           <input
             type="text"
             name="last_name"
-            value={user.last_name!}
+            value={user.last_name}
             onChange={handleInputChange}
             className={styles.InputField}
           />
         </h1>
-        <p>
+        <p className={styles.p}>
           Phone:{" "}
           <input
             type="text"
             name="phone_number"
-            value={user.phone_number!}
+            value={user.phone_number}
             onChange={handleInputChange}
             className={styles.InputField}
           />
@@ -58,7 +60,7 @@ const SideProfile: React.FC<{initialUser:any}> = ({ initialUser }) => {
           <input
             type="email"
             name="email"
-            value={user.email!}
+            value={user.email}
             onChange={handleInputChange}
             className={styles.InputField}
           />
@@ -68,7 +70,7 @@ const SideProfile: React.FC<{initialUser:any}> = ({ initialUser }) => {
           <input
             type="text"
             name="address"
-            value={user.address.value}
+            value={user.address}
             onChange={handleInputChange}
             className={styles.InputField}
           />
