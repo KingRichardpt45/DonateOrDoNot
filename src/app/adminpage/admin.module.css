@@ -19,6 +19,7 @@
     width: 100%;
     max-width: 800px;
     margin-bottom: 20px;
+    color: white;
   }
   
   .header h1 {
@@ -49,15 +50,34 @@
   }
   
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
     gap: 20px;
     width: 100%;
     max-width: 800px;
+    max-height: 500px; /* Set a maximum height for the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-right: 10px; /* Add padding for the scrollbar */
+    box-sizing: border-box; /* Include padding and border in size calculations */
+  }
+
+  .grid::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
   }
   
+  .grid::-webkit-scrollbar-thumb {
+    background-color: #2196f3; /* Scrollbar color */
+    border-radius: 4px;
+  }
+  
+  .grid::-webkit-scrollbar-thumb:hover {
+    background-color: #1e88e5; /* Color on hover */
+  }
+  
+  
   .card {
-    background-color: #f9f9f9;
+    background-color: #005b93;
+    color: white;
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 16px;
