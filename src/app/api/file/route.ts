@@ -45,7 +45,7 @@ export async function PUT( request : NextRequest )
         return Responses.createValidationErrorResponse(resultFile.errors);
     
     if( await fileService.save(resultFile.value!,uploadedFile) )
-        return Responses.createSuccessResponse(resultFile.value);
+        return Responses.createSuccessResponse(resultFile.value,`Uploaded ${resultFile.value?.original_name} successfully.`);
     else
         return Responses.createServerErrorResponse();
 }

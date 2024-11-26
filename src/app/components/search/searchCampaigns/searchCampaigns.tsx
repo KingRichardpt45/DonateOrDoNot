@@ -111,7 +111,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
     return (
         <div>
             <div className={styles.searchContainer}>
-                <DropdownInput options={["Startup","Health","School","Debt"]} onChange={onDroopCategoryChange}/>
+                <DropdownInput width={200} heigh={30} color="#3b3b3b" options={["Startup","Health","School","Debt"]} onChange={onDroopCategoryChange}/>
                 <select 
                     name="type"
                     id="type"
@@ -143,7 +143,11 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
                     {
                         campaigns.map( (campaign:Campaign) => 
                         (
+<<<<<<< HEAD
                             <CampaignItem campaign={campaign} customStyle={{width:350, height:250}}></CampaignItem>
+=======
+                            <CampaignItem campaign={campaign} customStyle={{}}></CampaignItem>
+>>>>>>> 188682c (feat create campaign)
                         )
                         )
                     }

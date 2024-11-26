@@ -17,11 +17,13 @@ import { YupUtils } from "@/core/utils/YupUtils";
 import { FormError } from "@/core/utils/operation_result/FormError";
 import { Constrain } from "@/core/repository/Constrain";
 import { Operator } from "@/core/repository/Operator";
+import { EntityManager } from "@/core/managers/EntityManager";
+import { CampaignBadge } from "@/models/CampaignBadge";
 
 const badgeManager = new BadgeManager();
 const donorManager = new DonorManager();
+const campaignBadgesManager = new EntityManager<CampaignBadge>(CampaignBadge);
 const fileManager = new FileManager();
-const savePath = "./public/documents/";
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const fileService = Services.getInstance().get<FileService>("FileService");
@@ -32,7 +34,8 @@ const putFormSchema = yup.object().shape(
         description: yup.string().trim().required().nonNullable().min(1).max(200),
         type: yup.number().required().integer().positive().nonNullable().min(0).max( Object.keys(BadgeTypes).length /2 - 1),
         unit: yup.string().trim().required().nullable(),
-        value: yup.number().required().integer().positive().nullable(),
+        value: yup.number().required().integer().min(0).nullable(),
+        campaignId: yup.number().nonNullable().min(0).positive(),
         imageFile: fileService.filesSchema
     }
 );
@@ -43,7 +46,7 @@ export async function PUT( request:NextRequest )
     const user = await userProvider.getUser();
     if( ! user )
         return Responses.createUnauthorizedResponse();
-    else if( user.type != UserRoleTypes.Admin)
+    else if( user.type != UserRoleTypes.Admin && user.type != UserRoleTypes.CampaignManager )
         return Responses.createForbiddenResponse();
 
     const bodyData = await request.formData();
@@ -51,8 +54,12 @@ export async function PUT( request:NextRequest )
 
     if(!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
-
+    
     const formData = validatorResult.value!
+
+    if(user.type == UserRoleTypes.CampaignManager && !formData.campaignId)
+        return Responses.createValidationErrorResponse([new FormError("campaignId",["is required"])]);
+
     const uploadedFile = formData.imageFile as File;
     const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,uploadedFile.size,user.id!);
     
@@ -63,8 +70,17 @@ export async function PUT( request:NextRequest )
         return Responses.createServerErrorResponse();
 
     const createdBadge = await badgeManager.create(formData.name,formData.description,formData.type,formData.unit,formData.value,fileResult.value!.id!);
+    
+    if(formData.campaignId !== undefined)
+    {
+        console.log("craaaa");
+        const campaignBadge = new CampaignBadge();
+        campaignBadge.campaign_id = formData.campaignId;
+        campaignBadge.badge_id = createdBadge.id;
+        await campaignBadgesManager.add( campaignBadge );
+    }
 
-    return Responses.createSuccessResponse(createdBadge);
+    return Responses.createSuccessResponse(createdBadge,`${BadgeTypes[formData.type]} created successfully`);
 }
 
 
