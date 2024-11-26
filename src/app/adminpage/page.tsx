@@ -16,16 +16,62 @@ export default async function Admin() {
   const authorized = user !== null && (user as User).type == UserRoleTypes.CampaignManager;
 
   const campaigns = [
-    { id: 1, title: "Donate Blood", description: "Save lives!", state: "Pending" },
-    { id: 2, title: "Food Drive", description: "Support families in need", state: "Completed" },
-    { id: 3, title: "Hope For Orphans", description: "Help orphaned children", state: "Pending" },
+    {
+      id: 1,
+      title: "Campaign 1",
+      description: "This is the first campaign.",
+      state: "Pending",
+    },
+    {
+      id: 2,
+      title: "Campaign 2",
+      description: "This is the second campaign.",
+      state: "In Analysis",
+    },
   ];
-
+  
   const users = [
-    { id: 1, name: "Jonas", email: "jonas@gmail.com", state: "Pending" },
-    { id: 2, name: "Maria", email: "maria@gmail.com", state: "Completed" },
-    { id: 3, name: "Ali", email: "ali@gmail.com", state: "In Analysis" },
-    { id: 4, name: "Jonas2", email: "jonas2@gmail.com", state: "Pending" },
+    {
+      id: 1,
+      name: "John Doe",
+      type: "Autonomous",
+      email: "john.doe@example.com",
+      creatorName: "John Doe Co.",
+      address: "123 Main St, Cityville",
+      pdf: "https://example.com/user-doc.pdf", // Optional
+      state: "Pending",
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      type: "Institution",
+      email: "jane.smith@example.com",
+      creatorName: "Admin User",
+      address: "456 Elm St, Townsville",
+      pdf: null, // No PDF available
+      state: "In Analysis",
+    },
+    {
+      id: 3,
+      name: "John Doe2",
+      type: "Autonomous",
+      email: "john.doe@example.com",
+      creatorName: "John Doe2 Co.",
+      address: "123 Main St, Cityville",
+      pdf: "https://example.com/user-doc.pdf", // Optional
+      state: "Pending",
+    },
+    {
+      id: 4,
+      name: "John Doe2",
+      type: "Autonomous",
+      email: "john.doe@example.com",
+      creatorName: "John Doe2 Co.",
+      address: "123 Main St, Cityville",
+      pdf: "https://example.com/user-doc.pdf", // Optional
+      state: "Pending",
+    },
+    
   ];
 
   return (
