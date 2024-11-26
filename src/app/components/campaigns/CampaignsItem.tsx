@@ -9,21 +9,11 @@ import Image from 'next/image';
 const CampaignItem : React.FC<{ campaign:Campaign, customStyle:React.CSSProperties | 0 }>= ( { campaign, customStyle}) => 
 {
 
-    //const [hoverClass,setHoverClass] = useState<string>("");
-
-    // function onHover(){
-    //     console.log("called");
-    //     if(hoverClass !== styles.campaignContainerHover)
-    //         setHoverClass(styles.campaignContainerHover);
-    //     else
-    //         setHoverClass("");
-    // }
-
     const mainFile = (campaign.files.value as File[]).find(
         (file: File) => file.file_type === FileTypes.MainImage
     );
 
-    const manImage : string = mainFile ?  `documents/${mainFile.id}_${mainFile.original_name}` : "/images/Missing.jpg"
+    const manImage : string = mainFile ?  `/documents/${mainFile.id}_${mainFile.original_name}` : "/images/Missing.jpg"
 
     let statusColor = ""
     switch(campaign.status)

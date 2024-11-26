@@ -41,7 +41,7 @@
     width: 100%;
     background-color: rgba(171, 18, 232,0.3);
     border-radius: 25px;
-    height: 250px;
+    height: 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -64,7 +64,7 @@
 
 .campaignCard {
     width: 250px; 
-    height: 250px;
+    height: 350px;
     
     border-radius: 10px;
     overflow: hidden;

@@ -34,9 +34,7 @@ export default async function MyCampaigns()
                                                                     (campaign)=>[new IncludeNavigation(campaign.files,0)],
                                                                     [],0,0
                                                                   )
-
-    activeCampaigns.push(createSampeCampaign());                                                        
-    
+                                                            
     for (let i = activeCampaigns.length; i < 5; i++) 
     {
       createButtons.push(
@@ -74,7 +72,7 @@ export default async function MyCampaigns()
                     {
                       minWidth: "200px",
                       width:"20%",
-                      height:250
+                      height:300
                     }
                   } ></CampaignItem>
                 )
@@ -94,28 +92,4 @@ export default async function MyCampaigns()
       }
     </MainLayout>
   );
-}
-
-function createSampeCampaign()
-{
-    const sampleCampaign = new Campaign();
-
-sampleCampaign.id = 1;
-sampleCampaign.title = "Save the Rainforest";
-sampleCampaign.description = "A campaign to raise funds for the conservation of rainforests.";
-sampleCampaign.objective_value = 1000000; // Objective in currency
-sampleCampaign.current_donation_value = 700000; // Amount raised so far
-sampleCampaign.category = "Environment";
-sampleCampaign.end_date = new Date("2024-12-31");
-sampleCampaign.contact_email = "contact@rainforestconservation.org";
-sampleCampaign.contact_phone_number = "+123456789";
-sampleCampaign.donation_counter = 1500; // Number of donations received
-sampleCampaign.last_notified_value = 200000; // Amount at which notifications were last sent
-sampleCampaign.interval_notification_value = 50000; // Notify every 50,000 raised
-sampleCampaign.status = CampaignStatus.Active; // Current status of the campaign
-
-sampleCampaign.campaign_manager_id = 42; // Reference to the campaign manager
-sampleCampaign.bank_account_id = 101; // Reference to the bank account associated
-
-return sampleCampaign;
 }

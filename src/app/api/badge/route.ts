@@ -73,7 +73,6 @@ export async function PUT( request:NextRequest )
     
     if(formData.campaignId !== undefined)
     {
-        console.log("craaaa");
         const campaignBadge = new CampaignBadge();
         campaignBadge.campaign_id = formData.campaignId;
         campaignBadge.badge_id = createdBadge.id;

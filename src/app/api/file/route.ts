@@ -20,7 +20,7 @@ const putFormSchema = yup.object().shape(
     {
         type: yup.number().required().integer().positive().nonNullable().min(0).max( Object.keys(FileTypes).length /2 - 1),
         user_id: yup.number().required().nonNullable().positive().integer(),
-        campaign_id: yup.number().nullable().positive().integer(),
+        campaign_id: yup.number().nonNullable().positive().integer(),
         imageFile: fileService.filesSchema
     }
 );

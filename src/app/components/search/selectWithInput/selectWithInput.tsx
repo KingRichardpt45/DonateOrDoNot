@@ -28,7 +28,6 @@ const DropdownInput : React.FC<{ width:number|string,heigh:number, color:string 
 
     function onDroopClick(open:boolean = true)
     {
-        console.log("aaaaaa");
         if(enableOptions !== styles.Active && open)
             setEnableOptions(styles.Active);
         else

@@ -29,7 +29,7 @@ export class FileManager extends EntityManager<File>
         fileToCreate.file_type = file_type;
         fileToCreate.size = size;
         fileToCreate.timestamp = new Date();
-        fileToCreate.campaign_id = campaign_id? campaign_id: null;
+        fileToCreate.campaign_id = campaign_id !== null ? campaign_id: null;
         fileToCreate.user_id = user_id;
 
         const errors : FormError[] = [];

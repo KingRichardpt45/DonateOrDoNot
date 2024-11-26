@@ -145,7 +145,7 @@ const CreateCampaignForm: React.FC<{managerId:number}> = ({managerId}) =>
     const data = new FormData();
     data.append("type",type.toString());
     data.append("user_id",managerId.toString());
-    data.append("campaignId",campaignId.toString());
+    data.append("campaign_id",campaignId.toString());
     data.append("imageFile",image);
 
     return fetch("/api/file",{method:"PUT",body:data});
@@ -270,7 +270,6 @@ const CreateCampaignForm: React.FC<{managerId:number}> = ({managerId}) =>
         break;
       case 422:
         const resultErrors = await response.json();
-        console.log(resultErrors)
         const actionErrors = []
         let time = 5000;
         for (const error of resultErrors.errors) 
