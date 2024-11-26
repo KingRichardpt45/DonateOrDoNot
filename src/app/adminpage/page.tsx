@@ -13,7 +13,7 @@ const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 
 export default async function Admin() {
   const user = await userProvider.getUser();
-  const authorized = user !== null && (user as User).type == UserRoleTypes.CampaignManager;
+  const authorized = user !== null && (user as User).type == UserRoleTypes.Admin;
 
   const campaigns = [
     {
