@@ -12,6 +12,7 @@ import { CampaignStatus } from "@/models/types/CampaignStatus";
 import { YupUtils } from "@/core/utils/YupUtils";
 import { Constrain } from "@/core/repository/Constrain";
 import { Operator } from "@/core/repository/Operator";
+import { FormError } from "@/core/utils/operation_result/FormError";
 
 const donationCampaignManager = new DonationCampaignManager();
 const bankManager = new BankAccountManager();
@@ -27,13 +28,9 @@ const putFormSchema = yup.object().shape(
         contact_email: yup.string().trim().required().nonNullable(),
         contact_phone_number:  yup.string().trim().required().nonNullable(),
         campaign_manager_id: yup.number().required().nonNullable().positive().integer().min(0),
-        bankAccount: yup.object(
-                        {
-                            iban: yup.string().trim().required().nonNullable().min(1).max(34),
-                            account_holder: yup.string().trim().required().nonNullable(),
-                            bank_name: yup.string().trim().required().nonNullable(),
-                        }
-                    ).required().nonNullable(),
+        iban: yup.string().trim().required().nonNullable().min(1).max(34),
+        account_holder: yup.string().trim().required().nonNullable(),
+        bank_name: yup.string().trim().required().nonNullable(),            
     }
 );
 const putFormValidator = new FormValidator(putFormSchema);
@@ -47,7 +44,17 @@ export async function PUT(request: NextRequest)
         return Responses.createValidationErrorResponse(validatorResult.errors);
 
     const formData = validatorResult.value!;
-    const bankAccount = await bankManager.create(formData.bankAccount.iban,formData.bankAccount.account_holder,formData.bankAccount.account_holder);
+    const campaigns = await donationCampaignManager.getByCondition(
+        [
+            new Constrain("campaign_manager_id",Operator.EQUALS,formData.campaign_manager_id),
+            new Constrain("status",Operator.IN,[CampaignStatus.Active,CampaignStatus.Approved,CampaignStatus.InAnalysis])
+        ],(e)=>[],[],6,0)
+    
+    if(campaigns.length > 5)
+        return Responses.createValidationErrorResponse(
+            [new FormError("Max Campaigns reached!",["Can not have more then 5 in Active,Analyses or Approved"])]);
+
+    const bankAccount = await bankManager.create(formData.iban,formData.account_holder,formData.account_holder);
 
     const campaignResult = await donationCampaignManager.create(
                                     formData.title,
@@ -62,7 +69,7 @@ export async function PUT(request: NextRequest)
                                     bankAccount.id
                                 );
 
-
+                                campaignResult.value?.status
 
     if (!campaignResult.isOK)
         return Responses.createValidationErrorResponse(campaignResult.errors);

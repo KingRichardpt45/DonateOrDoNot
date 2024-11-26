@@ -38,8 +38,11 @@ export class FileManager extends EntityManager<File>
             throw new Error("Trying to create an invalid File. With has null fields.");
         
         const suffix = fileToCreate.file_suffix.toLocaleLowerCase();
-        if( !["jpeg","png", "pdf"].find( (v) => suffix.includes(v) ) )
-            errors.push( new FormError( "fileType" , [ "Invalid file type, only is allowed jpeg, png and pdf." ] ) );
+        if( !["jpeg","png", "pdf", "gif" ,"mp4"].find( (v) => suffix.includes(v) ) )
+        {
+            const type = fileToCreate.file_suffix.substring(fileToCreate.file_suffix.indexOf("/"));
+            errors.push( new FormError( "fileType" , [ `Invalid file type, only is allowed jpeg, png and pdf. Provided ${type} ` ] ) );
+        }
 
         if ( fileToCreate.file_suffix.toLocaleLowerCase() in ["jpeg","png"] && fileToCreate.size > 52428800 )
             errors.push( new FormError( "fileSize" , [ "The maxim upload size of an image is 50MB." ] ) );
