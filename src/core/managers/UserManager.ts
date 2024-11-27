@@ -9,7 +9,6 @@ import {AccountStatus} from "@/models/types/AccountStatus";
 import {EntityManager} from "@/core/managers/EntityManager";
 import {OperationResult} from "@/core/utils/operation_result/OperationResult";
 import {FormError} from "@/core/utils/operation_result/FormError";
-import {SimpleError} from "@/core/utils/operation_result/SimpleError";
 import {Operator} from "@/core/repository/Operator";
 
 export class UserManager extends EntityManager<User> {
@@ -79,7 +78,7 @@ export class UserManager extends EntityManager<User> {
      * @param password - The plain-text password entered by the user.
      * @returns A promise that resolves to an OperationResult containing the authenticated user or null, and any errors.
      */
-    async signIn(email: string, password: string): Promise<OperationResult<User | null, SimpleError>> 
+    async signIn(email: string, password: string): Promise<OperationResult<User | null, FormError>> 
     {
         const user = await this.repository.getFirstByCondition([new Constrain("email", Operator.EQUALS, email)],
             (user) => [new IncludeNavigation(user.address, 0)],
@@ -89,6 +88,6 @@ export class UserManager extends EntityManager<User> {
         if (user != null && await this.passwordEncryption.decrypt(user.password) === password)
             return new OperationResult(user, []);
         else
-            return new OperationResult(null, [new SimpleError("Invalid Credentials.")]);
+            return new OperationResult(null, [new FormError("Invalid Credentials.")]);
     }
 }

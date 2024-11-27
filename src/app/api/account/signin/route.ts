@@ -40,5 +40,5 @@ export async function POST(request: NextRequest)
 
     const newSession = await sessionService.create( result.value!.id! );
 
-    return Responses.createRedirectResponse(redirectOnSuccessLogin,request);
+    return Responses.createSuccessResponse();
 }
