@@ -47,16 +47,19 @@ const CampaignItem : React.FC<{ campaign:Campaign, customStyle:React.CSSProperti
                 <div className={styles.statusContainer}>
                     <div className={styles.status} style={{ '--StatusColor': `${statusColor}` } as React.CSSProperties} >{  CampaignStatus[campaign.status] }</div>
                     <div>
-                        { CampaignStatus.Active == campaign.status && campaign.end_date
-                        ? new Intl.DateTimeFormat("pt-PT", {
-                            weekday: "short",
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        }).format(new Date(campaign.end_date))
-                        : "No end date provided"}
+                        { CampaignStatus.Active == campaign.status && campaign.end_date &&
+                        
+                            (
+                                new Intl.DateTimeFormat("pt-PT", {
+                                weekday: "short",
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            }).format(new Date(campaign.end_date))
+                            )
+                        }
                     </div> 
                 </div>
                 <div className={styles.progressbarContainer}>
