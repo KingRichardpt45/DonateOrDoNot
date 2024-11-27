@@ -159,7 +159,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, toggleMenu ,userType}) => {
         <div className={styles.menuGroup}>
           <ul>
             <li>
-              <a href="#">
+              <a href="/profile">
                 <span className={styles.iconContainer}>
                   <User size={20} />
                 </span>
