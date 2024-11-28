@@ -90,11 +90,11 @@ export async function POST(request: NextRequest)
     if (formData.password !== formData.passwordConfirm ) 
         return Responses.createValidationErrorResponse([new FormError("passwordConfirm", ["Password Confirmation doesn't match with password."])]);
 
-    const user = setUserInfo(formData as PostUserObject);
-    const userResult = await userManager.signUp(user);
-
+    const userResult = await userManager.signUp( setUserInfo(formData as PostUserObject) );
     if (!userResult.isOK) 
         return Responses.createValidationErrorResponse(userResult.errors);
+
+    const user = userResult.value!
 
     if (formData.type == UserRoleTypes.Donor) 
     {
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest)
             return Responses.createServerErrorResponse();
         }
 
-        const campaignManager = setCampaignManagerInfo(managerFormData);
+        const campaignManager = setCampaignManagerInfo(managerFormData, user);
         const managerResult = await campaignManagerManager.signUp(campaignManager);
 
         if (!managerResult.isOK) 
@@ -197,7 +197,7 @@ function setDonorInfo(user: User): Donor {
     return donor;
 }
 
-function setCampaignManagerInfo(formData:PostManagerObject): CampaignManager 
+function setCampaignManagerInfo(formData:PostManagerObject,user:User): CampaignManager 
 {
     const campaignManager = new CampaignManager();
 
@@ -205,6 +205,7 @@ function setCampaignManagerInfo(formData:PostManagerObject): CampaignManager
     campaignManager.description = formData.description;
     campaignManager.verified = false;
     campaignManager.type = formData.managerType;
+    campaignManager.user.value = user;
 
     return campaignManager;
 }
