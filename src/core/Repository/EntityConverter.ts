@@ -165,4 +165,45 @@ export class EntityConverter {
         return entity as Entity;
     }
 
+
+    /**
+     * Converts an entity into a plain JavaScript object.
+     * This method iterates over the entity's properties (both regular and navigation keys)
+     * and transforms them into a simple object where each property is represented by its key-value pair.
+     * Navigation properties are also recursively converted into plain objects.
+     *
+     * @param entity - The entity object that implements the `IEntity` interface.
+     * @returns A plain JavaScript object representing the entity, with each key's value.
+     *          For navigation keys.
+     */
+    toPlainObject(entity: IEntity) : { [key:string]: unknown }
+    {
+        const object = this.toPlainObjectAux(entity);
+
+        for (const navigationKey of entity.getNavigationKeys()) 
+        {
+            object[navigationKey] = { value: this.toPlainObjectAux(entity[navigationKey].value) }
+        }
+
+        return object;
+    }
+
+    /**
+     * Helper method to convert the direct keys of an entity into a plain JavaScript object.
+     * This method does not handle navigation keys, it only processes the direct properties of the entity.
+     *
+     * @param entity - The entity object that implements the `IEntity` interface.
+     * @returns A plain object containing the direct key-value pairs of the entity.
+     */
+    private toPlainObjectAux(entity: IEntity) : { [key:string]: unknown }
+    {   
+        const object : { [key:string]: unknown } = {};
+
+        for (const key of entity.getKeys()) 
+        {
+            object[key] = entity[key];
+        }
+
+        return object;
+    }
 }
