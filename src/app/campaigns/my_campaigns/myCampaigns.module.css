@@ -23,10 +23,9 @@
     gap: 20px; 
     flex-wrap: nowrap;
     justify-content: space-around;
-    padding-top:25px;
-    padding-bottom: 25px;
     max-width: 100%;
     overflow-x: scroll;
+    padding: 25px 20px;
 }
 
 .ButtonCreateLink

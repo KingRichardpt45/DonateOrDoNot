@@ -1,56 +1,111 @@
-.page{
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-image: url('/images/backgroundSigns.png'); /* Path to your page background */
-    background-size: cover;
-    background-position: center;
-}
 
-.main{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex-grow: 1;
-    color: white;
-}
-
-.CampaignCreateContainer{
-    width: 100%;
-    min-width: 300px;
-    max-width: 800px;
+.CampaignCreateContainer
+{
+    min-width: 800px;
+    max-width: 90%;
     padding: 20px;
-    background-size: cover;
     background-position: center;
-    background-color: rgba(161, 75, 236, 0.45); /* Optional overlay for readability */
+    background-color: rgba(74, 9, 131, 0.6);
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.ButtonFormContainer
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.line
+{
+    display: flex;
+    gap:20px;
+}
+
+.FormContainer
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.optionsContainer
+{
+    display: flex;
+    gap: 10px;
 }
 
 .inputField{
     color: white;
-    background-color: rgba(217, 217, 217, 0.55);
-    border-radius: 10px;
+    background-color: rgba(26, 0, 37, 1);
+    border-radius: 5px;
     resize: none;
-    padding: 2px 10px 2px;
+    padding: 10px 10px 10px;
     border: none;
 }
-.inputField::placeholder{
+
+.inputField2{
     color: white;
+    background-color: rgba(26, 0, 37, 1);
+    border-radius: 5px;
+    resize: none;
+    padding: 10px 10px 10px;
+    border: none;
+    width: 100%;
+    min-width: 200px;
+    height: 40px;
+}
+.inputFieldBank
+{
+    color: white;
+    background-color: rgba(26, 0, 37, 1);
+    border-radius: 5px;
+    resize: none;
+    padding: 10px 10px 10px;
+    border: none;
+    flex-grow: 1;
+}
+
+.inputField::placeholder{
+   
+    font-size: 13px;
+}
+
+.inputField2::placeholder{
+   
+    font-size: 13px;
 }
 
 .TextForm{
     display: flex;
     flex-direction: column;
-    padding: 7px;
 }
 
 .FormTitle{
-    padding-left: 15px;
-    padding-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 5px;
+    padding-bottom: 5px;
     color: white;
+}
+
+.TextFormBank
+{
+    padding-bottom: 5px ;
+}
+
+.bankFormContainer{
+    display: flex;
+    flex-direction: row;
+    gap:10px;
 }
 
 .dropdownContainer{
@@ -64,20 +119,22 @@
     background: none;
     border: none;
     color: white;
+    font-size: 15px;
 }
 
 .fileForm{
     display: flex;
     flex-direction: row;
-    padding: 7px 18px 7px;
+    padding: 5px;
     color: white;
 }
 
 .fileFormTitle{
-    padding-right: 8px;
+    padding-right: 0px;
     color: white;
 }
 
+.submitButtonUpdate , 
 .submitButton{
     background-color: #2F302F;
     color: #F6D4FF;
@@ -87,6 +144,17 @@
     border-radius: 40px;
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.5);
     cursor: pointer;
+    min-width: fit-content ;
+    width: 150px;
+}
+
+.submitButtonUpdate:hover{
+    background-color: rgb(255, 92, 92);
+}
+
+.submitButton:hover
+{
+    background-color: #5f3168;
 }
 
 .ButtonForm{
@@ -99,19 +167,26 @@
 
 .filePreviewContainer{
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 16px;
     padding: 10px 15px 10px;
+    background-color: rgba(26, 0, 37, 1);
+    border-radius: 5px;
+    min-height: 120px;
+    max-width: 100%;
+    min-width: 100px;
+    overflow-x: scroll;
 }
   
 .imagePreview{
     position: relative;
     width: 120px;
+    min-width: 120px;
     height: 120px;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
-    background-color: #f9f9f9;
+    background-color: rgba(26, 0, 37, 1);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -121,6 +196,14 @@
 .previewImage{
     width: 100%;
     height: 100%;
+    object-fit: cover;
+}
+
+.mainImage
+{
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
     object-fit: cover;
 }
   
@@ -171,5 +254,57 @@
     height: 100%;
     object-fit: cover;
 }
+
+.badgesContainerContainer
+{
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: solid 5px rgba(26, 0, 37, 1);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.badgesContainer
+{
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+
+}
+
+.imagePlaceHolder
+{
+    width: 100px;
+    height: 100px;
+    background-color: rgba(48, 49, 48,0.5);
+    border-radius: 10px;
+    overflow: hidden;
+    
+}
+
+.previewBadgeImage
+{
+    width: 100px;
+    height: 100px;
+}
   
+
+.badgeContainer
+{
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.badgeInput
+{
+    max-width: 150px;
+}
 

@@ -35,8 +35,8 @@ export async function GET( request : NextRequest )
         case TopTypes.TOTAL_VALUE_DONATED:
             donors = await donorManager.getTopTotalValueDonors(formData.page,formData.pageSize)
             break;
-        case TopTypes.TOTAL_VALUE_DONATED:
-            donors = await donorManager.getTopTotalValueDonors(formData.page,formData.pageSize)
+        case TopTypes.NUMBER_OF_DONATIONS:
+            donors = await donorManager.getTopTotalDonationsValueDonors(formData.page,formData.pageSize)
             break;
         default:
             return Responses.createValidationErrorResponse([new FormError("type",["Invalid type of top."])],);

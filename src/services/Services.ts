@@ -11,6 +11,8 @@ import {User} from "@/models/User";
 import {AuthorizationService} from "@/services/session/authorizationService/AuthorizationService";
 import {PasswordValidation} from "@/services/PasswordVaidation";
 import { FileService } from "./FIleService";
+import { EntityConverter } from "@/core/repository/EntityConverter";
+import { getModelFactory } from "@/core/utils/factory/ModelsFactory";
 
 export class Services {
     private static instance: Services | null = null;
@@ -26,15 +28,18 @@ export class Services {
         const authorizationService = new AuthorizationService(userProvider, "/signin", "/unauthorized");
         const fileService = new FileService("public/documents");
         fileService.init();
+        const entityConverter = new EntityConverter( getModelFactory() );
 
         this.registerServices({
+
             "DBConnectionService": dbConnection,
             "SessionService": sessionService,
             "IUserProvider": userProvider,
             "PasswordEncryption": new PasswordEncryption(process.env.PW_ENCRYPTION_KEY as string),
             "IPasswordValidation": new PasswordValidation(),
             "IAuthorizationService": authorizationService,
-            "FileService": fileService
+            "FileService": fileService,
+            "EntityConverter": entityConverter
         });
     }
 

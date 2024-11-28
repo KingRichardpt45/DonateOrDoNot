@@ -1,5 +1,6 @@
 import {IEntity} from "@/core/repository/IEntity"
 import {IFactory} from "../utils/factory/IFactory";
+import { NavigationKey } from "./NavigationKey";
 
 /**
  * A utility class for converting between `IEntity` objects and plain objects
@@ -176,13 +177,27 @@ export class EntityConverter {
      * @returns A plain JavaScript object representing the entity, with each key's value.
      *          For navigation keys.
      */
-    toPlainObject(entity: IEntity) : { [key:string]: unknown }
-    {
+    toPlainObject(entity: IEntity) : { [key:string]: unknown } | null
+    {   
         const object = this.toPlainObjectAux(entity);
 
         for (const navigationKey of entity.getNavigationKeys()) 
         {
-            object[navigationKey] = { value: this.toPlainObjectAux(entity[navigationKey].value) }
+
+            if(entity[navigationKey].value == null || entity[navigationKey].value == undefined)
+                object[navigationKey] = { value: null }
+
+            else if( !entity[navigationKey].isArray() )
+                object[navigationKey] = { value: this.toPlainObject(entity[navigationKey].value) }
+
+            else if(  entity[navigationKey].isArray() )
+            {
+                object[navigationKey] = { value: Array<{value:any}>() };
+                for (const entityItem of entity[navigationKey].value ) 
+                {
+                    (object[navigationKey] as {value:any}[]).push( { value: this.toPlainObject(entityItem) } )
+                }
+            }        
         }
 
         return object;

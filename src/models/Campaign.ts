@@ -31,7 +31,8 @@ export class Campaign extends Entity {
     readonly notifications = new NavigationKey<Notification>(this, "notifications", "id", Campaign.getTableName(), Campaign.getEntityName(), Notification.getTableName(), Notification.getEntityName(), "campaign_id", []);
     readonly badges = new NavigationKey<CampaignBadge>(this, "badges", "id", Campaign.getTableName(), Campaign.getEntityName(), CampaignBadge.getTableName(), CampaignBadge.getEntityName(), "campaign_id", []);
     readonly files = new NavigationKey<File>(this, "files", "id", Campaign.getTableName(), Campaign.getEntityName(), File.getTableName(), File.getEntityName(), "campaign_id", []);
-    readonly donations = new NavigationKey<Donation>(this, "donations", "id", Campaign.getTableName(), Campaign.getEntityName(), Donation.getTableName(), Donation.getEntityName(), "campaign_id", null);
+    readonly donations = new NavigationKey<Donation>(this, "donations", "id", Campaign.getTableName(), Campaign.getEntityName(), Donation.getTableName(), Donation.getEntityName(), "campaign_id", []);
+    
     readonly campaign_manager = new NavigationKey<CampaignManager>(this, "campaign_manager", "campaign_manager_id", Campaign.getTableName(), Campaign.getEntityName(), CampaignManager.getTableName(), CampaignManager.getEntityName(), "id", null);
     readonly bank_account = new NavigationKey<BankAccount>(this, "bank_account", "bank_account_id", Campaign.getTableName(), Campaign.getEntityName(), BankAccount.getTableName(), BankAccount.getEntityName(), "id", null);
 

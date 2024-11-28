@@ -165,13 +165,23 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
                 entityList.push(this.entityConverter.knexObjectToIEntity(resultObject, this.entityName) as Entity);
             }
 
+            const markToRemove : number[] = [];
             for (let indexCreatedEntitiesLists = 1, includeIndex = 0; indexCreatedEntitiesLists < createdEntitiesLists.length; includeIndex = indexCreatedEntitiesLists++) {
+
                 entityList = createdEntitiesLists[indexCreatedEntitiesLists];
                 if (entityList.length == 0 || !entityList[entityList.length - 1].equalsToKnex(resultObject, `${indexCreatedEntitiesLists}.`)) {
-                    entityList.push(this.entityConverter.knexObjectToIEntity(resultObject, includes[includeIndex].navigationKey.referencedEntity, `${includeIndex}.`) as IEntity);
+                    const createdEntity = this.entityConverter.knexObjectToIEntity(resultObject, includes[includeIndex].navigationKey.referencedEntity, `${includeIndex}.`) as IEntity
+                    entityList.push(createdEntity);
                     this.mergeCreatedEntities(createdEntitiesLists, includes, includeIndex, indexCreatedEntitiesLists);
-                    entityList.splice(0, entityList.length);
+                    //entityList.splice(0, entityList.length);
+                    markToRemove.push(indexCreatedEntitiesLists)
                 }
+            }
+
+            for (const index of markToRemove) 
+            {
+                entityList = createdEntitiesLists[index];
+                entityList.splice(0, entityList.length);
             }
         }
 

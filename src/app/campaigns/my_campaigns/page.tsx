@@ -68,13 +68,15 @@ export default async function MyCampaigns()
             {
               activeCampaigns.map( ( campaign:Campaign, index ) => 
                 (  
-                  <CampaignItem campaign={campaign} customStyle={
-                    {
-                      minWidth: "200px",
-                      width:"20%",
-                      height:300
-                    }
-                  } ></CampaignItem>
+                  <a href={`/campaigns/edit/${campaign.id}`} className={styles.ButtonCreateLink}>
+                    <CampaignItem campaign={campaign} customStyle={
+                      {
+                        minWidth: "200px",
+                        width:"100%",
+                        height:300
+                      }
+                    } ></CampaignItem>
+                  </a>
                 )
               )
             }
