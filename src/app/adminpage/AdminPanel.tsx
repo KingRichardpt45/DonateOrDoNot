@@ -7,10 +7,10 @@ import { CampaignManager } from "@/models/CampaignManager";
 
 interface AdminPanelProps {
   campaigns: Campaign[];
-  users: CampaignManager[];
+  campaignManagers: CampaignManager[];
 }
 
-const AdminPanel: React.FC<AdminPanelProps> = ({ campaigns, users }) => {
+const AdminPanel: React.FC<AdminPanelProps> = ({ campaigns, campaignManagers}) => {
   // Example: Pre-filter campaigns by status
 
   return (
@@ -18,7 +18,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ campaigns, users }) => {
       <header className={styles.header}>
         <h1 className={styles.title}>Admin Panel</h1>
       </header>
-      <CampaignsAdmin campaigns={campaigns} campaignManagers={users} />
+      <CampaignsAdmin campaigns={campaigns} campaignManagers={campaignManagers} />
     </div>
   );
 };

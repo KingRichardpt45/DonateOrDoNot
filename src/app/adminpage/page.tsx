@@ -16,9 +16,11 @@ import { Operator } from "@/core/repository/Operator";
 import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
 import { CampaignManagerManager } from "@/core/managers/CampaignManagerManager";
 import { DonationCampaignManager } from "@/core/managers/DonationCampaignManager";
+import { UserManager } from "@/core/managers/UserManager";
 
 const campaignManagers = new CampaignManagerManager();
 const campaignsManager = new DonationCampaignManager();
+const UserList= new UserManager();
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 
 export default async function Admin() {
@@ -29,7 +31,7 @@ export default async function Admin() {
 
   // Fetch active campaigns dynamically
   const UnverifiedManagers = await campaignManagers.getByCondition(
-    [new Constrain("verified", Operator.EQUALS, false)]
+    [new Constrain("verified", Operator.EQUALS, false), new Constrain("Users.type", Operator.EQUALS, UserRoleTypes.CampaignManager)],(manager) => [new IncludeNavigation (manager.user, 0)]
   );
 
   const CampaignList = await campaignsManager.getByCondition( [ 
@@ -40,16 +42,15 @@ export default async function Admin() {
 )
 
 
-  console.log(UnverifiedManagers);
 
-  console.log(CampaignList);
+  console.log(UnverifiedManagers);
 
 
   return (
     <MainLayout passUser={user}>
       {user === null && <NotLoggedIn />}
       {!authorized && <NotAuthorized />}
-      {authorized && <AdminPanel campaigns={CampaignList} users={UnverifiedManagers} />}
+      {authorized && <AdminPanel campaigns={CampaignList} campaignManagers={UnverifiedManagers}/>}
     </MainLayout>
   );
 }
