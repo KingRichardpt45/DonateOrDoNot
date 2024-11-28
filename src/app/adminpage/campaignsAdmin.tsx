@@ -43,8 +43,7 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
             <div key={manager.id} className={styles.managerCard}>
               <h3>Manager ID: {manager.id}</h3>
               {/* Access user by index */}
-              <p>Manager Name:</p>
-              {console.log((manager.user.value as User).first_name)}
+              <p>Manager Name: {(manager.user.value as User).first_name}</p>
               <p>Description: {manager.description || "No description provided"}</p>
               <p>Email: {manager.contact_email || "No email provided"}</p>
               <p>Verified: {manager.verified ? "Yes" : "No"}</p>
