@@ -80,7 +80,7 @@ export async function DELETE( request : NextRequest )
         return Responses.createForbiddenResponse();
 
     if ( await fileService.delete(resultFile) && await fileManager.delete(resultFile) )
-        return Responses.createSuccessResponse();
+        return Responses.createSuccessResponse({},"File Deleted.");
     else
         return Responses.createServerErrorResponse();
 }

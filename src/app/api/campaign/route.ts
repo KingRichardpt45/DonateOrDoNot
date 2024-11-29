@@ -98,8 +98,8 @@ export async function PATCH( request: NextRequest )
     if( ! user || ( user.type != UserRoleTypes.Admin && user.type != UserRoleTypes.CampaignManager )  )
         return Responses.createForbiddenResponse();
 
-    const { searchParams } = request.nextUrl;
-    const validatorResult = await updateFormValidator.validate( Object.fromEntries(searchParams.entries()) );
+    const bodyData = await request.formData();;
+    const validatorResult = await updateFormValidator.validate( Object.fromEntries(bodyData.entries()) );
 
     if(!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
@@ -130,10 +130,10 @@ export async function PATCH( request: NextRequest )
 
     const result = await donationCampaignManager.updateField(campaign,updatedFields);
 
-    if ( result )
+    if ( !result )
         return Responses.createServerErrorResponse();
 
-    return Responses.createSuccessResponse();
+    return Responses.createSuccessResponse({},"Campaign Updated.");
 }
 
 const searchFormSchema = yup.object().shape(

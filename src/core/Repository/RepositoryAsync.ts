@@ -55,7 +55,8 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return this.constructEntities(result, includes);
     }
 
-    async getByPrimaryKey(primaryKeyParts: PrimaryKeyPart[], includeFunction: (entity: Entity) => IncludeNavigation[] = () => []): Promise<Entity | null> {
+    async getByPrimaryKey(primaryKeyParts: PrimaryKeyPart[], includeFunction: (entity: Entity) => IncludeNavigation[] = () => []): Promise<Entity | null> 
+    {
         const includes = includeFunction(this.modelFactory.create(this.entityName) as Entity);
         let query = this.dbConnection(this.tableName);
         const selectColumns = this.selectEntityColumn();
@@ -112,13 +113,14 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     private include(query: Knex.QueryBuilder, includes: IncludeNavigation[], selects: string[]): Knex.QueryBuilder {
         const included: string[] = [this.entityName];
+        const includeAlias = new Map<string,string>();
         let includeNavigation: NavigationKey<IEntity>;
 
         for (let i = 0; i < includes.length; i++) {
             includeNavigation = includes[i].navigationKey;
 
             if (included.some(entity => entity === includeNavigation.referencingEntity || entity === includeNavigation.referencedEntity)) {
-                query = this.includeAux(query, selects, i, includeNavigation);
+                query = this.includeAux(query, selects, i, includeNavigation,includeAlias);
                 included.push(includeNavigation.referencedEntity);
             } else {
                 throw new Error(`Invalid include in ${includeNavigation.referencingEntity} for ${includeNavigation.key} of type ${includeNavigation.referencedEntity}.
@@ -132,16 +134,20 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return query;
     }
 
-    private includeAux(query: Knex.QueryBuilder, selects: string[], index: number, navigationKey: NavigationKey<IEntity>): Knex.QueryBuilder {
+    private includeAux(query: Knex.QueryBuilder, selects: string[], index: number, navigationKey: NavigationKey<IEntity>,includedAlias:Map<string,string>): Knex.QueryBuilder {
+
+        const aliasedTable = includedAlias.get(navigationKey.referencingTable)
+        const referencingTable = aliasedTable ? `${aliasedTable}.${navigationKey.key}` :  `${navigationKey.referencingTable}.${navigationKey.key}`;
 
         query = query.leftJoin(
-            {[navigationKey.referencedTable]: navigationKey.referencedTable},
-            `${navigationKey.referencingTable}.${navigationKey.key}`,
-            `${navigationKey.referencedTable}.${navigationKey.referencedColumn}`
+            {[`${navigationKey.referencedTable}_${index}`]: navigationKey.referencedTable},
+            referencingTable,
+            `${navigationKey.referencedTable}_${index}.${navigationKey.referencedColumn}`
         );
 
+        includedAlias.set(navigationKey.referencedTable,`${navigationKey.referencedTable}_${index}`);
         const object = this.modelFactory.create(navigationKey.referencedEntity) as IEntity;
-        const array = object.getKeys().map(name => `${navigationKey.referencedTable}.${name} as ${index}.${name}`);
+        const array = object.getKeys().map(name => `${navigationKey.referencedTable}_${index}.${name} as ${index}.${name}`);
 
         selects.push(...array);
 
@@ -149,6 +155,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     }
 
     private constructEntities(results: unknown[], includes: IncludeNavigation[]): Entity[] {
+
         if (results.length == 0)
             return [];
 

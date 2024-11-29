@@ -9,7 +9,7 @@ const NotLoggedIn = () => {
         <p className={styles.message}>
           You need to sign in to access this page.
         </p>
-        <a href="/" className={styles.link}>
+        <a href="/signin" className={styles.link}>
           Go to Sign In
         </a>
       </div>

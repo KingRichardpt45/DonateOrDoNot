@@ -30,6 +30,20 @@ export class FileService
                                         return value != null && typeof (value as File).arrayBuffer === 'function';
                                     })
 
+    readonly filesSchemaNotRequire  =  yup.mixed().notRequired()
+                                    .test('name', 'The file is too large', (value) => {
+                                        return value == null || (value as File).name != undefined;
+                                    })
+                                    .test('fileSize', 'The file is too large', (value) => {
+                                        return value == null || (value as File).type != undefined;
+                                    })
+                                    .test('fileType', 'Unsupported file type', (value) => {
+                                        return value == null || (value as File).type != undefined;
+                                    })
+                                    .test('arrayBytes', 'Unsupported file type', (value) => {
+                                        return value == null || typeof (value as File).arrayBuffer === 'function';
+                                    })
+
     readonly savePath : string;
     
     /**
@@ -142,7 +156,7 @@ export class FileService
     async delete(dbFile:ModelFile) : Promise<boolean>
     {
         try {
-            await fs.unlink(`${this.savePath}/${dbFile.id}`);
+            await fs.unlink(`${this.savePath}/${dbFile.id}_${dbFile.original_name}`);
             return true;
         } 
         catch ( error ) 

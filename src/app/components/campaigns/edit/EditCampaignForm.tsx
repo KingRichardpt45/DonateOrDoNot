@@ -11,187 +11,168 @@ import { File as ModelFIle} from "@/models/File";
 import { Campaign } from "@/models/Campaign";
 import { Badge } from "@/models/Badge";
 import { CampaignBadge } from "@/models/CampaignBadge";
+import { BankAccount } from "@/models/BankAccount";
+import { array } from "yup";
+import { StringUtils } from "@/core/utils/StringUtils";
+import { ActionResultNotificationError } from "../../actionsNotifications/ActionResultNotificationError";
+import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
 
-
-interface AddedFile{ 
-  field:string 
-  type:FileTypes
-  ,file:File 
+interface AddedFile
+{ 
+  type:FileTypes,
+  file:File 
 }
 
-const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
+enum FieldEntitiesTypes
 {
-  const [ updatedFields, setUpdatedFields ] = useState<Map<string,any>>(new Map<string,any>());
-  const [ removedFiles, setRemovedFiles ] = useState<ModelFIle[]>([]);
-  const [ addedFiles, setAddedFiles ] = useState<AddedFile[]>([]);
+  BANK,
+  CAMPAIGN,
+  BADGE,
+}
 
-  const [ badgePartner,setBadgePartner ] = useState<any | null>();
-  const [ badgePartnerName,setBadgePartnerName ] = useState<string>();
-  const [ badgePartnerDescription,setBadgePartnerDescription ] = useState<string>();
-  const [ badgeFamilyImage,setBadgeFamilyImage ] = useState<ModelFIle | undefined>();
-  const [ badgeFamilyName,setBadgeFamilyName ] = useState<string>();
-  const [ badgeFamilyDescription,setBadgeFamilyDescription ] = useState<string>();
-  const [ badgeHelper,setBadgeHelper ] = useState<ModelFIle>();
-  const [ badgeHelperName,setBadgeHelperName ] = useState<string>();
-  const [ badgeHelperDescription,setBadgeHelperDescription ] = useState<string>();
+interface FormsData 
+{ 
+  campaignFormData:FormData , 
+  bankForm:FormData ,
+  badgeFamilyFormData:FormData ,
+  badgeHelperFormData:FormData ,
+  badgePartnerFormData:FormData ,
+}
+
+const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,campaign}) =>
+{
+  const [ firstRender, setFirstRender ] = useState<boolean>(true);
+  const [ render,setRender] = useState<number>(0);
+  const [submitted, setSubmitted] =  useState<boolean>(false);
+
+  const [ updatedFields, setUpdatedFields ] = useState<Map<string,{type:FieldEntitiesTypes,value:string,badgeType:BadgeTypes|null}>>(new Map<string,any>());
+  const [ fieldsValue, setFieldsValue ] = useState<Map<string,string>>(new Map<string,string>());
+  const [ removedFiles, setRemovedFiles ] = useState<ModelFIle[]>([]);
+
+  const [ badgePartner ,setBadgePartner] = useState<Badge | null>( getBadgeWithType(campaign,BadgeTypes.CampaignPartner) );
+  const [ badgeFamily, setBadgeFamily ] = useState<Badge | null>( getBadgeWithType(campaign,BadgeTypes.CampaignFamily) );
+  const [ badgeHelper, setBadgeHelper ] = useState<Badge | null>( getBadgeWithType(campaign,BadgeTypes.CampaignHelper) );
+
+  const [ badgePartnerFile ,setBadgePartnerFile] = useState<File | null>( null );
+  const [ badgeFamilyFile, setBadgeFamilyFile ] = useState<File | null>( null);
+  const [ badgeHelperFile, setBadgeHelperFile ] = useState<File | null>( null );
 
   const [images, setImages] = useState<ModelFIle[]>([]);
   const [videos, setVideos] = useState<ModelFIle[]>([]);
   const [files, setFiles] = useState<ModelFIle[]>([]);
   const [mainImage, setMainImage] = useState<ModelFIle[]>([]);
 
-  const [submitted, setSubmitted] =  useState<boolean>(false);
-  // const timeIncrement = 1000;
+  const [imagesAdded, setImagesAdded] = useState<Map<string,File>>(new Map<string,File>());
+  const [videosAdded, setVideosAdded] = useState<Map<string,File>>(new Map<string,File>());
+  const [filesAdded, setFilesAdded] = useState<Map<string,File>>(new Map<string,File>());
+  const [mainImageAdded, setMainImageAdded] = useState<File | null>();
 
-  for (const file of (campaign.files.value as ModelFIle[] ) ) 
+  if(firstRender)
   {
-     switch (file.file_type) 
+    for (const key of (new Campaign).getKeys()) 
+    { 
+      if( key === "end_date")
+        fieldsValue.set(key,new Date(campaign[key]!).toISOString().split('T')[0] );
+      else
+        fieldsValue.set(key,campaign[key] as string);
+    }
+
+    for (const key of (new BankAccount).getKeys()) 
+    { 
+        fieldsValue.set(key,(campaign.bank_account!.value as BankAccount)[key]! as string);
+    }
+
+    for (const campaignBadge of campaign.badges.value as CampaignBadge[]) 
+    {  
+        const type = (campaignBadge.badge.value as Badge).type
+        fieldsValue.set(`${type}_name`,((campaignBadge.badge.value as Badge).name!));
+        fieldsValue.set(`${type}_description`,((campaignBadge.badge.value as Badge).description!));
+    }
+
+    for (const modelFile of campaign.files.value as ModelFIle[] ) 
+    {
+      switch (modelFile.file_type) 
      {
         case FileTypes.Document:
-          files.push(file);
+          files.push(modelFile);
           break;
         case FileTypes.Image:
-          images.push(file);
+          images.push(modelFile);
           break;
         case FileTypes.MainImage:
-          mainImage.push(file);
+          mainImage.push(modelFile);
           break;
         case FileTypes.Video:
-          videos.push(file);
+          videos.push(modelFile);
           break;
-     }
-  }  
 
-  const campaignBadge = (campaign.badges.value as CampaignBadge[]).find( 
-    (campaignBadge) => 
-    { 
-      (campaignBadge.badge.value as Badge).type === BadgeTypes.CampaignFamily 
-    }  
-  ) 
-  setBadgeFamilyImage( (campaignBadge?.badge.value! as Badge).image.value as ModelFIle );
-
-  // const campaignBadge = (campaign.badges.value as CampaignBadge[]).find( 
-  //   (campaignBadge) => 
-  //   { 
-  //     (campaignBadge.badge.value as Badge).type === BadgeTypes.CampaignFamily 
-  //   }  
-  // ) 
-  // setBadgeFamily( (campaignBadge?.badge.value! as Badge).image.value as ModelFIle );
-
-  // function handleBadgeImageInput( event: React.ChangeEvent<HTMLInputElement> , set:Dispatch<SetStateAction<File | undefined>> )
-  // {
-  //   const files = event.target.files;
-  //   if (files) {
-  //     const newImages = Array.from(files);
-  //     set(newImages[0]);
-  //   }
-  // }
-
-  
-
-  // const handleMainImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const files = event.target.files;
-  //   if (files) {
-  //     const newImages = Array.from(files);
-  //     setMainImage(newImages[0]);
-  //   }
-  // };
-
-  // //Adds new file to the image list
-  // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const files = event.target.files;
-  //   if (files) {
-  //     const newImages = Array.from(files);
-  //     setImages((prevImages) => [...prevImages, ...newImages]);
-
-  //   }
-  // };
-  
-  // //removes the selected image from the image list
-  // const removeImage = (index: number) => {
-  //   setImages((prevImages) => {
-  //     const updatedImages = prevImages.filter((_, i) => i !== index);
-  //     return updatedImages;
-  //   });
-  // };
-
-  //Adds new file to the video list
-  const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const newVideos = Array.from(files);
-      //setVideos((prevVideos) => [...prevVideos, ...newVideos]);
+      }
     }
-  };
 
-  //removes the selected video from the video list
-  const removeVideo = (index: number) => {
-    //setVideos((prevVideos) => prevVideos.filter((_, i) => i !== index));
-  };
-
-  //Adds new file to the file list
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const newFiles = Array.from(files);
-      //setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    }
-  };
-
-  //removes the selected file from the file list
-  const removeFile = (index: number) => {
-    //setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-
-  };
-
-  //render for file previews 
-  const renderFilePreview = (file: File) => 
-  {
-    const fileType = file.type;
-
-    if (fileType.startsWith("image/")) 
-      return <img src={URL.createObjectURL(file)} alt={file.name} className={styles.previewImage} />;
-
-    else if (fileType.startsWith("video/")) 
-      return <video controls className={styles.previewVideo}><source src={URL.createObjectURL(file)} type={file.type} /></video>;
-
-    else if (fileType === "application/pdf") 
-      return (
-        <object data={URL.createObjectURL(file)} type="application/pdf" width="100%" height="200">
-          <p>Your browser does not support PDFs. <a href={URL.createObjectURL(file)}>Download the PDF</a>.</p>
-        </object>
-      );
-    else if (fileType === "text/plain") 
-    {
-      const [content, setContent] = useState<string | null>(null);
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setContent(e.target?.result as string);
-      };
-      reader.readAsText(file);
-
-      return <pre className={styles.previewText}>{content}</pre>;
-
-    } else 
-      return <p>{file.name}</p>; // For unsupported file types
-  };
-
-  function addBadge(campaignId:number,type:BadgeTypes,image:File,description:string,name:string) : Promise<Response>
-  {   
-    const data = new FormData();
-    data.append("name",name);
-    data.append("description",description);
-    data.append("type",type.toString());
-    data.append("unit","n/a");
-    data.append("value","0");
-    data.append("campaignId",campaignId.toString());
-    data.append("imageFile",image);
-
-    return fetch("/api/badge",{method:"PUT",body:data});
+    setFirstRender(false);
   }
 
+  function isChanged(field:string):string
+  {
+    return updatedFields.get(field) !== undefined ? styles.changed : "";
+  }
+
+  function updateField(field:string,type:FieldEntitiesTypes,newValue:string,badgeType:BadgeTypes|null =null)
+  {
+    fieldsValue.get(field);
+    let object: { [key:string]:any} ;
+    let _field = field;
+    switch(type)
+    {
+      case FieldEntitiesTypes.BANK:
+        object = campaign.bank_account.value!;
+        break;
+      case FieldEntitiesTypes.BADGE:
+        const splittedField = field.split("_");
+        const type = Number(splittedField[0]);
+        _field = splittedField[1];
+        object = getBadgeWithType(campaign,type)!;
+        break;
+      case FieldEntitiesTypes.CAMPAIGN:
+      default:
+        object = campaign;
+    }
+    if(newValue == object[_field] || ( field === "end_date" && formatDateToYYYYMMDD(object[_field]) == newValue ) ) 
+      updatedFields.delete(field);
+    else
+      updatedFields.set(field,{type,value:newValue,badgeType});
+    
+    fieldsValue.set(field,newValue);
+    setRender(render+1);
+  }
+
+  function removeFile(file:ModelFIle,array:ModelFIle[],set:Dispatch<SetStateAction<ModelFIle[]>>)
+  {
+    removedFiles.push(file);
+    set( array.filter((item) => item.id !== file.id) );
+  }
   
+  function addSingleFile(file:File,map:Map<string,File>) 
+  {
+      map.set(file.name,file);
+      setRender(render-1);
+  }
+
+  function addFile(files:FileList,map:Map<string,File>) 
+  {
+    for (const file of files) 
+    {
+      map.set(file.name,file);
+      setRender(render-1);
+    }
+  }
+
+  function removeAddedFile(file:File,map:Map<string,File>)
+  {
+    map.delete(file.name);
+    setRender(render+1);
+  }
+
   function addImage(type:FileTypes,managerId:number,campaignId:number,image:File) : Promise<Response>
   { 
     const data = new FormData();
@@ -216,18 +197,191 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
  
   function continueToMy_Campaigns()
   {
-    window.location.href = window.location.href.replace("create","my_campaigns");
+    window.location.href = "/campaigns/my_campaigns"
   }
 
   const mainForm = useRef<HTMLFormElement>(null);
   const [actions,setActions] = useState<IActionResultNotification[]>([]);
   const [category,setCategory] = useState<string>("");
 
+  function constructForms(array:IActionResultNotification[], time:{time:number}, delay:number = 1000 ): FormsData
+  {
+
+    let campaignFormData = new FormData();
+    campaignFormData.set("id",campaign.id!.toString());
+
+    let bankForm = new FormData();
+    console.log((campaign.bank_account.value as BankAccount).id);
+    bankForm.set("id",(campaign.bank_account.value as BankAccount).id!.toString());
+
+    let badgeFamilyFormData = new FormData();
+    badgeFamilyFormData.set("id", getBadgeWithType(campaign,BadgeTypes.CampaignFamily)!.id!.toString());
+
+    let badgeHelperFormData = new FormData();
+    badgeHelperFormData.set("id", getBadgeWithType(campaign,BadgeTypes.CampaignHelper)!.id!.toString());
+
+    let badgePartnerFormData = new FormData();
+    badgePartnerFormData.set("id", getBadgeWithType(campaign,BadgeTypes.CampaignPartner)!.id!.toString());
+    
+    for (const [ key, valueObj ]  of updatedFields.entries()) 
+    {
+      if(StringUtils.stringIsNullOrEmpty(valueObj.value))
+      {
+        array.push( new ActionResultNotificationError(key,["Can not be empty"],time.time+=delay))
+        continue;
+      }
+
+      switch (valueObj.type) 
+      {
+        case FieldEntitiesTypes.CAMPAIGN:
+          campaignFormData.set(key,valueObj.value);
+          break;
+        case FieldEntitiesTypes.BANK:
+          bankForm.set(key,valueObj.value);
+          break;
+        case FieldEntitiesTypes.BADGE:
+          let splitted = key.split("_");
+          let badgeKey = splitted[1];
+          let type = Number(splitted[0]);
+
+          switch (type) 
+          {
+            case BadgeTypes.CampaignFamily:
+              badgeFamilyFormData.set(badgeKey,valueObj.value);
+              break;
+            case BadgeTypes.CampaignPartner:
+              badgePartnerFormData.set(badgeKey,valueObj.value);
+              break;
+            case BadgeTypes.CampaignHelper:
+              badgeHelperFormData.set(badgeKey,valueObj.value);
+              break;
+          }
+          break;
+      }
+      
+    }
+    return { campaignFormData, bankForm, badgeFamilyFormData, badgeHelperFormData, badgePartnerFormData } 
+  }
+
+  function validateFiles(data:FormsData,array:IActionResultNotification[],time:number,delay:number = 1000)
+  {
+    if( !mainImage && !mainImageAdded )
+      array.push( new ActionResultNotificationError("Main Image",["Can not be empty"],time+=delay) )
+
+    if( !badgeFamily && !badgeFamilyFile )
+      array.push( new ActionResultNotificationError("Family badge Image",["Can not be empty"],time+=delay) )
+    else if(badgeFamilyFile)
+      data.badgeFamilyFormData.set("imageFile",badgeFamilyFile);
+
+    if( !badgeHelper && !badgeHelperFile  )
+      array.push( new ActionResultNotificationError("Helper badge image",["Can not be empty"],time+=delay) )
+    else if(badgeHelperFile)
+      data.badgeHelperFormData.set("imageFile",badgeHelperFile);
+
+    if( !badgePartner && !badgePartnerFile )
+      array.push( new ActionResultNotificationError("Partner badge image",["Can not be empty"],time+=delay) )
+    else if(badgePartnerFile)
+      data.badgePartnerFormData.set("imageFile",badgePartnerFile);
+  }
+
+  function sendUpdate(responses:Promise<Response>[],formData:FormData | null, url:string,method:string = "PATCH")
+  {
+    if( formData && formData.entries().find(([key,v])=> key!="id") != undefined)
+    {
+      responses.push( fetch(url,{method,body:formData}) );
+    }
+    else if (!formData)
+    {
+      responses.push( fetch(url,{method}) );
+    }
+  }
+
+  function createPutFileFormData(campaign_id:number,user_id:number,type:FileTypes,file:File) : FormData
+  {
+    const formData = new FormData();
+
+    formData.append("campaign_id", campaign_id.toString());
+    formData.append("user_id", user_id.toString());
+    formData.append("type", type.toString());
+    formData.append("imageFile", file);
+
+    return formData;
+  }
+
+  function sendUpdates(formsData:FormsData) : Promise<Response>[]
+  {
+    const results:Promise<Response>[] = []
+    sendUpdate(results,formsData.campaignFormData,"/api/campaign");
+    sendUpdate(results,formsData.bankForm,"/api/bank_account");
+    sendUpdate(results,formsData.badgeFamilyFormData,"/api/badge");
+    sendUpdate(results,formsData.badgeHelperFormData,"/api/badge");
+    sendUpdate(results,formsData.badgePartnerFormData,"/api/badge");
+
+    for (const file of removedFiles) 
+    {
+       const data = new FormData()
+       data.set("id",file.id!.toString())
+       data.set("user_id",userId.toString())
+       sendUpdate(results,data,`/api/file`,"DELETE");
+    }
+    
+
+    for (const [field,file] of filesAdded) 
+      sendUpdate(results,createPutFileFormData(campaign.id!,userId,FileTypes.Document,file),"/api/file","PUT");
+
+    for (const [field,file] of videosAdded) 
+      sendUpdate(results,createPutFileFormData(campaign.id!,userId,FileTypes.Video,file),"/api/file","PUT");
+
+    for (const [field,file] of imagesAdded) 
+      sendUpdate(results,createPutFileFormData(campaign.id!,userId,FileTypes.Image,file),"/api/file","PUT");
+
+    if(mainImageAdded)
+      sendUpdate(results,createPutFileFormData(campaign.id!,userId,FileTypes.MainImage,mainImageAdded),"/api/file","PUT");
+
+    return results;
+  }
+
   const handleSubmit = async (e:any) => 
   {
-    
-  };
+    setActions(new Array());
+    const actionsResult: IActionResultNotification[] = [];
+    let time = 1000;
+    let timeIncrement = 2000;
+    const formsData = constructForms(actionsResult,{time});
+    validateFiles(formsData,actionsResult,time)
 
+    if(actionsResult.length > 0)
+    {
+      setTimeout( () => setActions(actionsResult) , 1 );
+      return;
+    }
+
+    const allResponses = await Promise.all( sendUpdates(formsData) );
+
+    for (const response of allResponses) 
+    {
+      switch(response.status)
+      {
+        case 200:
+          actionsResult.push( new ActionResultNotificationSuccess(response.statusText,time+=timeIncrement ) );
+          break;
+        case 422:
+          const resultErrors = await response.json();
+          for (const error of resultErrors.errors) 
+          {
+            actionsResult.push( new ActionResultNotificationError(error.field,error.errors,time+=timeIncrement) );
+          }
+          break;
+        default:
+          actionsResult.push( new ActionResultNotificationError( response.status.toString() , [response.statusText],time+=timeIncrement ) );
+          break;
+      }
+    }
+
+    setActions(actionsResult);
+    if( actionsResult.find( (action)=> action instanceof ActionResultNotificationSuccess ))
+      setSubmitted(true);
+  };
 
   return (
     <div className={styles.CampaignCreateContainer}>
@@ -238,7 +392,10 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
             name="title" 
             id="title" 
             type="text" 
-            className={styles.inputField} placeholder="Campaign Title"
+            value={fieldsValue.get("title")}
+            className={`${styles.inputField} ${isChanged("title")}`} 
+            placeholder="Campaign Title"
+            onChange={(e)=>{updateField("title",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
           />
         </div>
         <div className={styles.TextForm}>
@@ -246,8 +403,10 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
             <textarea 
               name="description" 
               id="description" 
-              className={styles.inputField} 
+              className={`${styles.inputField} ${isChanged("description")}`}  
               rows={4} 
+              value={fieldsValue.get("description")}
+              onChange={(e)=>{updateField("description",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
               placeholder="Campaign description"
             ></textarea>
         </div>
@@ -258,8 +417,10 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
               width={"100%"} 
               heigh={40} 
               color="rgba(26, 0, 37, 1)" 
+              value={fieldsValue.get("category") as string}
+              customContainerStyle={isChanged("category")}
               options={["Health","School","StartUp","Debt"]} 
-              onChange={(v)=>{setCategory(v);}}
+              onChange={(value)=>{updateField("category",FieldEntitiesTypes.CAMPAIGN,value);}}
             ></DropdownInput>
           </div>
           <div style={{flexGrow:1}}>
@@ -268,7 +429,10 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
               name="objective_value" 
               id="objective_value" 
               type="number" 
-              className={styles.inputField2} placeholder="Goal Amount €"
+              value={fieldsValue.get("objective_value")}
+              onChange={(e)=>{updateField("objective_value",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
+              className={`${styles.inputField2} ${isChanged("objective_value")}`} 
+              placeholder="Goal Amount €"
             />
           </div>
           <div style={{flexGrow:1}}>
@@ -277,7 +441,9 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
               name="end_date" 
               id="end_date" 
               type="date" 
-              className={styles.inputField2}
+              value={fieldsValue.get("end_date")}
+              onChange={(e)=>{updateField("end_date",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
+              className={`${styles.inputField2} ${isChanged("end_date")}`} 
             />
           </div>
         </div>
@@ -289,21 +455,27 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
               name="bank_name" 
               id="bank_name" 
               type="text" 
-              className={styles.inputFieldBank} 
+              value={fieldsValue.get("bank_name")}
+              onChange={(e)=>{updateField("bank_name",FieldEntitiesTypes.BANK,e.target.value);}}
+              className={`${styles.inputFieldBank} ${isChanged("bank_name")}`} 
               placeholder="Bank Name"
             />
             <input 
               name="iban" 
               id="iban" 
               type="text" 
-              className={styles.inputFieldBank} 
+              value={fieldsValue.get("iban")}
+              onChange={(e)=>{updateField("iban",FieldEntitiesTypes.BANK,e.target.value);}}
+              className={`${styles.inputFieldBank} ${isChanged("iban")}`} 
               placeholder="IBAN"
             />
             <input 
               name="account_holder" 
               id="account_holder" 
               type="text" 
-              className={styles.inputFieldBank} 
+              value={fieldsValue.get("account_holder")}
+              onChange={(e)=>{updateField("account_holder",FieldEntitiesTypes.BANK,e.target.value);}}
+              className={`${styles.inputFieldBank} ${isChanged("account_holder")}`} 
               placeholder="Account Owner"
             />
           </div>
@@ -315,14 +487,18 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
               name="contact_email" 
               id="bank_name" 
               type="email" 
-              className={styles.inputFieldBank} 
+              className={`${styles.inputFieldBank} ${isChanged("contact_email")}`} 
+              value={fieldsValue.get("contact_email")}
+              onChange={(e)=>{updateField("contact_email",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
               placeholder="Contact email"
             />
             <input 
               name="contact_phone_number" 
               id="iban" 
               type="number" 
-              className={styles.inputFieldBank} 
+              className={`${styles.inputFieldBank} ${isChanged("contact_phone_number")}`} 
+              value={fieldsValue.get("contact_phone_number")}
+              onChange={(e)=>{updateField("contact_phone_number",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
               placeholder="Contact Phone Number"
             />
           </div>
@@ -334,98 +510,173 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
           <div className={styles.badgesContainer}>
             <div className={styles.badgeContainer}>
               <div className={styles.TextForm}>Family</div>
-              <div className={styles.imagePlaceHolder}>
+              <div className={styles.imagePlaceHolder}> 
               { 
-                badgeFamilyImage &&
-                <img
-                  src={`/documents/${badgeFamilyImage.id}_${badgeFamilyImage.original_name}`}
-                  alt={`Preview`}
-                  className={styles.previewBadgeImage}
-                />
+                badgeFamily && badgeFamily.image.value && 
+                  <img
+                    src={`/documents/${(badgeFamily.image.value as ModelFIle).id}_${(badgeFamily.image.value as ModelFIle).original_name}`}
+                    alt={`Preview`}
+                    className={styles.previewBadgeImage}
+                  />
+              }
+              { 
+                badgeFamilyFile && !(badgeFamily?.image.value) && 
+                  <img src={URL.createObjectURL(badgeFamilyFile)} alt={badgeFamilyFile.name} className={styles.previewImage} />
               }
               </div>
-              <input className={styles.badgeInput}
-                type="file"
-                id="badge_image"
-                name="campaign_image"
-                accept="image/png, image/gif, image/jpeg"
-                //onChange={(e)=>{handleBadgeImageInput(e,setBadgeFamily)}}
-              />
+              { 
+                badgeFamily && badgeFamily.image.value &&
+                <input className={styles.badgeInput}
+                  type="file"
+                  id="badge_image"
+                  name="campaign_image"
+                  accept="image/png, image/gif, image/jpeg"
+                  onChange={(e)=>{ 
+                    removedFiles.push(badgeFamily.image.value as ModelFIle); 
+                    if(e.target.files) setBadgeFamilyFile(e.target.files[0]); 
+                    setBadgeFamily(null);
+                    console.log("changed");
+                    
+                  }}
+                />
+              }
+              { 
+                !badgeFamily && 
+                <input className={styles.badgeInput}
+                  type="file"
+                  id="badge_image"
+                  name="campaign_image"
+                  accept="image/png, image/gif, image/jpeg"
+                  onChange={(e)=>{ if(e.target.files) setBadgeFamilyFile(e.target.files[0]);}}
+                />
+              }
+              
               <input 
                 type="text" 
-                className={styles.inputFieldBank} 
                 placeholder="Name"
-               // onChange={(e)=>setBadgeFamilyName( e.target.value! )}
+                className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignFamily}_name`)}`} 
+                value={ fieldsValue.get(`${BadgeTypes.CampaignFamily}_name`) }
+                onChange={(e)=>{updateField(`${BadgeTypes.CampaignFamily}_name`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignFamily);}}
               />
               <input 
                 type="text" 
-                className={styles.inputFieldBank} 
+                className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignFamily}_description`)}`} 
+                value={ fieldsValue.get(`${BadgeTypes.CampaignFamily}_description`) }
+                onChange={(e)=>{updateField(`${BadgeTypes.CampaignFamily}_description`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignFamily);}}
                 placeholder="Description"
-               // onChange={(e)=>setBadgeFamilyDescription( e.target.value! )}
               />
             </div>
             <div className={styles.badgeContainer}>
               <div className={styles.TextForm}>Helper</div>
               <div className={styles.imagePlaceHolder}>
-                {/* { 
-                  badgeHelper  &&
+              { 
+                badgeHelper && badgeHelper.image.value && 
                   <img
-                    src={URL.createObjectURL(badgeHelper)} // Generate the object URL when rendering
+                    src={`/documents/${(badgeHelper.image.value as ModelFIle).id}_${(badgeHelper.image.value as ModelFIle).original_name}`}
                     alt={`Preview`}
                     className={styles.previewBadgeImage}
                   />
-                } */}
+              }
+              { 
+                badgeHelperFile && !(badgeHelper?.image.value) && 
+                  <img src={URL.createObjectURL(badgeHelperFile)} alt={badgeHelperFile.name} className={styles.previewImage} />
+              }
               </div>
-              <input className={styles.badgeInput}
-                type="file"
-                id="campaign_image"
-                name="campaign_image"
-                accept="image/png, image/gif, image/jpeg"
-              //  onChange={(e)=>{handleBadgeImageInput(e,setBadgeHelper)}}
-              />
+              { 
+                badgeHelper && badgeHelper.image.value &&
+                <input className={styles.badgeInput}
+                  type="file"
+                  id="badge_image"
+                  name="campaign_image"
+                  accept="image/png, image/gif, image/jpeg"
+                  onChange={(e)=>{ 
+                    removedFiles.push(badgeHelper.image.value as ModelFIle); 
+                    if(e.target.files) {
+                      setBadgeHelperFile(e.target.files[0]); 
+                      setBadgeHelper(null);
+                    }
+                  }}
+                />
+              }
+              { 
+                !badgeHelper && 
+                <input className={styles.badgeInput}
+                  type="file"
+                  id="badge_image"
+                  name="campaign_image"
+                  accept="image/png, image/gif, image/jpeg"
+                  onChange={(e)=>{ if(e.target.files) setBadgeHelperFile(e.target.files[0]);}}
+                />
+              }
               <input 
                 type="text" 
-                className={styles.inputFieldBank} 
                 placeholder="Name"
-                onChange={(e)=>setBadgeHelperName( e.target.value! )}
+                className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignHelper}_name`)}`} 
+                value={ fieldsValue.get(`${BadgeTypes.CampaignHelper}_name`) }
+                onChange={(e)=>{updateField(`${BadgeTypes.CampaignHelper}_name`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignHelper);}}
               />
               <input 
                 type="text" 
-                className={styles.inputFieldBank} 
-                placeholder="Description"
-                onChange={(e)=>setBadgeHelperDescription( e.target.value! )}
+                className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignHelper}_description`)}`} 
+                value={ fieldsValue.get(`${BadgeTypes.CampaignHelper}_description`) }
+                onChange={(e)=>{updateField(`${BadgeTypes.CampaignHelper}_description`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignHelper);}}
               />
             </div>
             <div className={styles.badgeContainer}>
             <div className={styles.TextForm}>Partner</div>
               <div className={styles.imagePlaceHolder}>
-                {/* { 
-                  badgePartner  &&
+              { 
+                badgePartner && badgePartner.image.value && 
                   <img
-                    src={URL.createObjectURL(badgePartner)} // Generate the object URL when rendering
+                    src={`/documents/${(badgePartner.image.value as ModelFIle).id}_${(badgePartner.image.value as ModelFIle).original_name}`}
                     alt={`Preview`}
                     className={styles.previewBadgeImage}
                   />
-                } */}
+              }
+              { 
+                badgePartnerFile && !(badgePartner?.image.value) && 
+                  <img src={URL.createObjectURL(badgePartnerFile)} alt={badgePartnerFile.name} className={styles.previewImage} />
+              }
               </div>
-              <input className={styles.badgeInput}
-                type="file"
-                id="campaign_image"
-                name="campaign_image"
-                accept="image/png, image/gif, image/jpeg"
-               // onChange={(e)=>{handleBadgeImageInput(e,setBadgePartner)}}
-              />
+              { 
+                badgePartner && badgePartner.image.value &&
+                <input className={styles.badgeInput}
+                  type="file"
+                  id="badge_image"
+                  name="campaign_image"
+                  accept="image/png, image/gif, image/jpeg"
+                  onChange={(e)=>{ 
+                    removedFiles.push(badgePartner.image.value as ModelFIle); 
+                    if(e.target.files) {
+                      setBadgePartnerFile(e.target.files[0]); 
+                      setBadgePartner(null);
+                    }
+                  }}
+                />
+              }
+              { 
+                !badgePartner && 
+                <input className={styles.badgeInput}
+                  type="file"
+                  id="badge_image"
+                  name="campaign_image"
+                  accept="image/png, image/gif, image/jpeg"
+                  onChange={(e)=>{ if(e.target.files) setBadgePartnerFile(e.target.files[0]);}}
+                />
+              }
               <input 
                 type="text" 
-                className={styles.inputFieldBank} 
                 placeholder="Name"
-               // onChange={(e)=>setBadgePartnerName( e.target.value! )}
+                className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignPartner}_name`)}`} 
+                value={ fieldsValue.get(`${BadgeTypes.CampaignPartner}_name`) }
+                onChange={(e)=>{updateField(`${BadgeTypes.CampaignPartner}_name`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignPartner);}}
               />
               <input 
                 type="text" 
-                className={styles.inputFieldBank} 
                 placeholder="Description"
-              //  onChange={(e)=>setBadgePartnerDescription( e.target.value! )}
+                className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignPartner}_description`)}`} 
+                value={ fieldsValue.get(`${BadgeTypes.CampaignPartner}_description`) }
+                onChange={(e)=>{updateField(`${BadgeTypes.CampaignPartner}_description`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignPartner);}}
               />
             </div>
           </div>
@@ -435,23 +686,51 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
           <div className={styles.fileFormTitle}>
               <b>Campaign Front Image</b>
           </div>
-          <input
-              
-              type="file"
-              id="campaign_image"
-              name="campaign_image"
-              accept="image/png, image/gif, image/jpeg"
-              //onChange={handleMainImageUpload}
+          {
+            mainImage.length > 0 &&
+            <input
+                
+                type="file"
+                id="campaign_image"
+                name="campaign_image"
+                accept="image/png, image/gif, image/jpeg"
+                onChange={(e)=>{ 
+                    if(e.target.files)
+                    {
+                      removeFile(mainImage[0],mainImage,setMainImage);
+                      setMainImageAdded(e.target.files[0] ) 
+                    }
+                  }
+                }
               />
-          </div>
+          }
+          {
+            mainImage.length == 0 && 
+            <input
+                
+                type="file"
+                id="campaign_image"
+                name="campaign_image"
+                accept="image/png, image/gif, image/jpeg"
+                onChange={(e)=>{ 
+                  if(e.target.files)
+                    setMainImageAdded(e.target.files[0] ) 
+                  }}
+            />
+          }
+        </div>
         <div className={styles.filePreviewContainer}>
           {
-           // mainImage && 
-            // <img 
-            //   src={URL.createObjectURL(mainImage)} // Generate the object URL when rendering
-            //   alt={`Preview`}
-            //   className={styles.mainImage}
-            // />
+           mainImage.length > 0  && 
+            <img 
+              src={`/documents/${mainImage[0].id}_${mainImage[0].original_name}`}
+              alt={`Preview`}
+              className={styles.mainImage}
+            />
+          }
+          {
+            mainImageAdded &&
+            <img src={URL.createObjectURL(mainImageAdded)} alt={mainImageAdded.name} className={styles.previewImage} />
           }
         </div>
         <div className={styles.fileForm}>
@@ -459,31 +738,47 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
               <b>Campaign Images</b>
           </div>
           <input
-              
               type="file"
               id="campaign_image"
               name="campaign_image"
               accept="image/png, image/gif, image/jpeg"
               multiple
-            //  onChange={handleImageUpload}
+              onChange={(e)=> {addFile(e.target.files? e.target.files: new FileList(),imagesAdded)}}
               />
           </div>
         <div className={styles.filePreviewContainer}>
         {images.map((image, index) => (
           <div key={index} className={styles.imagePreview}>
-            {/* <img
-                src={URL.createObjectURL(image)} // Generate the object URL when rendering
+            <img
+                src={`/documents/${image.id}_${image.original_name}`} // Generate the object URL when rendering
                 alt={`Preview ${index + 1}`}
                 className={styles.previewImage}
                 />
             <button
-                onClick={() => removeImage(index)}
+                onClick={() => removeFile(image,images,setImages)}
                 className={styles.removeButton}
                 >
                 X
-            </button> */}
-            </div>
+            </button>
+          </div>
         ))}
+         {
+          Array.from(imagesAdded.entries()).map( ([name,file],index) => 
+          (
+            <div key={index} className={styles.imagePreview}>
+            {
+              <img src={URL.createObjectURL(file)} alt={file.name} className={styles.previewImage} />
+            }
+            <button
+                onClick={() => removeAddedFile(file,imagesAdded)}
+                className={styles.removeButton}
+                >
+                X
+            </button>
+          </div>
+          )
+        )
+        }
         </div>
         {/* Campaign Videos Upload */}
         <div className={styles.fileForm}>
@@ -494,27 +789,47 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
             id="campaign_video"
             accept="video/mp4"
             multiple
-            onChange={handleVideoUpload}
+            onChange={(e)=>addFile(e.target.files? e.target.files: new FileList(),videosAdded)}
             />
         </div>
         <div className={styles.filePreviewContainer}>
         {videos.map((video, index) => (
           <div key={index} className={styles.videoPreview}>
-            {/* <video
+            <video
                 controls
                 className={styles.previewVideo}
                 >
-                <source src={URL.createObjectURL(video)} type={video.type} />
+                <source src={`/documents/${video.id}_${video.original_name}`} type={video.file_suffix!} />
                 Your browser does not support the video tag.
             </video>
             <button
-                onClick={() => removeVideo(index)}
+                onClick={() => removeFile(video,videos,setVideos)}
                 className={styles.removeButton}
                 >
                 X
-            </button> */}
+            </button>
             </div>
         ))}
+        {
+          Array.from(videosAdded.entries()).map( ([name,file],index) => 
+          (
+            <div key={index} className={styles.videoPreview}>
+            {
+              <video controls width="100%" height="200" className={styles.previewVideo}>
+                <source src={URL.createObjectURL(file)} type={`${file.type}`} />
+                <p>Your browser does not support videos. <a href={URL.createObjectURL(file)}>Download the video</a>.</p>
+              </video>
+            }
+            <button
+                onClick={() => removeAddedFile(file,videosAdded)}
+                className={styles.removeButton}
+                >
+                X
+            </button>
+          </div>
+          )
+        )
+        }
         </div>
         {/* Campaign File Upload */}
         <div className={styles.fileForm}>
@@ -525,21 +840,44 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
             id="campaign_file"
             accept=".pdf, .docx, .xlsx, .txt"
             multiple
-            onChange={handleFileUpload}
+            onChange={(e)=>{addFile(e.target.files? e.target.files: new FileList() ,filesAdded)}}
             />
         </div>
         <div className={styles.filePreviewContainer}>
         {files.map((file, index) => (
           <div key={index} className={styles.filePreview}>
-            {/* {renderFilePreview(file)}
+            {
+              <object data={`/documents/${file.id}_${file.original_name}`} type="application/pdf" width="100%" height="200">
+                <p>Your browser does not support PDFs. <a href={`/documents/${file.id}_${file.original_name}`}>Download the PDF</a>.</p>
+              </object>
+            }
             <button
-                onClick={() => removeFile(index)}
+                onClick={() => removeFile(file,files,setFiles)}
                 className={styles.removeButton}
                 >
                 X
-            </button> */}
-            </div>
+            </button>
+          </div>
         ))}
+        {
+          Array.from(filesAdded.entries()).map( ([name,file],index) => 
+          (
+            <div key={index} className={styles.filePreview}>
+            {
+              <object data={URL.createObjectURL(file)} type="application/pdf" width="100%" height="200">
+                <p>Your browser does not support PDFs. <a href={URL.createObjectURL(file)}>Download the PDF</a>.</p>
+              </object>
+            }
+            <button
+                onClick={() => removeAddedFile(file,filesAdded)}
+                className={styles.removeButton}
+                >
+                X
+            </button>
+          </div>
+          )
+        )
+        }
         </div>
         {
           !submitted &&
@@ -560,11 +898,23 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
         }
         {
           submitted &&
-          <div className={styles.ButtonForm}>
-            <button className={styles.submitButton} onClick={() => continueToMy_Campaigns() }>
-                Continue
-            </button>
+          <div className={styles.ButtonFormContainer}>
+            <div className={styles.line}>
+              <div className={styles.ButtonForm}>
+                <a href={window.location.href} >
+                  <button className={styles.submitButton}>
+                      Do Other Update
+                  </button>
+                </a>
+              </div>
+              <div className={styles.ButtonForm}>
+                <button className={styles.submitButtonUpdate} onClick={() => continueToMy_Campaigns()}>
+                    Continue
+                </button>
+              </div>
+            </div>
           </div>
+          
         }
       </div>
       <div>
@@ -577,6 +927,20 @@ const EditCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>
       </div>
     </div>
   );
+}
+
+function getBadgeWithType(campaign:Campaign,type:BadgeTypes) : Badge | null
+{
+  const campaignBadge = (campaign.badges.value as CampaignBadge[]).find( 
+    (campaignBadge) => (campaignBadge.badge.value as Badge).type === type
+  ) 
+
+  return (campaignBadge?.badge.value! as Badge) as Badge;
+}
+
+const formatDateToYYYYMMDD = (date:Date) => {
+  let a = new Date(date) 
+  return `${a.getFullYear()}-${a.getMonth()+1}-${a.getDate()}`;
 }
 
 export default EditCampaignForm;

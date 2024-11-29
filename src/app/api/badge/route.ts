@@ -150,7 +150,7 @@ const updateFormSchema = yup.object().shape(
         type: yup.number().integer().positive().nonNullable().min(0).max( Object.keys(BadgeTypes).length /2 - 1),
         unit: yup.string().trim().nullable(),
         value: yup.number().integer().positive().nullable(),
-        imageFile: fileService.filesSchema
+        imageFile: fileService.filesSchemaNotRequire
     }
 );
 const updateFormValidator = new FormValidator(updateFormSchema);
@@ -180,7 +180,23 @@ export async function PATCH( request:NextRequest )
     const updatedFields = [];
     for (const key in formData) 
     {
-        if (key !== "id" ) 
+        console.log(formData);
+        if( key == "imageFile")
+        {   
+            const uploadedFile = formData[key] as File;
+            const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,uploadedFile.size,user.id!);
+    
+            if(!fileResult.isOK)
+                return Responses.createValidationErrorResponse(fileResult.errors);
+
+            if ( !await fileService.save(fileResult.value!,uploadedFile) )
+                return Responses.createServerErrorResponse();
+
+            updatedFields.push("image_id");
+            badge.image_id = fileResult.value!.id;
+
+        }
+        else if (key !== "id") 
         {
             badge[key] = formData[key as keyof typeof formData];
             updatedFields.push(key);
@@ -194,7 +210,7 @@ export async function PATCH( request:NextRequest )
     if( !await badgeManager.updateField(badge,updatedFields) )
         return Responses.createServerErrorResponse();
 
-    return Responses.createSuccessResponse();
+    return Responses.createSuccessResponse({},"Badge Updated.");
 }
 
 const getFormSchema = yup.object().shape(

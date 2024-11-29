@@ -236,7 +236,7 @@ const CreateCampaignForm: React.FC<{managerId:number}> = ({managerId}) =>
         if(videos.length > 0)
           responsePromise = [ ...responsePromise, ...addImageArray(videos,FileTypes.Video,managerId,campaign.id) ]
         if(videos.length > 0)
-          responsePromise = [ ...responsePromise, ...addImageArray(videos,FileTypes.Document,managerId,campaign.id) ]
+          responsePromise = [ ...responsePromise, ...addImageArray(files,FileTypes.Document,managerId,campaign.id) ]
         
         responsePromise.push( addBadge(campaign.id,BadgeTypes.CampaignFamily,badgeFamily!,badgeFamilyDescription!, badgeFamilyName! ))
         responsePromise.push( addBadge(campaign.id,BadgeTypes.CampaignHelper,badgeHelper!,badgeHelperDescription!, badgeHelperName! ))
@@ -318,6 +318,8 @@ const CreateCampaignForm: React.FC<{managerId:number}> = ({managerId}) =>
             <DropdownInput 
               width={"100%"} 
               heigh={40} 
+              value=""
+              customContainerStyle=""
               color="rgba(26, 0, 37, 1)" 
               options={["Health","School","StartUp","Debt"]} 
               onChange={(v)=>{setCategory(v);}}
