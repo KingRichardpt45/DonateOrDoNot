@@ -12,18 +12,22 @@ import { DonationManager } from "@/core/managers/DonationManager";
 import { DonorManager } from "@/core/managers/DonorManager";
 import { Constrain } from "@/core/repository/Constrain";
 import { Operator } from "@/core/repository/Operator";
+import { DonorStoreItem } from "@/models/DonorStoreItem";
+
+
+// Initialize userProvider to fetch the current logged-in user
+const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 
 // Static test data for debugging purposes
 let totalDonated = 0; // Total donated amount by the user
 let freqDon = 0; // Frequency of user's donations
-
-// Initialize userProvider to fetch the current logged-in user
-const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
+let item="";
 
 const ProfilePage = async () => {
   // Initialize managers for donations and donors
   const donationManager = new DonationManager();
   const donorManager = new DonorManager();
+  const donorSItem = new DonorStoreItem();
 
   // Fetch user from session provider
   const user = await userProvider.getUser();
@@ -36,6 +40,7 @@ const ProfilePage = async () => {
     new Constrain("id", Operator.EQUALS, user?.id),
   ]);
 
+
   // Check if the donor exists and extract their data
   if (Donor && Donor.length > 0) {
     const donorData = Donor.find((donor) => donor.id === user?.id);
@@ -44,6 +49,7 @@ const ProfilePage = async () => {
       // Extract donation details if available
       totalDonated = donorData.total_donated_value || 0;
       freqDon = donorData.frequency_of_donation || 0;
+      item = donorSItem.store_item.name 
 
       console.log(`Total donated value: ${totalDonated}`);
       console.log(`Donation frequency: ${freqDon}`);
@@ -122,7 +128,7 @@ const ProfilePage = async () => {
               <div className={styles.LastBought}>
                 <h2>Last Bought</h2>
                 <div className={styles.ItemsGrid}>
-                  <p>No items purchased yet</p>
+                  <p>{item}</p>
                 </div>
               </div>
             </div>
