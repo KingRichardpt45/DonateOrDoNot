@@ -75,8 +75,8 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     }
 
     async getByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[] = () => [], orderBy: unknown[], limit: number = 0, offset: number = 0): Promise<Entity[]> {
-        constrains = this.filterConstrains(constrains);
         const includes = includeFunction(this.modelFactory.create(this.entityName) as Entity);
+        constrains = this.filterConstrains(constrains,includes);
         let query = this.dbConnection(this.tableName);
         const selectColumns = this.selectEntityColumn();
         query = this.include(query, includes, selectColumns);
@@ -99,13 +99,28 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return [`${this.tableName}.*`];
     }
 
-    private filterConstrains(constrains: Constrain[]): Constrain[] {
+    private filterConstrains(constrains: Constrain[], includes:IncludeNavigation[] ): Constrain[] {
         const filteredConstrains = [];
-        for (const constrain of constrains) {
-            if (this.typeObject[constrain.key] !== undefined) {
+        for (const constrain of constrains) 
+        {
+            if (this.typeObject[constrain.key] !== undefined) 
+            {
                 filteredConstrains.push(new Constrain(`${this.tableName}.${constrain.key}`, constrain.op, constrain.value));
-            } else
-                filteredConstrains.push(constrain)
+            }
+            else 
+            {
+                if( constrain.key.includes(".") )
+                {
+                    let splittedKey =  constrain.key.split(".");
+                    let index = includes.findIndex( (navigation)=> navigation.navigationKey.referencedTable === splittedKey[0] );
+                    if(index == -1)
+                        throw new Error(`Invalid Constrain key ${constrain.key} table ${splittedKey[0]} is not included.`);
+
+                    filteredConstrains.push( new Constrain(`${splittedKey[0]}_${index}.${splittedKey[1]}`, constrain.op, constrain.value) );
+                }
+                else
+                    filteredConstrains.push(constrain);
+            } 
         }
 
         return filteredConstrains;
