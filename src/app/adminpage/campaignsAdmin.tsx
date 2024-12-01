@@ -1,7 +1,9 @@
 import React from "react";
+import Link from "next/link"; // Import Link from Next.js
 import styles from "./campaignsAdmin.module.css";
 import { Campaign } from "@/models/Campaign";
 import { CampaignManager } from "@/models/CampaignManager";
+import { User } from "@/models/User";
 
 interface CampaignsAdminProps {
   campaigns: Campaign[]; // Pre-filtered and sorted campaigns
@@ -11,7 +13,7 @@ interface CampaignsAdminProps {
 const campaignStatus = ["In Analysis", "Approved", "Active", "Reproved", "Closed"];
 const campaignManagerTypes = ["Autonomous", "Institution"];
 
-const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignManagers}) => {
+const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignManagers }) => {
   return (
     <div className={styles.container}>
       {/* Campaigns Section */}
@@ -28,7 +30,9 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
               )}
               {/* Edit button for campaigns in "In Analysis" state */}
               {campaign.status === 0 && (
-                <button className={styles.editButton}>Edit</button>
+                <Link href={`/edit-campaign?id=${campaign.id}`}>
+                  <button className={styles.editButton}>Edit</button>
+                </Link>
               )}
             </div>
           ))}
@@ -39,7 +43,7 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
       <div className={styles.rightContainer}>
         <h2 className={styles.title}>Campaign Managers</h2>
         <div className={styles.list}>
-          {campaignManagers.map((manager, index) => (
+          {campaignManagers.map((manager) => (
             <div key={manager.id} className={styles.managerCard}>
               <h3>Manager ID: {manager.id}</h3>
               {/* Access user by index */}
@@ -48,7 +52,7 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
               <p>Email: {manager.contact_email || "No email provided"}</p>
               <p>Verified: {manager.verified ? "Yes" : "No"}</p>
               <p>Type: {campaignManagerTypes[manager.type]}</p>
-              {/* Accept and Deny buttons for verified managers */}
+              {/* Accept and Deny buttons for unverified managers */}
               {manager.verified == false && (
                 <div className={styles.actionButtons}>
                   <button className={styles.acceptButton}>Accept</button>
