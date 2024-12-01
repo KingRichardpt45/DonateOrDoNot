@@ -49,7 +49,7 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
               <p>Verified: {manager.verified ? "Yes" : "No"}</p>
               <p>Type: {campaignManagerTypes[manager.type]}</p>
               {/* Accept and Deny buttons for verified managers */}
-              {manager.verified === false && (
+              {manager.verified == false && (
                 <div className={styles.actionButtons}>
                   <button className={styles.acceptButton}>Accept</button>
                   <button className={styles.denyButton}>Deny</button>
