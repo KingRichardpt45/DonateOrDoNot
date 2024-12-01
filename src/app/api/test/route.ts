@@ -3,11 +3,15 @@ import {RepositoryAsync} from '@/core/repository/RepositoryAsync';
 import {User} from '@/models/User';
 import {IncludeNavigation} from '@/core/repository/IncludeNavigation';
 import {PrimaryKeyPart} from '@/core/repository/PrimaryKeyPart';
+import { CampaignManagerManager } from '@/core/managers/CampaignManagerManager';
+import { Constrain } from '@/core/repository/Constrain';
+import { Operator } from '@/core/repository/Operator';
+import { UserRoleTypes } from '@/models/types/UserRoleTypes';
 
 
 export async function GET() {
 // let AddresseRepo = new RepositoryAsync<Address>("Address");
-    const UserRepo = new RepositoryAsync(User);
+    //const UserRepo = new RepositoryAsync(User);
     // const myAddresse = new Address();
 
     // myAddresse.address = "Santo antónio Caminho da miranda";
@@ -46,7 +50,7 @@ export async function GET() {
 
     // gets with includes
     //let result = await UserRepo.getAll((user)=> [ new IncludeNavigation( user.notifications , 0), new IncludeNavigation( user.address , 0) ]);
-    const result = await UserRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],(user)=>[new IncludeNavigation(user.notifications,0)]);
+    //const result = await UserRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],(user)=>[new IncludeNavigation(user.notifications,0)]);
     //const result = await UserRepo.getFirstByCondition([new Constrain("Addresses.id", "=", "18")], (user) => [new IncludeNavigation(user.address, 0)], [], 0, 0);
     // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
     // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
@@ -106,6 +110,10 @@ export async function GET() {
 
     //console.log( await userRepo.getByPrimaryKey([{name:"Users.id",value:20}],["Addresse"]))
 
-    return NextResponse.json({h: "hello world", a: result});
+    const UnverifiedManagers = await (new CampaignManagerManager).getByCondition(
+        [new Constrain("verified", Operator.EQUALS, false), new Constrain("Users.type", Operator.EQUALS, UserRoleTypes.CampaignManager)],(manager) => [new IncludeNavigation (manager.user, 0)]
+      );
+
+    return NextResponse.json({h: "hello world", a: UnverifiedManagers});
 }
 
