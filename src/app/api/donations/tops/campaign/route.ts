@@ -7,26 +7,27 @@ import * as yup from 'yup';
 
 const donationCampaignManager = new DonationCampaignManager();
 
-const getFormSchema = yup.object().shape(
-    {
-        id: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer(),
-        page: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer(),
-        pageSize: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer()
-    }
-);
+const getFormSchema = yup.object().shape({
+    id: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer(),
+    page: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer(),
+    pageSize: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer()
+});
+
 const getFormValidator = new FormValidator(getFormSchema);
 
 export async function GET(request: NextRequest) {
-    const {searchParams} = request.nextUrl;
+    const searchParams = request.nextUrl.searchParams;
     const validatorResult = await getFormValidator.validate(Object.fromEntries(searchParams.entries()));
-    if (!validatorResult.isOK)
+    if (!validatorResult.isOK) {
         return Responses.createValidationErrorResponse(validatorResult.errors);
+    }
 
     const formData = validatorResult.value!;
     const donors = await donationCampaignManager.getTopDonors(formData.id, formData.page, formData.pageSize);
 
-    if (!donors.isOK)
+    if (!donors.isOK) {
         return Responses.createNotFoundResponse();
+    }
 
-    return Responses.createSuccessResponse(donors);
+    return Responses.createSuccessResponse(donors.value);
 }

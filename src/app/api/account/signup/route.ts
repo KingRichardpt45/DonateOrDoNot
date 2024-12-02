@@ -34,7 +34,7 @@ interface PostManagerObject {
     contactEmail: string;
     description: string;
     managerType: number;
-    identificationFile: any;
+    identificationFile: unknown;
 }
 
 

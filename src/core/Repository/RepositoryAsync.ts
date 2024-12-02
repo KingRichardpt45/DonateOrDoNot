@@ -3,7 +3,7 @@ import {IRepositoryAsync} from "@/core/repository/IRepositoryAsync";
 import {EntityConverter} from "./EntityConverter";
 import {getModelFactory} from "@/core/utils/factory/ModelsFactory";
 import {Knex} from "knex";
-import {Constrain} from "@/core/repository/Constrain";
+import {Constraint} from "@/core/repository/Constraint";
 import {IFactory} from "../utils/factory/IFactory";
 import {PrimaryKeyPart} from "./PrimaryKeyPart";
 import {NavigationKey} from "./NavigationKey";
@@ -74,13 +74,13 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return entities.length == 1 ? entities[0] : null;
     }
 
-    async getByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[] = () => [], orderBy: unknown[], limit: number = 0, offset: number = 0): Promise<Entity[]> {
+    async getByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[] = () => [], orderBy: unknown[], limit: number = 0, offset: number = 0): Promise<Entity[]> {
         const includes = includeFunction(this.modelFactory.create(this.entityName) as Entity);
-        constrains = this.filterConstrains(constrains,includes);
+        constraints = this.filterConstraints(constraints,includes);
         let query = this.dbConnection(this.tableName);
         const selectColumns = this.selectEntityColumn();
         query = this.include(query, includes, selectColumns);
-        query = this.addConstrains(query, constrains);
+        query = this.addConstraints(query, constraints);
         query = this.applyPaginationAndSorting(query, orderBy, limit, offset);
 
         const result = await query.select(selectColumns);
@@ -88,8 +88,8 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return this.constructEntities(result, includes);
     }
 
-    async getFirstByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[] = () => [], orderBy: unknown[], limit: number, offset: number): Promise<Entity | null> {
-        const entries = await this.getByCondition(constrains, includeFunction, orderBy, limit, offset);
+    async getFirstByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[] = () => [], orderBy: unknown[], limit: number, offset: number): Promise<Entity | null> {
+        const entries = await this.getByCondition(constraints, includeFunction, orderBy, limit, offset);
 
         return entries.length > 0 ? entries[0] : null;
     }
@@ -99,31 +99,31 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return [`${this.tableName}.*`];
     }
 
-    private filterConstrains(constrains: Constrain[], includes:IncludeNavigation[] ): Constrain[] {
-        const filteredConstrains = [];
-        for (const constrain of constrains) 
+    private filterConstraints(constraints: Constraint[], includes:IncludeNavigation[] ): Constraint[] {
+        const filteredConstraints = [];
+        for (const constraint of constraints) 
         {
-            if (this.typeObject[constrain.key] !== undefined) 
+            if (this.typeObject[constraint.key] !== undefined) 
             {
-                filteredConstrains.push(new Constrain(`${this.tableName}.${constrain.key}`, constrain.op, constrain.value));
+                filteredConstraints.push(new Constraint(`${this.tableName}.${constraint.key}`, constraint.op, constraint.value));
             }
             else 
             {
-                if( constrain.key.includes(".") )
+                if( constraint.key.includes(".") )
                 {
-                    let splittedKey =  constrain.key.split(".");
+                    let splittedKey =  constraint.key.split(".");
                     let index = includes.findIndex( (navigation)=> navigation.navigationKey.referencedTable === splittedKey[0] );
                     if(index == -1)
-                        throw new Error(`Invalid Constrain key ${constrain.key} table ${splittedKey[0]} is not included.`);
+                        throw new Error(`Invalid Constraint key ${constraint.key} table ${splittedKey[0]} is not included.`);
 
-                    filteredConstrains.push( new Constrain(`${splittedKey[0]}_${index}.${splittedKey[1]}`, constrain.op, constrain.value) );
+                    filteredConstraints.push( new Constraint(`${splittedKey[0]}_${index}.${splittedKey[1]}`, constraint.op, constraint.value) );
                 }
                 else
-                    filteredConstrains.push(constrain);
+                    filteredConstraints.push(constraint);
             } 
         }
 
-        return filteredConstrains;
+        return filteredConstraints;
     }
 
     private include(query: Knex.QueryBuilder, includes: IncludeNavigation[], selects: string[]): Knex.QueryBuilder {
@@ -339,7 +339,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         const keysToExclude = [...entity.getPrimaryKeyParts(), ...excludedFields];
         const convertedEntity = this.entityConverter.toKnexObjectExcludingFields(entity, keysToExclude);
         let query = this.dbConnection(this.tableName)
-        query = this.addPrimaryKeyConstrains(query, entity);
+        query = this.addPrimaryKeyConstraints(query, entity);
 
         const result: unknown[] = await query.update(convertedEntity, keysToExclude);
         return result.length == 1;
@@ -348,7 +348,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     async updateFields(entity: Entity, ...Fields: string[]): Promise<boolean> {
         const convertedEntity = this.entityConverter.toKnexObjectOnlyFields(entity, Fields);
         let query = this.dbConnection(this.tableName)
-        query = this.addPrimaryKeyConstrains(query, entity);
+        query = this.addPrimaryKeyConstraints(query, entity);
 
         const result: unknown[] = await query.update(convertedEntity, Fields);
         return result.length == 1;
@@ -357,7 +357,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     async delete(entity: Entity): Promise<boolean> {
         let query = this.dbConnection(this.tableName);
-        query = this.addPrimaryKeyConstrains(query, entity);
+        query = this.addPrimaryKeyConstraints(query, entity);
 
         const result: number = await query.delete() as number;
 
@@ -388,47 +388,47 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return result;
     }
 
-    async deleteByCondition(constrains: Constrain[]): Promise<number> {
-        if (constrains.length === 0) {
+    async deleteByCondition(constraints: Constraint[]): Promise<number> {
+        if (constraints.length === 0) {
             throw new Error("No constraints provided for delete.");
         }
 
-        const query = this.addConstrains(this.dbConnection(this.tableName), constrains);
+        const query = this.addConstraints(this.dbConnection(this.tableName), constraints);
         const result = await query.delete()
         return result;
     }
 
 
-    private addConstrains(query: Knex.QueryBuilder, constrains: Constrain[]): Knex.QueryBuilder {
-        for (const constrain of constrains) {
-            query = this.addConstrainByType(query, constrain);
+    private addConstraints(query: Knex.QueryBuilder, constraints: Constraint[]): Knex.QueryBuilder {
+        for (const constraint of constraints) {
+            query = this.addConstrainByType(query, constraint);
         }
 
         return query
     }
 
-    private addConstrainByType(query: Knex.QueryBuilder, constrain: Constrain): Knex.QueryBuilder {
-        switch (constrain.op) {
+    private addConstrainByType(query: Knex.QueryBuilder, constraint: Constraint): Knex.QueryBuilder {
+        switch (constraint.op) {
             case Operator.LIKE:
-                if (typeof constrain.value !== 'string')
+                if (typeof constraint.value !== 'string')
                     throw new Error("Invalid where like. Value is not a string");
-                query = query.whereLike(constrain.key, constrain.value);
+                query = query.whereLike(constraint.key, constraint.value);
                 break;
             case Operator.NOT_EQUALS:
-                query = query.whereNot(constrain.key, constrain.value);
+                query = query.whereNot(constraint.key, constraint.value);
                 break;
             case Operator.IN:
-                query = query.whereIn(constrain.key, constrain.value);
+                query = query.whereIn(constraint.key, constraint.value);
                 break;
             default:
-                query = query.where(constrain.key, constrain.op, constrain.value);
+                query = query.where(constraint.key, constraint.op, constraint.value);
                 break;
         }
 
         return query;
     }
 
-    private addPrimaryKeyConstrains(query: Knex.QueryBuilder, entity: Entity): Knex.QueryBuilder {
+    private addPrimaryKeyConstraints(query: Knex.QueryBuilder, entity: Entity): Knex.QueryBuilder {
         let count = 0;
         for (const primaryKeyPart of entity.getPrimaryKeyParts()) {
             if (count == 0)

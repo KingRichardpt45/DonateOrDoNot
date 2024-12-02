@@ -1,5 +1,5 @@
 import {IEntity} from "@/core/repository/IEntity";
-import {Constrain} from "./Constrain";
+import {Constraint} from "./Constraint";
 import {PrimaryKeyPart} from "./PrimaryKeyPart";
 import {IncludeNavigation} from "./IncludeNavigation";
 
@@ -41,7 +41,7 @@ export interface IRepositoryAsync<Entity extends IEntity> {
 
     /**
      * Retrieves entities that match specific conditions.
-     * @param constrains - An array of constraints, each with a key, an operator, and a value.
+     * @param constraints - An array of constraints, each with a key, an operator, and a value.
      * @param includes - An array of relation entities to include in the result.
      * @param orderBy - An array specifying the sorting order.
      * @param limit - The maximum number of records to retrieve.
@@ -53,11 +53,11 @@ export interface IRepositoryAsync<Entity extends IEntity> {
      * const users = await userRepo.getByCondition([{ key: "Users.id", op: ">", value: 20 }], ["Addresse"], [{ column: "Users.id", order: "desc" }], 2);
      * ```
      */
-    getByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity[]>
+    getByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity[]>
 
     /**
      * Retrieves the first entity that matches specific conditions.
-     * @param constrains - An array of constraints, each with a key, an operator (see knexOperators), and a value.
+     * @param constraints - An array of constraints, each with a key, an operator (see knexOperators), and a value.
      * @param includes - An array of relation entities to include in the result.
      * @param orderBy - An array specifying the sorting order.
      * @param limit - The maximum number of records to retrieve.
@@ -69,7 +69,7 @@ export interface IRepositoryAsync<Entity extends IEntity> {
      * const user = await userRepo.getFirstByCondition([{ key: "Users.id", op: ">", value: 20 }], ["Addresse"], [{ column: "Users.id", order: "desc" }], 2);
      * ```
      */
-    getFirstByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity | null>
+    getFirstByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity | null>
 
 
     /**
@@ -178,7 +178,7 @@ export interface IRepositoryAsync<Entity extends IEntity> {
 
     /**
      * Deletes entities that match specific conditions.
-     * @param constrains - An array of constraints, each with a key, an operator, and a value.
+     * @param constraints - An array of constraints, each with a key, an operator, and a value.
      * @returns A promise that resolves to the number of entities deleted.
      *
      * @example
@@ -187,5 +187,5 @@ export interface IRepositoryAsync<Entity extends IEntity> {
      * const deletedCount = await userRepo.deleteByCondition([{ key: "id", op: "=", value: 13 }, { key: "name", op: "=", value: "tt" }]);
      * ```
      */
-    deleteByCondition(constrains: { key: string, op: string, value: any }[]): Promise<number>
+    deleteByCondition(constraints: { key: string, op: string, value: any }[]): Promise<number>
 }

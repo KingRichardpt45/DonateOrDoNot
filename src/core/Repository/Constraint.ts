@@ -6,7 +6,7 @@ import {Operator} from "@/core/repository/Operator";
  * This class is used to store the details of a constraint, including the key (column name),
  * the operator (e.g., "=", ">", "<"), and the value used for the comparison.
  */
-export class Constrain {
+export class Constraint {
     /** The name of the key or column (e.g., "age", "status", "userId"). */
     readonly key: string;
 
@@ -17,7 +17,7 @@ export class Constrain {
     readonly value: any;
 
     /**
-     * Constructs a `Constrain` instance.
+     * Constructs a `Constraint` instance.
      *
      * @param key - The name of the key or column (e.g., "age", "status", "userId").
      * @param op - The operator to be used for comparison (e.g., "=", ">", "<", ">=", "<=", "LIKE" , "!=").

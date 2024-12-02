@@ -13,6 +13,8 @@ import {FileService} from "@/services/FIleService";
 import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
 import {Responses} from "@/core/utils/Responses";
 import {YupUtils} from "@/core/utils/YupUtils";
+import {Constraint} from "@/core/repository/Constraint";
+import {Operator} from "@/core/repository/Operator";
 
 const storeItemManager = new StoreItemManager();
 const donorManager = new DonorManager();
@@ -102,7 +104,15 @@ export async function GET(request: NextRequest) {
         return Responses.createValidationErrorResponse(validatorResult.errors);
 
     const formData = validatorResult.value!;
-    const result = await storeItemManager.search(formData.query, formData.page, formData.pageSize);
+
+    const constraints = [];
+
+    if (formData.query) {
+        constraints.push(new Constraint("name", Operator.LIKE, `%${formData.query}%`))
+        constraints.push(new Constraint("description", Operator.LIKE, `%${formData.query}%`))
+    }
+
+    const result = await storeItemManager.searchWithConstraints(constraints, formData.page, formData.pageSize);
 
     if (result.isOK)
         return Responses.createSuccessResponse(result.value);
