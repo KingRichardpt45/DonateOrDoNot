@@ -1,12 +1,12 @@
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 import {EntityManager} from "@/core/managers/EntityManager";
 import {BankAccount} from "@/models/BankAccount";
 import * as yup from "yup";
-import { FormValidator } from "@/core/utils/FormValidator";
-import { Services } from "@/services/Services";
-import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { Responses } from "@/core/utils/Responses";
+import {FormValidator} from "@/core/utils/FormValidator";
+import {Services} from "@/services/Services";
+import {IAuthorizationService} from "@/services/session/authorizationService/IAuthorizationService";
+import {UserRoleTypes} from "@/models/types/UserRoleTypes";
+import {Responses} from "@/core/utils/Responses";
 
 const bankAccountManager = new EntityManager(BankAccount);
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
@@ -19,9 +19,8 @@ const updateBankAccountSchema = yup.object().shape({
 });
 const updateBankAccountValidator = new FormValidator(updateBankAccountSchema);
 
-export async function PATCH(request: NextRequest) 
-{   
-    if( ! await authorizationService.hasRoles(UserRoleTypes.Admin,UserRoleTypes.CampaignManager) )
+export async function PATCH(request: NextRequest) {
+    if (!await authorizationService.hasRoles(UserRoleTypes.Admin, UserRoleTypes.CampaignManager))
         return Responses.createForbiddenResponse();
 
     const bodyData = await request.formData();
@@ -33,22 +32,20 @@ export async function PATCH(request: NextRequest)
 
     const formData = validatorResult.value!;
     const bankAccount = await bankAccountManager.getById(formData.id);
-    if (!bankAccount) 
+    if (!bankAccount)
         return Responses.createNotFoundResponse();
 
     const updatedFields: string[] = [];
 
-    for (const key in formData) 
-    {   
-        if(key != "id")
-        {
+    for (const key in formData) {
+        if (key != "id") {
             bankAccount[key] = formData[key as keyof typeof formData];
             updatedFields.push(key);
         }
     }
 
-    if (updatedFields.length === 0) 
-        return Responses.createValidationErrorResponse(["Id cannot be updated.", "No other fields to update."],"No fields for update.");
+    if (updatedFields.length === 0)
+        return Responses.createValidationErrorResponse(["Id cannot be updated.", "No other fields to update."], "No fields for update.");
 
     const result = await bankAccountManager.updateField(bankAccount, updatedFields);
 
@@ -56,6 +53,6 @@ export async function PATCH(request: NextRequest)
         return Responses.createServerErrorResponse();
     }
 
-    return Responses.createSuccessResponse({},"Bank Account Updated.");   
+    return Responses.createSuccessResponse({}, "Bank Account Updated.");
 }
 

@@ -1,24 +1,23 @@
-import { NextRequest } from "next/server";
-import { FormValidator } from "@/core/utils/FormValidator";
-import { DonorManager } from "@/core/managers/DonorManager";
-import { FileManager } from "@/core/managers/FileManager"; 
+import {NextRequest} from "next/server";
+import {FormValidator} from "@/core/utils/FormValidator";
+import {DonorManager} from "@/core/managers/DonorManager";
+import {FileManager} from "@/core/managers/FileManager";
 import * as yup from 'yup';
-import { FileTypes } from "@/models/types/FileTypes";
-import { Services } from "@/services/Services";
-import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { BadgeManager } from "@/core/managers/BadgeManager";
-import { BadgeTypes } from "@/models/types/BadgeTypes";
-import { Badge } from "@/models/Badge";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
-import { FileService } from "@/services/FIleService";
-import { Responses } from "@/core/utils/Responses";
-import { YupUtils } from "@/core/utils/YupUtils";
-import { FormError } from "@/core/utils/operation_result/FormError";
-import { Constrain } from "@/core/repository/Constrain";
-import { Operator } from "@/core/repository/Operator";
-import { EntityManager } from "@/core/managers/EntityManager";
-import { CampaignBadge } from "@/models/CampaignBadge";
+import {FileTypes} from "@/models/types/FileTypes";
+import {Services} from "@/services/Services";
+import {IAuthorizationService} from "@/services/session/authorizationService/IAuthorizationService";
+import {UserRoleTypes} from "@/models/types/UserRoleTypes";
+import {BadgeManager} from "@/core/managers/BadgeManager";
+import {BadgeTypes} from "@/models/types/BadgeTypes";
+import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
+import {FileService} from "@/services/FIleService";
+import {Responses} from "@/core/utils/Responses";
+import {YupUtils} from "@/core/utils/YupUtils";
+import {FormError} from "@/core/utils/operation_result/FormError";
+import {Constrain} from "@/core/repository/Constrain";
+import {Operator} from "@/core/repository/Operator";
+import {EntityManager} from "@/core/managers/EntityManager";
+import {CampaignBadge} from "@/models/CampaignBadge";
 
 const badgeManager = new BadgeManager();
 const donorManager = new DonorManager();
@@ -32,7 +31,7 @@ const putFormSchema = yup.object().shape(
     {
         name: yup.string().trim().required().nonNullable().min(1).max(100),
         description: yup.string().trim().required().nonNullable().min(1).max(200),
-        type: yup.number().required().integer().positive().nonNullable().min(0).max( Object.keys(BadgeTypes).length /2 - 1),
+        type: yup.number().required().integer().positive().nonNullable().min(0).max(Object.keys(BadgeTypes).length / 2 - 1),
         unit: yup.string().trim().required().nullable(),
         value: yup.number().required().integer().min(0).nullable(),
         campaignId: yup.number().nonNullable().min(0).positive(),
@@ -41,48 +40,44 @@ const putFormSchema = yup.object().shape(
 );
 const putFormValidator = new FormValidator(putFormSchema);
 
-export async function PUT( request:NextRequest )
-{   
+export async function PUT(request: NextRequest) {
     const user = await userProvider.getUser();
-    if( ! user )
+    if (!user)
         return Responses.createUnauthorizedResponse();
-    else if( user.type != UserRoleTypes.Admin && user.type != UserRoleTypes.CampaignManager )
+    else if (user.type != UserRoleTypes.Admin && user.type != UserRoleTypes.CampaignManager)
         return Responses.createForbiddenResponse();
 
     const bodyData = await request.formData();
-    const validatorResult = await putFormValidator.validate( Object.fromEntries( bodyData.entries() ) );
+    const validatorResult = await putFormValidator.validate(Object.fromEntries(bodyData.entries()));
 
-    if(!validatorResult.isOK)
+    if (!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
-    
+
     const formData = validatorResult.value!
 
-    if(user.type == UserRoleTypes.CampaignManager && !formData.campaignId)
-        return Responses.createValidationErrorResponse([new FormError("campaignId",["is required"])]);
+    if (user.type == UserRoleTypes.CampaignManager && !formData.campaignId)
+        return Responses.createValidationErrorResponse([new FormError("campaignId", ["is required"])]);
 
     const uploadedFile = formData.imageFile as File;
-    const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,uploadedFile.size,user.id!);
-    
-    if(!fileResult.isOK)
+    const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Image, uploadedFile.size, user.id!);
+
+    if (!fileResult.isOK)
         return Responses.createValidationErrorResponse(fileResult.errors);
 
-    if ( !await fileService.save(fileResult.value!,uploadedFile) )
+    if (!await fileService.save(fileResult.value!, uploadedFile))
         return Responses.createServerErrorResponse();
 
-    const createdBadge = await badgeManager.create(formData.name,formData.description,formData.type,formData.unit,formData.value,fileResult.value!.id!);
-    
-    if(formData.campaignId !== undefined)
-    {
+    const createdBadge = await badgeManager.create(formData.name, formData.description, formData.type, formData.unit, formData.value, fileResult.value!.id!);
+
+    if (formData.campaignId !== undefined) {
         const campaignBadge = new CampaignBadge();
         campaignBadge.campaign_id = formData.campaignId;
         campaignBadge.badge_id = createdBadge.id;
-        await campaignBadgesManager.add( campaignBadge );
+        await campaignBadgesManager.add(campaignBadge);
     }
 
-    return Responses.createSuccessResponse(createdBadge,`${BadgeTypes[formData.type]} created successfully`);
+    return Responses.createSuccessResponse(createdBadge, `${BadgeTypes[formData.type]} created successfully`);
 }
-
-
 
 
 const deleteFormSchema = yup.object().shape(
@@ -92,26 +87,23 @@ const deleteFormSchema = yup.object().shape(
 );
 const deleteFormValidator = new FormValidator(deleteFormSchema);
 
-export async function DELETE( request:NextRequest )
-{
-    if( ! await authorizationService.hasRoles(UserRoleTypes.Admin) )
+export async function DELETE(request: NextRequest) {
+    if (!await authorizationService.hasRoles(UserRoleTypes.Admin))
         return Responses.createForbiddenResponse();
 
-    const { searchParams } = request.nextUrl;
-    const validatorResult = await deleteFormValidator.validate( Object.fromEntries(searchParams.entries()) );
+    const {searchParams} = request.nextUrl;
+    const validatorResult = await deleteFormValidator.validate(Object.fromEntries(searchParams.entries()));
 
-    if(!validatorResult.isOK)
+    if (!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
-    
+
     const formData = validatorResult.value!;
-    
-    if ( await badgeManager.deleteById(formData.badge_id) )
+
+    if (await badgeManager.deleteById(formData.badge_id))
         return Responses.createSuccessResponse();
     else
         return Responses.createNotFoundResponse();
 }
-
-
 
 
 const unlockFormSchema = yup.object().shape(
@@ -122,21 +114,20 @@ const unlockFormSchema = yup.object().shape(
 );
 const unlockFormValidator = new FormValidator(unlockFormSchema);
 
-export async function POST( request:NextRequest )
-{
-    if( ! await authorizationService.hasRoles(UserRoleTypes.Donor) )
+export async function POST(request: NextRequest) {
+    if (!await authorizationService.hasRoles(UserRoleTypes.Donor))
         return Responses.createForbiddenResponse();
 
-    const formBody =  await request.formData();
-    const validatorResult = await unlockFormValidator.validate( Object.fromEntries(formBody.entries()) );
+    const formBody = await request.formData();
+    const validatorResult = await unlockFormValidator.validate(Object.fromEntries(formBody.entries()));
 
-    if(!validatorResult.isOK)
+    if (!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
-    
-    const formData = validatorResult.value!;
-    const unlockResult = await donorManager.unlockBadge(formData.donor_id,formData.badge_id);
 
-    if ( !unlockResult.isOK )
+    const formData = validatorResult.value!;
+    const unlockResult = await donorManager.unlockBadge(formData.donor_id, formData.badge_id);
+
+    if (!unlockResult.isOK)
         return Responses.createValidationErrorResponse(unlockResult.errors);
 
     return Responses.createSuccessResponse();
@@ -147,7 +138,7 @@ const updateFormSchema = yup.object().shape(
         id: yup.number().required().nonNullable().positive().integer(),
         name: yup.string().trim().nonNullable().min(1).max(100),
         description: yup.string().trim().nonNullable().min(1).max(200),
-        type: yup.number().integer().positive().nonNullable().min(0).max( Object.keys(BadgeTypes).length /2 - 1),
+        type: yup.number().integer().positive().nonNullable().min(0).max(Object.keys(BadgeTypes).length / 2 - 1),
         unit: yup.string().trim().nullable(),
         value: yup.number().integer().positive().nullable(),
         imageFile: fileService.filesSchemaNotRequire
@@ -155,62 +146,57 @@ const updateFormSchema = yup.object().shape(
 );
 const updateFormValidator = new FormValidator(updateFormSchema);
 
-export async function PATCH( request:NextRequest )
-{
-    const user =  await userProvider.getUser();
-    if( user == null || (user.type != UserRoleTypes.Admin && user.type != UserRoleTypes.CampaignManager) ) 
+export async function PATCH(request: NextRequest) {
+    const user = await userProvider.getUser();
+    if (user == null || (user.type != UserRoleTypes.Admin && user.type != UserRoleTypes.CampaignManager))
         return Responses.createForbiddenResponse();
 
     const formBody = await request.formData();
-    const validatorResult = await updateFormValidator.validate( Object.fromEntries(formBody.entries()) );
+    const validatorResult = await updateFormValidator.validate(Object.fromEntries(formBody.entries()));
 
-    if(!validatorResult.isOK)
+    if (!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
-    
+
     const formData = validatorResult.value!;
     const badge = await badgeManager.getById(formData.id);
 
-    if(badge == null)
+    if (badge == null)
         return Responses.createNotFoundResponse();
 
-    if( (badge.type === BadgeTypes.FrequencyOfDonations || badge.type === BadgeTypes.TotalDonations || 
-         badge.type === BadgeTypes.TotalValueDonated) && user.type != UserRoleTypes.Admin )
+    if ((badge.type === BadgeTypes.FrequencyOfDonations || badge.type === BadgeTypes.TotalDonations ||
+        badge.type === BadgeTypes.TotalValueDonated) && user.type != UserRoleTypes.Admin)
         return Responses.createForbiddenResponse();
 
     const updatedFields = [];
-    for (const key in formData) 
-    {
+    for (const key in formData) {
         console.log(formData);
-        if( key == "imageFile")
-        {   
+        if (key == "imageFile") {
             const uploadedFile = formData[key] as File;
-            const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Image,uploadedFile.size,user.id!);
-    
-            if(!fileResult.isOK)
+            const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Image, uploadedFile.size, user.id!);
+
+            if (!fileResult.isOK)
                 return Responses.createValidationErrorResponse(fileResult.errors);
 
-            if ( !await fileService.save(fileResult.value!,uploadedFile) )
+            if (!await fileService.save(fileResult.value!, uploadedFile))
                 return Responses.createServerErrorResponse();
 
             updatedFields.push("image_id");
             badge.image_id = fileResult.value!.id;
 
-        }
-        else if (key !== "id") 
-        {
+        } else if (key !== "id") {
             badge[key] = formData[key as keyof typeof formData];
             updatedFields.push(key);
         }
     }
 
-    if(updatedFields.length == 0)
-        return Responses.createValidationErrorResponse(new FormError("id",["Id can not be updated.","Id can not be the only field in request."]));
+    if (updatedFields.length == 0)
+        return Responses.createValidationErrorResponse(new FormError("id", ["Id can not be updated.", "Id can not be the only field in request."]));
 
-  
-    if( !await badgeManager.updateField(badge,updatedFields) )
+
+    if (!await badgeManager.updateField(badge, updatedFields))
         return Responses.createServerErrorResponse();
 
-    return Responses.createSuccessResponse({},"Badge Updated.");
+    return Responses.createSuccessResponse({}, "Badge Updated.");
 }
 
 const getFormSchema = yup.object().shape(
@@ -218,32 +204,31 @@ const getFormSchema = yup.object().shape(
         query: yup.string().trim().required().nonNullable().min(1),
         page: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer().min(0),
         pageSize: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer().min(0),
-        type: yup.number().transform(YupUtils.convertToNumber).integer().positive().min(0).max( Object.keys(BadgeTypes).length /2 -1 ).nullable(),
+        type: yup.number().transform(YupUtils.convertToNumber).integer().positive().min(0).max(Object.keys(BadgeTypes).length / 2 - 1).nullable(),
         id: yup.number().transform(YupUtils.convertToNumber).integer().positive().nullable().min(0)
     }
 );
 const getFormValidator = new FormValidator(getFormSchema);
 
-export async function GET( request:NextRequest )
-{
+export async function GET(request: NextRequest) {
     const {searchParams} = await request.nextUrl;
-    const validatorResult = await getFormValidator.validate( Object.fromEntries(searchParams.entries()) );
+    const validatorResult = await getFormValidator.validate(Object.fromEntries(searchParams.entries()));
 
-    if(!validatorResult.isOK)
+    if (!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
 
     const formData = validatorResult.value!;
 
     const constrains = []
-    if(formData.type)
-        constrains.push(new Constrain("type",Operator.EQUALS,formData.type));
+    if (formData.type)
+        constrains.push(new Constrain("type", Operator.EQUALS, formData.type));
 
-    if (formData.id )
-        constrains.push(new Constrain("user_id",Operator.EQUALS,formData.id));
+    if (formData.id)
+        constrains.push(new Constrain("user_id", Operator.EQUALS, formData.id));
 
-    const result = await badgeManager.searchWithConstrains(formData.query,constrains,formData.page,formData.pageSize);
-    
-    if(!result.isOK)
+    const result = await badgeManager.searchWithConstrains(formData.query, constrains, formData.page, formData.pageSize);
+
+    if (!result.isOK)
         return Responses.createNotFoundResponse();
 
     return Responses.createSuccessResponse(result.value);

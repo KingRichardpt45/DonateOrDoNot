@@ -9,15 +9,15 @@ import {UserRoleTypes} from "@/models/types/UserRoleTypes";
 import {User} from "@/models/User";
 import {Services} from "@/services/Services";
 import {SessionService} from "@/services/session/SessionService";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 import {FileTypes} from "@/models/types/FileTypes";
 import {FileManager} from "@/core/managers/FileManager";
 import {CampaignManagerManager} from "@/core/managers/CampaignManagerManager";
 import * as yup from 'yup';
-import { FormValidator } from "@/core/utils/FormValidator";
-import { Responses } from "@/core/utils/Responses";
-import { FileService } from "@/services/FIleService";
-import { EntityManager } from "@/core/managers/EntityManager";
+import {FormValidator} from "@/core/utils/FormValidator";
+import {Responses} from "@/core/utils/Responses";
+import {FileService} from "@/services/FIleService";
+import {EntityManager} from "@/core/managers/EntityManager";
 
 interface PostUserObject {
     name: string;
@@ -30,8 +30,7 @@ interface PostUserObject {
     type: number;
 }
 
-interface PostManagerObject 
-{
+interface PostManagerObject {
     contactEmail: string;
     description: string;
     managerType: number;
@@ -67,45 +66,39 @@ const postManagerFormSchema = yup.object().shape(
     {
         contactEmail: yup.string().trim().required().nonNullable().min(1),
         description: yup.string().trim().required().nonNullable().min(1).max(200),
-        managerType: yup.number().required().nonNullable().min(0).max( Object.keys(CampaignManagerTypes).length/2 -1 ),
+        managerType: yup.number().required().nonNullable().min(0).max(Object.keys(CampaignManagerTypes).length / 2 - 1),
         identificationFile: fileService.filesSchema
     }
 );
 const postManagerFormValidator = new FormValidator(postManagerFormSchema);
 
 
-
-export async function POST(request: NextRequest) 
-{
+export async function POST(request: NextRequest) {
     if (await sessionService.verify()) await sessionService.delete();
 
     const formBody = await request.formData();
-    const objectFormBody = Object.fromEntries( formBody.entries() );
-    const validatorResult = await postUserFormValidator.validate( objectFormBody );
+    const objectFormBody = Object.fromEntries(formBody.entries());
+    const validatorResult = await postUserFormValidator.validate(objectFormBody);
 
-    if (!validatorResult.isOK) 
+    if (!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
 
     const formData = validatorResult.value!;
-    if (formData.password !== formData.passwordConfirm ) 
+    if (formData.password !== formData.passwordConfirm)
         return Responses.createValidationErrorResponse([new FormError("passwordConfirm", ["Password Confirmation doesn't match with password."])]);
 
-    const userResult = await userManager.signUp( setUserInfo(formData as PostUserObject) );
-    if (!userResult.isOK) 
+    const userResult = await userManager.signUp(setUserInfo(formData as PostUserObject));
+    if (!userResult.isOK)
         return Responses.createValidationErrorResponse(userResult.errors);
 
     const user = userResult.value!
 
-    if (formData.type == UserRoleTypes.Donor) 
-    {
+    if (formData.type == UserRoleTypes.Donor) {
         const donor = setDonorInfo(user);
         await donorManager.signUp(donor); //doesn't have restrictions
-    } 
-    else 
-    {
-        const managerFormValidatorResult = await postManagerFormValidator.validate( objectFormBody );
-        if (!managerFormValidatorResult.isOK) 
-        {
+    } else {
+        const managerFormValidatorResult = await postManagerFormValidator.validate(objectFormBody);
+        if (!managerFormValidatorResult.isOK) {
             await addressManager.delete(user.address.value as Address);
             await userManager.delete(user);
             return Responses.createValidationErrorResponse(managerFormValidatorResult.errors);
@@ -113,16 +106,14 @@ export async function POST(request: NextRequest)
 
         const managerFormData = managerFormValidatorResult.value!;
         const uploadedFile = managerFormData.identificationFile as File;
-        const fileResult = await fileManager.create(uploadedFile.name,fileService.savePath,uploadedFile.type,FileTypes.Identification,uploadedFile.size,user.id!);
-        if (!fileResult.isOK) 
-        {
+        const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Identification, uploadedFile.size, user.id!);
+        if (!fileResult.isOK) {
             await addressManager.delete(user.address.value as Address);
             await userManager.delete(user);
             return Responses.createValidationErrorResponse(fileResult.errors);
         }
-        
-        if( ! await fileService.save(fileResult.value!,uploadedFile) )
-        {
+
+        if (!await fileService.save(fileResult.value!, uploadedFile)) {
             await addressManager.delete(user.address.value as Address);
             await userManager.delete(user);
             return Responses.createServerErrorResponse();
@@ -131,8 +122,7 @@ export async function POST(request: NextRequest)
         const campaignManager = setCampaignManagerInfo(managerFormData, user);
         const managerResult = await campaignManagerManager.signUp(campaignManager);
 
-        if (!managerResult.isOK) 
-        {
+        if (!managerResult.isOK) {
             await fileManager.delete(fileResult.value!);
             await addressManager.delete(user.address.value as Address);
             await userManager.delete(user);
@@ -142,9 +132,6 @@ export async function POST(request: NextRequest)
 
     return Responses.createSuccessResponse();
 }
-
-
-
 
 
 function mergeMiddleNames(names: string[]): string {
@@ -158,8 +145,7 @@ function mergeMiddleNames(names: string[]): string {
     } else return names[1];
 }
 
-function setUserInfo(formData:PostUserObject): User 
-{
+function setUserInfo(formData: PostUserObject): User {
     const user = new User();
 
     user.address.value = new Address();
@@ -197,8 +183,7 @@ function setDonorInfo(user: User): Donor {
     return donor;
 }
 
-function setCampaignManagerInfo(formData:PostManagerObject,user:User): CampaignManager 
-{
+function setCampaignManagerInfo(formData: PostManagerObject, user: User): CampaignManager {
     const campaignManager = new CampaignManager();
 
     campaignManager.contact_email = formData.contactEmail;

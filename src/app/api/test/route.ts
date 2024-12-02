@@ -1,12 +1,9 @@
 import {NextResponse} from 'next/server';
-import {RepositoryAsync} from '@/core/repository/RepositoryAsync';
-import {User} from '@/models/User';
 import {IncludeNavigation} from '@/core/repository/IncludeNavigation';
-import {PrimaryKeyPart} from '@/core/repository/PrimaryKeyPart';
-import { CampaignManagerManager } from '@/core/managers/CampaignManagerManager';
-import { Constrain } from '@/core/repository/Constrain';
-import { Operator } from '@/core/repository/Operator';
-import { UserRoleTypes } from '@/models/types/UserRoleTypes';
+import {CampaignManagerManager} from '@/core/managers/CampaignManagerManager';
+import {Constrain} from '@/core/repository/Constrain';
+import {Operator} from '@/core/repository/Operator';
+import {UserRoleTypes} from '@/models/types/UserRoleTypes';
 
 
 export async function GET() {
@@ -111,8 +108,8 @@ export async function GET() {
     //console.log( await userRepo.getByPrimaryKey([{name:"Users.id",value:20}],["Addresse"]))
 
     const UnverifiedManagers = await (new CampaignManagerManager).getByCondition(
-        [new Constrain("verified", Operator.EQUALS, false), new Constrain("Users.type", Operator.EQUALS, UserRoleTypes.CampaignManager)],(manager) => [new IncludeNavigation (manager.user, 0)]
-      );
+        [new Constrain("verified", Operator.EQUALS, false), new Constrain("Users.type", Operator.EQUALS, UserRoleTypes.CampaignManager)], (manager) => [new IncludeNavigation(manager.user, 0)]
+    );
 
     return NextResponse.json({h: "hello world", a: UnverifiedManagers});
 }
