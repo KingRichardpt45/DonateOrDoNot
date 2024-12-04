@@ -64,7 +64,7 @@ export class DonorManager extends EntityManager<Donor>
             return new OperationResult(donors,[]);
     }
 
-    async byStoreItem(donorId:number,storeItemId:number): Promise< OperationResult<boolean,FormError> >
+    async buyStoreItem(donorId:number,storeItemId:number): Promise< OperationResult<boolean,FormError> >
     {
         const errors = []
 

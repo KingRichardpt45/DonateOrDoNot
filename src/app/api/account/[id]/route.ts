@@ -8,8 +8,11 @@ import * as yup from "yup";
 import {FormValidator} from "@/core/utils/FormValidator";
 import {CampaignManagerTypes} from "@/models/types/CampaignManagerTypes";
 import {FileService} from "@/services/FIleService";
+import {EntityManager} from "@/core/managers/EntityManager";
+import {Address} from "@/models/Address";
 
 const userManager = new UserManager();
+const addressManager = new EntityManager<Address>(Address);
 
 const fileService = Services.getInstance().get<FileService>("FileService");
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
@@ -66,11 +69,34 @@ export async function PATCH(request: NextRequest, context: any) {
 
     const updatedFields: string[] = [];
 
+    if (formData.address || formData.addressSpecification || formData.city || formData.postalCode) {
+        addressManager.getById(params.id).then(async (address) => {
+            if (address) {
+                address.address = formData.address ?? address.address;
+                address.addressSpecification = formData.addressSpecification ?? address.addressSpecification;
+                address.city = formData.city ?? address.city;
+                address.postalCode = formData.postalCode ?? address.postalCode;
+                await addressManager.update(address)
+            } else {
+                const newAddress = new Address();
+                newAddress.address = formData.address;
+                newAddress.addressSpecification = formData.addressSpecification;
+                newAddress.city = formData.city;
+                newAddress.postalCode = formData.postalCode;
+
+                await addressManager.add(newAddress);
+            }
+        })
+
+        formData.address = null;
+        formData.addressSpecification = null;
+        formData.city = null;
+        formData.postalCode = null;
+    }
+
     for (const key in formData) {
-        if (key !== "id") {
-            user[key] = formData[key as keyof typeof formData];
-            updatedFields.push(key);
-        }
+        user[key] = formData[key as keyof typeof formData];
+        updatedFields.push(key);
     }
 
     if (user.type == UserRoleTypes.CampaignManager || formData.type == UserRoleTypes.CampaignManager) {

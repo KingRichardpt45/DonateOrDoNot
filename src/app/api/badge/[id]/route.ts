@@ -9,7 +9,6 @@ import {IAuthorizationService} from "@/services/session/authorizationService/IAu
 import {UserRoleTypes} from "@/models/types/UserRoleTypes";
 import {BadgeManager} from "@/core/managers/BadgeManager";
 import {BadgeTypes} from "@/models/types/BadgeTypes";
-import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
 import {FileService} from "@/services/FIleService";
 import {Responses} from "@/core/utils/Responses";
 import {FormError} from "@/core/utils/operation_result/FormError";
@@ -18,10 +17,9 @@ const badgeManager = new BadgeManager();
 const donorManager = new DonorManager();
 const fileManager = new FileManager();
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
-const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const fileService = Services.getInstance().get<FileService>("FileService");
 
-export async function DELETE(request: NextRequest, context: any) {
+export async function DELETE(context: any) {
     const {params} = context;
 
     if (!params?.id) {
@@ -91,8 +89,7 @@ export async function PATCH(request: NextRequest, context: any) {
         return Responses.createNotFoundResponse();
     }
 
-    const user = await userProvider.getUser();
-    if (user == null || (user.type != UserRoleTypes.Admin && user.type != UserRoleTypes.CampaignManager)) return Responses.createForbiddenResponse();
+    if ((!await authorizationService.hasRole(UserRoleTypes.Admin) && !await authorizationService.hasRole(UserRoleTypes.CampaignManager))) return Responses.createForbiddenResponse();
 
     const formBody = await request.formData();
     const validatorResult = await updateFormValidator.validate(Object.fromEntries(formBody.entries()));

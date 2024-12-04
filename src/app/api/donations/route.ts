@@ -52,7 +52,7 @@ const getFormSchema = yup.object().shape({
 const getFormValidator = new FormValidator(getFormSchema);
 
 export async function GET(request: NextRequest) {
-    const searchParams= request.nextUrl.searchParams;
+    const searchParams = request.nextUrl.searchParams;
 
     const validatorResult = await getFormValidator.validate(Object.fromEntries(searchParams.entries()), false);
     if (!validatorResult.isOK) {
