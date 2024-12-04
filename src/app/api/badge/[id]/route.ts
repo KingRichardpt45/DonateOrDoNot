@@ -89,7 +89,10 @@ export async function PATCH(request: NextRequest, context: any) {
         return Responses.createNotFoundResponse();
     }
 
-    if ((!await authorizationService.hasRole(UserRoleTypes.Admin) && !await authorizationService.hasRole(UserRoleTypes.CampaignManager))) return Responses.createForbiddenResponse();
+    const userId = await authorizationService.getId();
+    const isAdmin = await authorizationService.hasRole(UserRoleTypes.Admin)
+
+    if (!userId || (!isAdmin && !await authorizationService.hasRole(UserRoleTypes.CampaignManager))) return Responses.createForbiddenResponse();
 
     const formBody = await request.formData();
     const validatorResult = await updateFormValidator.validate(Object.fromEntries(formBody.entries()));
@@ -101,13 +104,13 @@ export async function PATCH(request: NextRequest, context: any) {
 
     if (badge == null) return Responses.createNotFoundResponse();
 
-    if ((badge.type === BadgeTypes.FrequencyOfDonations || badge.type === BadgeTypes.TotalDonations || badge.type === BadgeTypes.TotalValueDonated) && user.type != UserRoleTypes.Admin) return Responses.createForbiddenResponse();
+    if ((badge.type === BadgeTypes.FrequencyOfDonations || badge.type === BadgeTypes.TotalDonations || badge.type === BadgeTypes.TotalValueDonated) && !isAdmin) return Responses.createForbiddenResponse();
 
     const updatedFields = [];
     for (const key in formData) {
         if (key == "imageFile") {
             const uploadedFile = formData[key] as File;
-            const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Image, uploadedFile.size, user.id!);
+            const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Image, uploadedFile.size, userId);
 
             if (!fileResult.isOK) return Responses.createValidationErrorResponse(fileResult.errors);
 

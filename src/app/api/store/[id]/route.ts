@@ -56,7 +56,8 @@ export async function PATCH(request: NextRequest, context: any) {
         return Responses.createNotFoundResponse();
     }
 
-    if (!await authorizationService.hasRole(UserRoleTypes.Admin)) return Responses.createUnauthorizedResponse();
+    const userId = await authorizationService.getId();
+    if (!userId || !await authorizationService.hasRole(UserRoleTypes.Admin)) return Responses.createUnauthorizedResponse();
 
     const formBody = await request.formData();
     const validatorResult = await updateFormValidator.validate(Object.fromEntries(formBody.entries()));
@@ -74,7 +75,7 @@ export async function PATCH(request: NextRequest, context: any) {
         if (key == "imageFile") {
             const oldFile = await fileManager.getById(storeItem.image_id!) as ModelFile;
             const uploadedFile = formData.imageFile as File;
-            const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Image, uploadedFile.size, user.id!);
+            const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Image, uploadedFile.size, userId);
             if (!fileResult.isOK) return Responses.createValidationErrorResponse(fileResult.errors);
             await fileService.update(oldFile, fileResult.value!, uploadedFile)
         } else {
