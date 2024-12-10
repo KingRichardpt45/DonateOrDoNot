@@ -201,3 +201,27 @@ export async function DELETE(context: any) {
     else 
         return Responses.createNotFoundResponse();
 }
+
+
+export async function POST( context: any) 
+{
+    const {params} = await context;
+
+    if( ! await authorizationService.hasRole(UserRoleTypes.Admin) )
+        return Responses.createForbiddenResponse("Only admin can change verified State")
+
+    if( !params.id )
+        return Responses.createBadRequestResponse();
+
+    const manager = await managersManager.getById(params.id);
+
+    if(!manager)
+        return Responses.createNotFoundResponse("Manager not fount " + params.id);
+
+    manager.verified = true;
+    
+    if ( await managersManager.updateField(manager,["verified"]) )
+        return Responses.createSuccessResponse(`Manager ${manager.id} is now verified.` );
+    
+    return Responses.createServerErrorResponse(`Could't change ${manager.id} verified state.`)
+}
