@@ -311,18 +311,18 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
   function sendUpdates(formsData:FormsData) : Promise<Response>[]
   {
     const results:Promise<Response>[] = []
-    sendUpdate(results,formsData.campaignFormData,"/api/campaign");
-    sendUpdate(results,formsData.bankForm,"/api/bank_account");
-    sendUpdate(results,formsData.badgeFamilyFormData,"/api/badge");
-    sendUpdate(results,formsData.badgeHelperFormData,"/api/badge");
-    sendUpdate(results,formsData.badgePartnerFormData,"/api/badge");
+    sendUpdate(results,formsData.campaignFormData,`/api/campaign/${campaign.id}`);
+    sendUpdate(results,formsData.bankForm,`/api/bank_account/${campaign.bank_account_id}`);
+    sendUpdate(results,formsData.badgeFamilyFormData,`/api/badge/${getBadgeWithType(campaign,BadgeTypes.CampaignPartner)?.id}`);
+    sendUpdate(results,formsData.badgeHelperFormData,`/api/badge/${getBadgeWithType(campaign,BadgeTypes.CampaignHelper)?.id}`);
+    sendUpdate(results,formsData.badgePartnerFormData,`/api/badge/${getBadgeWithType(campaign,BadgeTypes.CampaignPartner)?.id}`);
 
     for (const file of removedFiles) 
     {
        const data = new FormData()
-       data.set("id",file.id!.toString())
+      //  data.set("id",file.id!.toString())
        data.set("user_id",userId.toString())
-       sendUpdate(results,data,`/api/file`,"DELETE");
+       sendUpdate(results,data,`/api/file/${file.id}`,"DELETE");
     }
     
 
