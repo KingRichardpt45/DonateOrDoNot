@@ -12,14 +12,14 @@ const donationCampaignManager = new DonationCampaignManager();
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
 
 const updateFormSchema = yup.object().shape({
-    title: yup.string().trim().nullable().min(1).max(200),
-    description: yup.string().trim().nullable().min(1).max(2000),
-    objective_value: yup.number().nullable().positive().min(0),
-    category: yup.string().trim().nullable(),
-    end_date: yup.date().nullable().min(new Date(), "End date must be in the future"),
-    contact_email: yup.string().trim().nullable(),
-    contact_phone_number: yup.string().trim().nullable(),
-    status: yup.number().nullable().integer().positive().min(0).max(Object.keys(CampaignStatus).length / 2 - 1),
+    title: yup.string().trim().notRequired().nonNullable().min(1).max(200),
+    description: yup.string().trim().notRequired().nonNullable().min(1).max(2000),
+    objective_value: yup.number().notRequired().nonNullable().positive().min(0),
+    category: yup.string().trim().notRequired().nonNullable(),
+    end_date: yup.date().notRequired().nonNullable().min(new Date(), "End date must be in the future"),
+    contact_email: yup.string().trim().notRequired().nonNullable(),
+    contact_phone_number: yup.string().trim().notRequired().nonNullable(),
+    status: yup.number().notRequired().nonNullable().integer().positive().min(0).max(Object.keys(CampaignStatus).length / 2 - 1),
 });
 const updateFormValidator = new FormValidator(updateFormSchema);
 
@@ -61,11 +61,10 @@ export async function PATCH(request: NextRequest, context: any) {
     }
 
     const updatedFields = [];
-    for (const key in formData) {
-        if (formData.hasOwnProperty(key)) {
-            campaign[key] = formData[key as keyof typeof formData];
-            updatedFields.push(key);
-        }
+    for (const key in formData) 
+    {   
+        campaign[key] = formData[key as keyof typeof formData];
+        updatedFields.push(key);
     }
 
     if (updatedFields.length == 0) {
@@ -79,18 +78,4 @@ export async function PATCH(request: NextRequest, context: any) {
     }
 
     return Responses.createSuccessResponse({}, "Campaign Updated.");
-}
-
-export async function GET(context: any) {
-    const {params} = context;
-
-    if (!params?.id) {
-        return Responses.createNotFoundResponse();
-    }
-
-    const result = await donationCampaignManager.getById(params.id);
-    if (result == null) {
-        return Responses.createNotFoundResponse();
-    }
-    return Responses.createSuccessResponse(result.value);
 }
