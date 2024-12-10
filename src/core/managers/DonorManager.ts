@@ -3,17 +3,16 @@ import {OperationResult} from "@/core/utils/operation_result/OperationResult";
 import {FormError} from "@/core/utils/operation_result/FormError";
 import {Donor} from "@/models/Donor";
 import {SimpleError} from "@/core/utils/operation_result/SimpleError";
-import { RepositoryAsync } from "../repository/RepositoryAsync";
-import { StoreItem } from "@/models/StoreItem";
-import { PrimaryKeyPart } from "../repository/PrimaryKeyPart";
-import { DonorBadge } from "@/models/DonorBadge";
-import { Badge } from "@/models/Badge";
-import { BadgeManager } from "./BadgeManager";
-import { DonorStoreItem } from "@/models/DonorStoreItem";
-import { BadgeTypes } from "@/models/types/BadgeTypes";
+import {RepositoryAsync} from "../repository/RepositoryAsync";
+import {StoreItem} from "@/models/StoreItem";
+import {PrimaryKeyPart} from "../repository/PrimaryKeyPart";
+import {DonorBadge} from "@/models/DonorBadge";
+import {Badge} from "@/models/Badge";
+import {DonorStoreItem} from "@/models/DonorStoreItem";
+import {BadgeTypes} from "@/models/types/BadgeTypes";
 
 
-export class DonorManager extends EntityManager<Donor> 
+export class DonorManager extends EntityManager<Donor>
 {
     private readonly storeItemRepo : RepositoryAsync<StoreItem>;
     private readonly donorBadgeRepo : RepositoryAsync<DonorBadge>;
@@ -28,7 +27,7 @@ export class DonorManager extends EntityManager<Donor>
         this.badgeRepo = new RepositoryAsync(Badge);
     }
 
-    async signUp(donor: Donor): Promise<OperationResult<Donor | null, FormError>> 
+    async signUp(donor: Donor): Promise<OperationResult<Donor | null, FormError>>
     {
         const createdDonor = await this.repository.create(donor);
         return new OperationResult(createdDonor,[]);
@@ -65,7 +64,7 @@ export class DonorManager extends EntityManager<Donor>
             return new OperationResult(donors,[]);
     }
 
-    async byStoreItem(donorId:number,storeItemId:number): Promise< OperationResult<boolean,FormError> >
+    async buyStoreItem(donorId:number,storeItemId:number): Promise< OperationResult<boolean,FormError> >
     {
         const errors = []
 
@@ -111,7 +110,7 @@ export class DonorManager extends EntityManager<Donor>
         {
             if ( (badge.type == BadgeTypes.FrequencyOfDonations && donor.best_frequency_of_donation! < badge.value!) ||
                  (badge.type == BadgeTypes.TotalDonations && donor.total_donated_value! < badge.value!) ||
-                 (badge.type == BadgeTypes.TotalValueDonated && donor.total_donated_value! < badge.value!) ) 
+                 (badge.type == BadgeTypes.TotalValueDonated && donor.total_donated_value! < badge.value!) )
             {
                 errors.push( new FormError("donor_id", ["Doesn't meet the requirements to unlock the badge."]) );
             }

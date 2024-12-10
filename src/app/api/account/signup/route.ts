@@ -34,7 +34,7 @@ interface PostManagerObject {
     contactEmail: string;
     description: string;
     managerType: number;
-    identificationFile: any;
+    identificationFile: unknown;
 }
 
 
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
 }
 
 
-function mergeMiddleNames(names: string[]): string {
+export function mergeMiddleNames(names: string[]): string {
     if (names.length > 3) {
         let middle_names = "";
         for (let i = 1; i < names.length - 2; i++) {

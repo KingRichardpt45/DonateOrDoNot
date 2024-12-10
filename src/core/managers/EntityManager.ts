@@ -1,4 +1,4 @@
-import {Constrain} from "../repository/Constrain";
+import {Constraint} from "../repository/Constraint";
 import {IEntity} from "../repository/IEntity";
 import {IncludeNavigation} from "../repository/IncludeNavigation";
 import {IRepositoryAsync} from "../repository/IRepositoryAsync";
@@ -20,12 +20,12 @@ export class EntityManager<Entity extends IEntity> {
         return this.repository.getAll(includeFunction, orderBy, limit, offset);
     }
 
-    async getByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[] = ()=>[], orderBy: any[] = [], limit: number = 0, offset: number = 0): Promise<Entity[]> {
-        return this.repository.getByCondition(constrains, includeFunction, orderBy, limit, offset);
+    async getByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[] = ()=>[], orderBy: any[] = [], limit: number = 0, offset: number = 0): Promise<Entity[]> {
+        return this.repository.getByCondition(constraints, includeFunction, orderBy, limit, offset);
     }
 
-    async getFirstByCondition(constrains: Constrain[], includeFunction: (entity: Entity) => IncludeNavigation[] = ()=>[], orderBy: any[] = [], limit: number = 0, offset: number = 0): Promise<Entity | null> {
-        return this.repository.getFirstByCondition(constrains, includeFunction, orderBy, limit, offset);
+    async getFirstByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[] = ()=>[], orderBy: any[] = [], limit: number = 0, offset: number = 0): Promise<Entity | null> {
+        return this.repository.getFirstByCondition(constraints, includeFunction, orderBy, limit, offset);
     }
 
     async exists(id: number): Promise<boolean> {
@@ -45,8 +45,7 @@ export class EntityManager<Entity extends IEntity> {
         return entity ? this.repository.update(entity) : false;
     }
 
-    async updateField(entity: Entity, fields_to_update:string[]): Promise<boolean> 
-    {
+    async updateField(entity: Entity, fields_to_update:string[]): Promise<boolean> {
         return  this.repository.updateFields(entity, ...fields_to_update ) ;
     }
 

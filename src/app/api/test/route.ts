@@ -1,7 +1,7 @@
 import {NextResponse} from 'next/server';
 import {IncludeNavigation} from '@/core/repository/IncludeNavigation';
 import {CampaignManagerManager} from '@/core/managers/CampaignManagerManager';
-import {Constrain} from '@/core/repository/Constrain';
+import {Constraint} from '@/core/repository/Constraint';
 import {Operator} from '@/core/repository/Operator';
 import {UserRoleTypes} from '@/models/types/UserRoleTypes';
 
@@ -41,16 +41,16 @@ export async function GET() {
     //console.log( await AddresseRepo.create(myAddresse) );
     // let result = await AddresseRepo.getAll([],[{column: "id", order:"desc"}],2,1);
     // let result = await AddresseRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],[]);
-    // let result = await AddresseRepo.getByCondition([ new Constrain("id","!=","2")],[],[],2,1);
-    // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
-    // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
+    // let result = await AddresseRepo.getByCondition([ new Constraint("id","!=","2")],[],[],2,1);
+    // let result = await AddresseRepo.getByCondition([ new Constraint("address","like","% da %")],[],[],2,0);
+    // let result = await AddresseRepo.getFirstByCondition([new Constraint("address","like","% da %")],[],[],2,0);
 
     // gets with includes
     //let result = await UserRepo.getAll((user)=> [ new IncludeNavigation( user.notifications , 0), new IncludeNavigation( user.address , 0) ]);
     //const result = await UserRepo.getByPrimaryKey([ new PrimaryKeyPart("id", 1 ) ],(user)=>[new IncludeNavigation(user.notifications,0)]);
-    //const result = await UserRepo.getFirstByCondition([new Constrain("Addresses.id", "=", "18")], (user) => [new IncludeNavigation(user.address, 0)], [], 0, 0);
-    // let result = await AddresseRepo.getByCondition([ new Constrain("address","like","% da %")],[],[],2,0);
-    // let result = await AddresseRepo.getFirstByCondition([new Constrain("address","like","% da %")],[],[],2,0);
+    //const result = await UserRepo.getFirstByCondition([new Constraint("Addresses.id", "=", "18")], (user) => [new IncludeNavigation(user.address, 0)], [], 0, 0);
+    // let result = await AddresseRepo.getByCondition([ new Constraint("address","like","% da %")],[],[],2,0);
+    // let result = await AddresseRepo.getFirstByCondition([new Constraint("address","like","% da %")],[],[],2,0);
 
     // updates
     // user.id = 25;
@@ -73,7 +73,7 @@ export async function GET() {
     // let result2 = await AddresseRepo.deleteRange([a1,a2]);
 
     // let notificationrepo = new RepositoryAsync<Notification>("Notification");
-    // let result3 = await notificationrepo.deleteByCondition([new Constrain("user_id",">=",24)]);
+    // let result3 = await notificationrepo.deleteByCondition([new Constraint("user_id",">=",24)]);
 
     // let result4 = await notificationrepo.deleteRangeByPrimaryKeys( [ new PrimaryKeyPart("id",18) ], [new PrimaryKeyPart("id",19)] );
 
@@ -108,7 +108,7 @@ export async function GET() {
     //console.log( await userRepo.getByPrimaryKey([{name:"Users.id",value:20}],["Addresse"]))
 
     const UnverifiedManagers = await (new CampaignManagerManager).getByCondition(
-        [new Constrain("verified", Operator.EQUALS, false), new Constrain("Users.type", Operator.EQUALS, UserRoleTypes.CampaignManager)], (manager) => [new IncludeNavigation(manager.user, 0)]
+        [new Constraint("verified", Operator.EQUALS, false), new Constraint("Users.type", Operator.EQUALS, UserRoleTypes.CampaignManager)], (manager) => [new IncludeNavigation(manager.user, 0)]
     );
 
     return NextResponse.json({h: "hello world", a: UnverifiedManagers});

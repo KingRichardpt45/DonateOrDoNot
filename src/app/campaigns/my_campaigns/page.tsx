@@ -1,17 +1,17 @@
 import styles from "./MyCampaigns.module.css";
-import { MainLayout } from "../../components/coreComponents/mainLayout";
-import { User } from "@/models/User";
-import { DonationCampaignManager } from "@/core/managers/DonationCampaignManager";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
+import {MainLayout} from "../../components/coreComponents/mainLayout";
+import {User} from "@/models/User";
+import {DonationCampaignManager} from "@/core/managers/DonationCampaignManager";
+import {UserRoleTypes} from "@/models/types/UserRoleTypes";
 import NotAuthorized from "../../components/authorization/notAuthorized";
 import NotLoggedIn from "../../components/authorization/notLogged";
-import { Services } from "@/services/Services";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
-import { Constrain } from "@/core/repository/Constrain";
-import { Campaign } from "@/models/Campaign";
-import { Operator } from "@/core/repository/Operator";
-import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
-import { CampaignStatus } from "@/models/types/CampaignStatus";
+import {Services} from "@/services/Services";
+import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
+import {Constraint} from "@/core/repository/Constraint";
+import {Campaign} from "@/models/Campaign";
+import {Operator} from "@/core/repository/Operator";
+import {IncludeNavigation} from "@/core/repository/IncludeNavigation";
+import {CampaignStatus} from "@/models/types/CampaignStatus";
 import CampaignItem from "@/app/components/campaigns/CampaignsItem"
 import SearchCampaigns from "@/app/components/search/searchCampaigns/searchCampaigns";
 
@@ -28,8 +28,8 @@ export default async function MyCampaigns()
   if(authorized)
   {
     const status = [CampaignStatus.Active,CampaignStatus.Approved,CampaignStatus.InAnalysis];
-    activeCampaigns = await campaignsManager.getByCondition( [ new Constrain("campaign_manager_id",Operator.EQUALS,user.id),
-                                                                      new Constrain("status",Operator.IN,status)
+    activeCampaigns = await campaignsManager.getByCondition( [ new Constraint("campaign_manager_id",Operator.EQUALS,user.id),
+                                                                      new Constraint("status",Operator.IN,status)
                                                                     ],
                                                                     (campaign)=>[new IncludeNavigation(campaign.files,0)],
                                                                     [],0,0

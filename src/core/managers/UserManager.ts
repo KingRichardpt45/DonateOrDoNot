@@ -1,5 +1,5 @@
 import {User} from "@/models/User";
-import {Constrain} from "../repository/Constrain";
+import {Constraint} from "../repository/Constraint";
 import {IncludeNavigation} from "../repository/IncludeNavigation";
 import {IPasswordValidation} from "@/services/IPasswordValidation";
 import {Services} from "@/services/Services";
@@ -46,7 +46,7 @@ export class UserManager extends EntityManager<User> {
             errors.push(new FormError("email", ["A email must be provided!"]));
         else 
         {
-            const existingUserWithEmail = await this.getFirstByCondition([new Constrain("email", Operator.EQUALS, user.email)],(user) => [], [], 0, 0);
+            const existingUserWithEmail = await this.getFirstByCondition([new Constraint("email", Operator.EQUALS, user.email)],(user) => [], [], 0, 0);
 
             if (existingUserWithEmail != null)
                 errors.push(new FormError("email", ["A user with this email already exists!"]));
@@ -80,7 +80,7 @@ export class UserManager extends EntityManager<User> {
      */
     async signIn(email: string, password: string): Promise<OperationResult<User | null, FormError>> 
     {
-        const user = await this.repository.getFirstByCondition([new Constrain("email", Operator.EQUALS, email)],
+        const user = await this.repository.getFirstByCondition([new Constraint("email", Operator.EQUALS, email)],
             (user) => [new IncludeNavigation(user.address, 0)],
             [], 0, 0
         );

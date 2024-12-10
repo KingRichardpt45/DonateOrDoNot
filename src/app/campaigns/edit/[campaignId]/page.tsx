@@ -1,20 +1,20 @@
 import NotAuthorized from "@/app/components/authorization/notAuthorized";
 import NotLoggedIn from "@/app/components/authorization/notLogged";
-import { MainLayout } from "@/app/components/coreComponents/mainLayout";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { Services } from "@/services/Services";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
+import {MainLayout} from "@/app/components/coreComponents/mainLayout";
+import {UserRoleTypes} from "@/models/types/UserRoleTypes";
+import {Services} from "@/services/Services";
+import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
 import styles from "./page.module.css";
 import EditCampaignForm from "@/app/components/campaigns/edit/EditCampaignForm";
-import { DonationCampaignManager } from "@/core/managers/DonationCampaignManager";
-import { EntityConverter } from "@/core/repository/EntityConverter";
-import { Campaign } from "@/models/Campaign";
-import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
-import { Badge } from "@/models/Badge";
-import { CampaignBadge } from "@/models/CampaignBadge";
-import { FileManager } from "@/core/managers/FileManager";
-import { Constrain } from "@/core/repository/Constrain";
-import { Operator } from "@/core/repository/Operator";
+import {DonationCampaignManager} from "@/core/managers/DonationCampaignManager";
+import {EntityConverter} from "@/core/repository/EntityConverter";
+import {Campaign} from "@/models/Campaign";
+import {IncludeNavigation} from "@/core/repository/IncludeNavigation";
+import {Badge} from "@/models/Badge";
+import {CampaignBadge} from "@/models/CampaignBadge";
+import {FileManager} from "@/core/managers/FileManager";
+import {Constraint} from "@/core/repository/Constraint";
+import {Operator} from "@/core/repository/Operator";
 
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const campaignsManager = new  DonationCampaignManager();
@@ -55,7 +55,7 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
       </MainLayout>
     );
   }
-  campaign.files.value  = await filesManager.getByCondition([new Constrain("campaign_id",Operator.EQUALS,campaign.id)],(v)=>[],[],0,0);
+  campaign.files.value  = await filesManager.getByCondition([new Constraint("campaign_id",Operator.EQUALS,campaign.id)],(v)=>[],[],0,0);
   const authorized = user?.type == UserRoleTypes.CampaignManager && user.id == campaign.campaign_manager_id;
   const campaignAdPain = entityConverter.toPlainObject(campaign) as Campaign;
   

@@ -1,22 +1,18 @@
-import { Badge } from "@/models/Badge";
-import { EntityManager } from "./EntityManager";
-import { BadgeTypes } from "@/models/types/BadgeTypes";
-import { SearchableEntity } from "./SerachableEntity";
-import { Constrain } from "../repository/Constrain";
-import { OperationResult } from "../utils/operation_result/OperationResult";
-import { SimpleError } from "../utils/operation_result/SimpleError";
-import { IncludeNavigation } from "../repository/IncludeNavigation";
-import { Operator } from "../repository/Operator";
+import {Badge} from "@/models/Badge";
+import {EntityManager} from "./EntityManager";
+import {BadgeTypes} from "@/models/types/BadgeTypes";
+import {SearchableEntity} from "./SerachableEntity";
+import {Constraint} from "../repository/Constraint";
+import {OperationResult} from "../utils/operation_result/OperationResult";
+import {SimpleError} from "../utils/operation_result/SimpleError";
+import {IncludeNavigation} from "../repository/IncludeNavigation";
 
-export class BadgeManager extends EntityManager<Badge> implements SearchableEntity<Badge>
-{
-    constructor()
-    {
+export class BadgeManager extends EntityManager<Badge> implements SearchableEntity<Badge> {
+    constructor() {
         super(Badge);
     }
-    
-    async create(name:string, description:string, type:BadgeTypes, unit:string | null, value:number | null, imageId:number ): Promise<Badge>
-    {
+
+    async create(name: string, description: string, type: BadgeTypes, unit: string | null, value: number | null, imageId: number): Promise<Badge> {
         const badge = new Badge();
         badge.name = name;
         badge.description = description;
@@ -28,26 +24,13 @@ export class BadgeManager extends EntityManager<Badge> implements SearchableEnti
         return this.add(badge);
     }
 
-    async search(query: string, page: number, pageSize: number): Promise<OperationResult<Badge[], SimpleError>> 
-    {   
-        return this.searchWithConstrains(query,[],page,pageSize);
-    }
+    async searchWithConstraints(constraints: Constraint[], page: number, pageSize: number): Promise<OperationResult<Badge[], SimpleError>> {
+        const inNamesResult = await this.repository.getByCondition(constraints, (badge) => [new IncludeNavigation(badge.image, 0)], [], pageSize, page * pageSize);
 
-    async searchWithConstrains(query: string, constrains: Constrain[], page: number, pageSize: number): Promise<OperationResult<Badge[], SimpleError>> 
-    {
-        const inNamesResult = await this.repository.getByCondition(
-            [new Constrain("name",Operator.LIKE,`%${query}%`),...constrains],
-            (badge)=>[new IncludeNavigation(badge.image,0)],[],pageSize,page*pageSize);
+        const inDescriptionResult = await this.repository.getByCondition(constraints, (badge) => [new IncludeNavigation(badge.image, 0)], [], pageSize, page * pageSize);
 
-        const inDescriptionResult = await this.repository.getByCondition(
-            [new Constrain("description",Operator.LIKE,`%${query}%`),...constrains],
-            (badge)=>[new IncludeNavigation(badge.image,0)],[],pageSize,page*pageSize);
-        
-        inDescriptionResult.forEach( (value)=>inNamesResult.push(value) );
-        
-        if(inNamesResult.length == 0)
-            return new OperationResult( [] , [ new SimpleError("No items where found.") ]);
-        else
-            return new OperationResult( inNamesResult , []);
+        inDescriptionResult.forEach((value) => inNamesResult.push(value));
+
+        if (inNamesResult.length == 0) return new OperationResult([], [new SimpleError("No items where found.")]); else return new OperationResult(inNamesResult, []);
     }
 }

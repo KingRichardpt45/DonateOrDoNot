@@ -4,7 +4,6 @@ import * as yup from 'yup';
 import {FormValidator} from "@/core/utils/FormValidator";
 import {DonorManager} from "@/core/managers/DonorManager";
 import {FileManager} from "@/core/managers/FileManager";
-import {File as ModelFile} from "@/models/File";
 import {FileTypes} from "@/models/types/FileTypes";
 import {Services} from "@/services/Services";
 import {IAuthorizationService} from "@/services/session/authorizationService/IAuthorizationService";
@@ -13,6 +12,8 @@ import {FileService} from "@/services/FIleService";
 import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
 import {Responses} from "@/core/utils/Responses";
 import {YupUtils} from "@/core/utils/YupUtils";
+import {Constraint} from "@/core/repository/Constraint";
+import {Operator} from "@/core/repository/Operator";
 
 const storeItemManager = new StoreItemManager();
 const donorManager = new DonorManager();
@@ -42,7 +43,11 @@ export async function PUT(request: NextRequest) {
     if (!validatorResult.isOK)
         return Responses.createValidationErrorResponse(validatorResult.errors);
 
-    const formData = validatorResult.value!
+    const formData = validatorResult?.value
+    if (!formData) {
+        return Responses.createBadRequestResponse();
+    }
+
     const uploadedFile: File = formData.imageFile as File;
     const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Image, uploadedFile.size, user.id!);
     if (!fileResult.isOK)
@@ -57,33 +62,6 @@ export async function PUT(request: NextRequest) {
 
     return Responses.createSuccessResponse(createdStoreItem);
 }
-
-
-const deleteFormSchema = yup.object().shape(
-    {
-        store_item_id: yup.number().required().integer().positive().nonNullable()
-    }
-);
-const deleteFormValidator = new FormValidator(deleteFormSchema);
-
-export async function DELETE(request: NextRequest) {
-    if (!await authorizationService.hasRoles(UserRoleTypes.Admin))
-        return Responses.createUnauthorizedResponse();
-
-    const {searchParams} = request.nextUrl;
-    const validatorResult = await deleteFormValidator.validate(Object.fromEntries(searchParams.entries()));
-
-    if (!validatorResult.isOK)
-        return Responses.createValidationErrorResponse(validatorResult.errors);
-
-    const formData = validatorResult.value!;
-
-    if (!await storeItemManager.deleteById(formData.store_item_id))
-        return Responses.createNotFoundResponse("No item was found with the provided id.");
-    else
-        return Responses.createSuccessResponse();
-}
-
 
 const searchFormSchema = yup.object().shape(
     {
@@ -102,7 +80,15 @@ export async function GET(request: NextRequest) {
         return Responses.createValidationErrorResponse(validatorResult.errors);
 
     const formData = validatorResult.value!;
-    const result = await storeItemManager.search(formData.query, formData.page, formData.pageSize);
+
+    const constraints = [];
+
+    if (formData.query) {
+        constraints.push(new Constraint("name", Operator.LIKE, `%${formData.query}%`))
+        constraints.push(new Constraint("description", Operator.LIKE, `%${formData.query}%`))
+    }
+
+    const result = await storeItemManager.searchWithConstraints(constraints, formData.page, formData.pageSize);
 
     if (result.isOK)
         return Responses.createSuccessResponse(result.value);
@@ -110,84 +96,32 @@ export async function GET(request: NextRequest) {
         return Responses.createNotFoundResponse("No item where found with the provided search.");
 }
 
-
-const byFormSchema = yup.object().shape(
+const buyFormSchema = yup.object().shape(
     {
         store_item_id: yup.number().required().integer().positive().nonNullable(),
         donor_id: yup.number().required().integer().positive().nonNullable(),
     }
 );
-const byFormValidator = new FormValidator(byFormSchema);
+const buyFormValidator = new FormValidator(buyFormSchema);
 
 export async function POST(request: NextRequest) {
     if (!await authorizationService.hasRoles(UserRoleTypes.Donor))
         return Responses.createUnauthorizedResponse();
 
     const bodyData = await request.formData();
-    const validationResult = await byFormValidator.validate(Object.fromEntries(bodyData.entries()));
+    const validationResult = await buyFormValidator.validate(Object.fromEntries(bodyData.entries()));
 
     if (!validationResult.isOK)
         return Responses.createValidationErrorResponse(validationResult.errors);
 
-    const formData = validationResult.value!;
-    const result = await donorManager.byStoreItem(formData.donor_id, formData.store_item_id,);
+    const formData = validationResult?.value;
+    if (!formData) {
+        return Responses.createBadRequestResponse();
+    }
+    const result = await donorManager.buyStoreItem(formData.donor_id, formData.store_item_id);
 
     if (result.isOK)
         return Responses.createSuccessResponse();
     else
         return Responses.createValidationErrorResponse(result.errors);
-}
-
-
-const updateFormSchema = yup.object().shape(
-    {
-        id: yup.number().required().integer().positive().nonNullable(),
-        cost: yup.number().integer().positive().nonNullable(),
-        description: yup.string().trim().nonNullable().min(1).max(200),
-        name: yup.string().trim().nonNullable().min(1).max(100),
-        imageFile: fileService.filesSchema
-    }
-);
-const updateFormValidator = new FormValidator(updateFormSchema);
-
-export async function PATCH(request: NextRequest) {
-    const user = await userProvider.getUser();
-    if (!user || user.type != UserRoleTypes.Admin)
-        return Responses.createUnauthorizedResponse();
-
-    const formBody = await request.formData();
-    const validatorResult = await updateFormValidator.validate(Object.fromEntries(formBody.entries()));
-
-    if (!validatorResult.isOK)
-        return Responses.createValidationErrorResponse(validatorResult.errors);
-
-    const formData = validatorResult.value!;
-    const storeItem = await storeItemManager.getById(formData.id);
-    if (storeItem == null)
-        return Responses.createNotFoundResponse();
-
-    const updatedFields = [];
-    for (const key in formData) {
-        if (key == "imageFile") {
-            const oldFile = await fileManager.getById(storeItem.image_id!) as ModelFile;
-            const uploadedFile = formData.imageFile as File;
-            const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Image, uploadedFile.size, user.id!);
-            if (!fileResult.isOK)
-                return Responses.createValidationErrorResponse(fileResult.errors);
-            fileService.update(oldFile, fileResult.value!, uploadedFile)
-        } else {
-            storeItem[key] = formData[key as keyof typeof formData];
-            updatedFields.push(key);
-        }
-    }
-
-    if (updatedFields.length == 0)
-        return Responses.createValidationErrorResponse(["Id can not be updated.", "No other fields to update."], "No fields for updated.")
-
-    const updated = await storeItemManager.updateField(storeItem, updatedFields);
-
-    if (updated)
-        return Responses.createSuccessResponse();
-    else
-        return Responses.createServerErrorResponse();
 }

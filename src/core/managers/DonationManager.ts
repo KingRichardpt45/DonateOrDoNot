@@ -4,12 +4,12 @@ import {FormError} from "@/core/utils/operation_result/FormError";
 import {OperationResult} from "@/core/utils/operation_result/OperationResult";
 import {Donation} from "@/models/Donation";
 import {Donor} from "@/models/Donor";
-import { SimpleError } from "../utils/operation_result/SimpleError";
-import { Constrain } from "../repository/Constrain";
-import { Operator } from "../repository/Operator";
-import { TotalDonatedValue } from "@/models/TotalDonatedValue";
-import { RepositoryAsync } from "../repository/RepositoryAsync";
-import { PrimaryKeyPart } from "../repository/PrimaryKeyPart";
+import {SimpleError} from "../utils/operation_result/SimpleError";
+import {Constraint} from "../repository/Constraint";
+import {Operator} from "../repository/Operator";
+import {TotalDonatedValue} from "@/models/TotalDonatedValue";
+import {RepositoryAsync} from "../repository/RepositoryAsync";
+import {PrimaryKeyPart} from "../repository/PrimaryKeyPart";
 
 export class DonationManager extends EntityManager<Donation> 
 {
@@ -63,7 +63,7 @@ export class DonationManager extends EntityManager<Donation>
     private async updateTotalDonatedValue(donor_id:number,campaign_id:number,donatedValue:number)
     {
         let totalDonatedValue = await this.totalDonatedValueRepo.getFirstByCondition(
-            [new Constrain("donor_id",Operator.EQUALS,donor_id),new Constrain("campaign_id",Operator.EQUALS,campaign_id)],
+            [new Constraint("donor_id",Operator.EQUALS,donor_id),new Constraint("campaign_id",Operator.EQUALS,campaign_id)],
             (u)=>[],
             [],0,0
         )
@@ -119,7 +119,7 @@ export class DonationManager extends EntityManager<Donation>
     async getDonationsOfDonor(donor_id:number, page:number, pageSize:number): Promise< OperationResult< Donation[]| null,SimpleError> >
     {
         const donations = await this.repository.getByCondition(
-            [new Constrain("donor_id",Operator.EQUALS,donor_id)],
+            [new Constraint("donor_id",Operator.EQUALS,donor_id)],
             (d)=>[],
             [{ column: `${Donation.getTableName()}.id`, order: "desc" }],
             pageSize,
