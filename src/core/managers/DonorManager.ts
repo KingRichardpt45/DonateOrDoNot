@@ -14,6 +14,12 @@ import {BadgeTypes} from "@/models/types/BadgeTypes";
 
 export class DonorManager extends EntityManager<Donor>
 {
+    getBadges(id: number | null) {
+      throw new Error("Method not implemented.");
+    }
+    getDonatedCampaigns(id: number | null) {
+      throw new Error("Method not implemented.");
+    }
     private readonly storeItemRepo : RepositoryAsync<StoreItem>;
     private readonly donorBadgeRepo : RepositoryAsync<DonorBadge>;
     private readonly donorStoreItemRepo : RepositoryAsync<DonorStoreItem>;
