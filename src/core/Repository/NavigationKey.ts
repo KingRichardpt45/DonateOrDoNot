@@ -35,7 +35,6 @@ export class NavigationKey<Entity extends IEntity> {
 
     /** A flag to indicate that this navigation is required to the entity and need to be created first.*/
     readonly isDecency: boolean;
-  map: any;
 
     /**
      * Constructs a new `NavigationKey` instance.

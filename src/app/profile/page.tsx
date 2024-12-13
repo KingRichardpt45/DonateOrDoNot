@@ -10,34 +10,46 @@ import { Services } from "@/services/Services";
 import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
 import { DonationManager } from "@/core/managers/DonationManager";
 import { DonorManager } from "@/core/managers/DonorManager";
-import { Constrain } from "@/core/repository/Constrain";
+import { Constraint } from "@/core/repository/Constraint";
 import { Operator } from "@/core/repository/Operator";
 import { DonorStoreItem } from "@/models/DonorStoreItem";
+import { DonorBadgeManager } from "@/core/managers/DonorBadgesManager";
+import { DonorStoreItemManager } from "@/core/managers/DonorStoreItemManager";
 
 
 // Initialize userProvider to fetch the current logged-in user
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 
-// Static test data for debugging purposes
 let totalDonated = 0; // Total donated amount by the user
 let freqDon = 0; // Frequency of user's donations
 let item="";
 
+// Initialize managers for donations and donors
+const donationManager = new DonationManager();
+const donorBadgeManager = new DonorBadgeManager();
+const donorStoreItemManager = new DonorStoreItemManager();
+const donorManager = new DonorManager();
+const donorSItem = new DonorStoreItem();
+
 const ProfilePage = async () => {
-  // Initialize managers for donations and donors
-  const donationManager = new DonationManager();
-  const donorManager = new DonorManager();
-  const donorSItem = new DonorStoreItem();
 
   // Fetch user from session provider
   const user = await userProvider.getUser();
 
+  if(user === null)
+    return ( <NotLoggedIn /> );
+
+  if(user !== null && (user as User).type !== UserRoleTypes.Donor)
+    return ( <NotAuthorized /> );
+
   // Fetch all donations of the donor
-  const donations = await donationManager.getDonationsOfDonor.length;
+  const donations = (await donationManager.getDonationsOfDonor(user.id!,0,10));
+  const badges = await donorBadgeManager.getBadgeOfDonor(user.id!,0,10);
+  const items = await donorStoreItemManager.getItemsOfDonor(user.id!,0,10);
 
   // Fetch donor details using a condition (matching user ID)
   const Donor = await donorManager.getByCondition([
-    new Constrain("id", Operator.EQUALS, user?.id),
+    new Constraint("id", Operator.EQUALS, user?.id),
   ]);
 
 
@@ -89,7 +101,9 @@ const ProfilePage = async () => {
                 <div className={styles.StatisticsInfo}>
                   <div>
                     <h3>Number of Donations</h3>
-                    <p>{donations}</p>
+                    <p>{donations.isOK &&
+                        donations.value!.length
+                      }</p>
                   </div>
                   <div>
                     <h3>Frequency of Donation</h3>

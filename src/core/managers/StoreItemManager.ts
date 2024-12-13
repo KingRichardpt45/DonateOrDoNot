@@ -27,10 +27,13 @@ export class StoreItemManager extends EntityManager<StoreItem> implements Search
 
     async searchWithConstraints(constraints: Constraint[], page: number, pageSize: number): Promise<OperationResult<StoreItem[], SimpleError>>
     {
-        const inNamesResult = await this.repository.getByCondition(constraints,
+        if(constraints.length <2)
+            throw new Error("FIX THIS Function searchWithConstraints in StoreItemManager");
+        
+        const inNamesResult = await this.repository.getByCondition([constraints[0]],
             (storeItem)=>[new IncludeNavigation(storeItem.image,0)],[],pageSize,page*pageSize);
 
-        const inDescriptionResult = await this.repository.getByCondition(constraints,
+        const inDescriptionResult = await this.repository.getByCondition([constraints[1]],
             (storeItem)=>[new IncludeNavigation(storeItem.image,0)],[],pageSize,page*pageSize);
 
         inDescriptionResult.forEach( (value)=>inNamesResult.push(value) );

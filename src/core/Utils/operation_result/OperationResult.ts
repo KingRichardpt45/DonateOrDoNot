@@ -4,8 +4,7 @@ export class OperationResult<T, ErrorType extends IOperationError> {
     readonly errors: ErrorType[];
     readonly value: T;
     readonly isOK: boolean;
-  length: number;
-
+    
     constructor(value: T, errors: ErrorType[]) {
         this.value = value;
         this.errors = errors;
