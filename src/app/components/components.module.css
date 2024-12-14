@@ -303,10 +303,12 @@
   border: none;
   cursor: pointer;
   margin-right: 16px;
+  color: white;
 }
 .notificationBell {
   position: relative;
   margin-left: 10px;
+  color: white;
 }
 
 .bellButton {
