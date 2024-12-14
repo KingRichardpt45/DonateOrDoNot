@@ -90,10 +90,6 @@
     flex-direction: column;
 }
 
-.disabledDropdown{
-    pointer-events: none; /* Prevent interaction */
-}
-
 .FormTitle{
     display: flex;
     flex-direction: column;

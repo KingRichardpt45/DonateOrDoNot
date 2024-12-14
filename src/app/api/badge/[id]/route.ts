@@ -19,7 +19,7 @@ const fileManager = new FileManager();
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
 const fileService = Services.getInstance().get<FileService>("FileService");
 
-export async function DELETE(context: any) {
+export async function DELETE(req:NextRequest, context: any) {
     const {params} = context;
 
     if (!params?.id) {
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest, context: any) {
     return Responses.createSuccessResponse();
 }
 
-export async function GET(context: any) {
+export async function GET(req:NextRequest, context: any) {
     const {params} = context;
 
     if (!params?.id) {
