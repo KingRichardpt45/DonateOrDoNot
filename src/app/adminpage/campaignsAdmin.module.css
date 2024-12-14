@@ -11,21 +11,23 @@
     width: 45%;
     height: 500px; /* Set fixed height for scrollable behavior */
     overflow-y: auto; /* Enable vertical scrolling */
-    border: 1px solid #ccc;
+    border: 1px solid #7a0385;
     border-radius: 8px;
     padding: 10px;
+    background-color: rgba(26, 0, 37, 1);
   }
   
   /* Title styles */
   .title {
-    background-color: #fff;
+    border: 1px solid #ddd;
+    background-color: #5f0168;
     text-align: center;
     padding: 10px;
     margin-bottom: 15px;
     border-radius: 8px;
     font-size: 1.5rem;
     font-weight: bold;
-    color: #333; /* You can adjust the color as needed */
+    color: #ffffff; /* You can adjust the color as needed */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Adds subtle shadow */
   }
   
@@ -42,10 +44,11 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: #5f0168;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    color:white;
   }
   
   /* Buttons */

@@ -17,6 +17,7 @@ import { StringUtils } from "@/core/utils/StringUtils";
 import { ActionResultNotificationError } from "../../actionsNotifications/ActionResultNotificationError";
 import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
+import { CampaignStatus } from "@/models/types/CampaignStatus";
 
 interface AddedFile
 { 
@@ -385,6 +386,33 @@ const EditCampaignForm :React.FC<{userType:number,userId:number,campaign:Campaig
   };
 
   const isAdmin = userType === UserRoleTypes.Admin;
+
+  function sendUpdateStatus(campaignId:number, status:string)
+  {
+    const formdata =new FormData();
+    formdata.set('status', status);
+
+    fetch(`/api/campaign/${campaignId}`, {
+      method: "PATCH",
+      body: formdata,
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          // If the request was successful, redirect the user
+          window.location.href = "/adminpage";
+        } else {
+          // If the response is not ok, handle the error
+          const errorData = await response.json();
+          console.error("Error updating campaign:", errorData.message || "Unknown error");
+          alert(`Failed to update campaign: ${errorData.message || "Please try again later."}`);
+        }
+      })
+      .catch((error) => {
+        // Handle network or unexpected errors
+        console.error("Network or server error:", error);
+        alert("A network error occurred. Please check your connection and try again.");
+      });
+  }
 
   return (
     <div className={styles.CampaignCreateContainer}>
@@ -927,10 +955,10 @@ const EditCampaignForm :React.FC<{userType:number,userId:number,campaign:Campaig
       <div className={styles.ButtonFormContainer}>
         <div className={styles.line}>
           <div className={styles.ButtonForm}>
-            <button className={styles.submitButton} >Accept</button>
+            <button className={styles.submitButton} onClick={() => sendUpdateStatus(campaign.id!,CampaignStatus.Approved.toString())}>Accept</button>
           </div>
           <div className={styles.ButtonForm}>
-            <button className={styles.submitButtonUpdate}>Deny</button>
+            <button className={styles.submitButtonUpdate} onClick={() => sendUpdateStatus(campaign.id!,CampaignStatus.Reproved.toString())}>Deny</button>
           </div>
         </div>
       </div>

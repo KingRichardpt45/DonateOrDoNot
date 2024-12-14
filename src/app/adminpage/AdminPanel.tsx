@@ -16,7 +16,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ campaigns, campaignManagers}) =
   return (
     <div>
       <header className={styles.header}>
-        <h1 className={styles.title}>Admin Panel</h1>
       </header>
       <CampaignsAdmin campaigns={campaigns} campaignManagers={campaignManagers} />
     </div>
