@@ -5,7 +5,6 @@ import styles from "./profile.module.css";
 import NotAuthorized from "@/app/components/authorization/notAuthorized";
 import NotLoggedIn from "@/app/components/authorization/notLogged";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { User } from "@/models/User";
 import { Services } from "@/services/Services";
 import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
 import { DonationManager } from "@/core/managers/DonationManager";
@@ -14,6 +13,12 @@ import { Constraint } from "@/core/repository/Constraint";
 import { Operator } from "@/core/repository/Operator";
 import { DonorBadgeManager } from "@/core/managers/DonorBadgesManager";
 import { DonorStoreItemManager } from "@/core/managers/DonorStoreItemManager";
+import Link from "next/link";
+
+// Define the type for searchParams
+type SearchParams = {
+  [key: string]: string | string[] | undefined;
+};
 
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 
@@ -22,7 +27,21 @@ const donorBadgeManager = new DonorBadgeManager();
 const donorStoreItemManager = new DonorStoreItemManager();
 const donorManager = new DonorManager();
 
-const ProfilePage = async () => {
+
+
+const ProfilePage = async ({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) => {
+  const page = parseInt(
+    (Array.isArray(searchParams.page)
+      ? searchParams.page[0]
+      : searchParams.page) || "1"
+  );
+  const badgesPerPage = 5;
+  const itemsPerPage = 5;
+
   // Fetch user from session provider
   const user = await userProvider.getUser();
 
@@ -35,9 +54,9 @@ const ProfilePage = async () => {
   }
 
   // Fetch all necessary data
-  const donations = await donationManager.getDonationsOfDonor(user.id!, 0, 10);
-  const badges = await donorBadgeManager.getBadgeOfDonor(user.id!, 0, 10);
-  const items = await donorStoreItemManager.getItemsOfDonor(user.id!, 0, 10);
+   const donations = await donationManager.getDonationsOfDonor(user.id!, 0, 10);
+  const badges = await donorBadgeManager.getBadgeOfDonor(user.id!, 0, 100);
+  const items = await donorStoreItemManager.getItemsOfDonor(user.id!, 0, 100);
 
   const Donor = await donorManager.getByCondition([
     new Constraint("id", Operator.EQUALS, user?.id),
@@ -47,6 +66,23 @@ const ProfilePage = async () => {
   const donorData = Donor?.find((donor) => donor.id === user.id);
   const totalDonated = donorData?.total_donated_value || 0;
   const freqDon = donorData?.frequency_of_donation || 0;
+
+
+
+  // Pagination logic
+  const indexOfLastBadge = page * badgesPerPage;
+  const indexOfFirstBadge = indexOfLastBadge - badgesPerPage;
+  const currentBadges = badges.value?.slice(
+    indexOfFirstBadge,
+    indexOfLastBadge
+  );
+
+  const indexOfLastItem = page * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = items.value?.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalBadgesPages = Math.ceil(badges.value?.length / badgesPerPage);
+  const totalItemsPages = Math.ceil(items.value?.length / itemsPerPage);
 
   return (
     <MainLayout passUser={user}>
@@ -79,13 +115,24 @@ const ProfilePage = async () => {
           <div className={styles.MyBadges}>
             <h2>My Badges</h2>
             <div className={styles.BadgesGrid}>
-              {badges.isOK && badges.value.length > 0 ? (
-                badges.value.map((badge, index) => (
+              {currentBadges && currentBadges.length > 0 ? (
+                currentBadges.map((badge, index) => (
                   <div key={index}>{badge.name}</div>
                 ))
               ) : (
                 <p>No badges earned yet</p>
               )}
+            </div>
+            <div className={styles.Pagination}>
+              {[...Array(totalBadgesPages)].map((_, i) => (
+                <Link
+                  key={i}
+                  href={`/profile?page=${i + 1}`}
+                  className={page === i + 1 ? styles.Active : ""}
+                >
+                  {i + 1}
+                </Link>
+              ))}
             </div>
           </div>
 
@@ -93,13 +140,24 @@ const ProfilePage = async () => {
           <div className={styles.LastBought}>
             <h2>Last Bought</h2>
             <div className={styles.ItemsGrid}>
-              {items.isOK && items.value.length > 0 ? (
-                items.value.map((item, index) => (
+              {currentItems && currentItems.length > 0 ? (
+                currentItems.map((item, index) => (
                   <div key={index}>{item.name}</div>
                 ))
               ) : (
                 <p>No items bought yet</p>
               )}
+            </div>
+            <div className={styles.Pagination}>
+              {[...Array(totalItemsPages)].map((_, i) => (
+                <Link
+                  key={i}
+                  href={`/profile?page=${i + 1}`}
+                  className={page === i + 1 ? styles.Active : ""}
+                >
+                  {i + 1}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
