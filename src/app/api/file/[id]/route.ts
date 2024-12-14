@@ -60,7 +60,7 @@ export async function DELETE(request: NextRequest, context: any) {
     }
 }
 
-export async function GET(context: any) {
+export async function GET(request: Request, context: any) {
     const {params} = context;
 
     if (!params?.id) {

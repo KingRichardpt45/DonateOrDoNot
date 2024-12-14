@@ -10,10 +10,9 @@ import {CampaignManagerTypes} from "@/models/types/CampaignManagerTypes";
 import {FileService} from "@/services/FIleService";
 import {EntityManager} from "@/core/managers/EntityManager";
 import {Address} from "@/models/Address";
-import {mergeMiddleNames} from "@/app/api/account/signup/route";
 import {FileTypes} from "@/models/types/FileTypes";
 import {FileManager} from "@/core/managers/FileManager";
-import { CampaignManagerManager } from "@/core/managers/CampaignManagerManager";
+import {CampaignManagerManager} from "@/core/managers/CampaignManagerManager";
 
 const userManager = new UserManager();
 const managersManager = new CampaignManagerManager();
@@ -65,13 +64,12 @@ export async function PATCH(request: NextRequest, context: any) {
     const formData = validatorResult.value!;
 
     const user = await userManager.getById(params.id);
-    if (!user) 
+    if (!user)
         return Responses.createNotFoundResponse();
 
     const updatedFields: string[] = [];
 
-    if (formData.address || formData.addressSpecification || formData.city || formData.postalCode) 
-    {
+    if (formData.address || formData.addressSpecification || formData.city || formData.postalCode) {
         if (user.address_id == null || user.address_id == 0) {
             console.log("Creating new address")
             const newAddress = new Address();
@@ -107,62 +105,55 @@ export async function PATCH(request: NextRequest, context: any) {
         }
     }
 
-    if ( user.type == UserRoleTypes.CampaignManager ) 
-    {
+    if (user.type == UserRoleTypes.CampaignManager) {
         const managerValidatorResult = await managerFormValidator.validate(Object.fromEntries(bodyData.entries()));
         if (!managerValidatorResult.isOK) {
             return Responses.createValidationErrorResponse(managerValidatorResult.errors);
         }
 
         const manager = await managersManager.getById(user.id!);
-        if(!manager)
+        if (!manager)
             return Responses.createServerErrorResponse("Invalid account user is Campaign manager but there is no manger with user id.");
 
         const formDataManager = managerValidatorResult.value!;
-        let updateManagerFields : string[] = []
+        const updateManagerFields: string[] = []
 
-        for (const key in formDataManager) 
-        {
-            if (key == "identificationFile" ) 
-            {
+        for (const key in formDataManager) {
+            if (key == "identificationFile") {
                 const manager = await managersManager.getById(user.id!);
-                if(!manager)
+                if (!manager)
                     return Responses.createServerErrorResponse("Invalid account user is Campaign manager but there is no manger with user id.");
-        
+
                 const uploadedFile = formDataManager.identificationFile! as File;
                 const fileResult = await fileManager.create(uploadedFile.name, fileService.savePath, uploadedFile.type, FileTypes.Identification, uploadedFile.size, user.id!);
-                if ( !fileResult.isOK) 
+                if (!fileResult.isOK)
                     return Responses.createValidationErrorResponse(fileResult.errors);
-                
+
                 const oldIdentificationFile = await fileManager.getById(manager.identification_file_id!)
-                if( oldIdentificationFile )
-                {
-                    const result = await fileService.update( oldIdentificationFile , fileResult.value!, uploadedFile);
-                    if(!result)
+                if (oldIdentificationFile) {
+                    const result = await fileService.update(oldIdentificationFile, fileResult.value!, uploadedFile);
+                    if (!result)
                         return Responses.createServerErrorResponse("Could not update the identification file.");
                 }
-        
+
                 await fileManager.deleteById(manager.identification_file_id!);
                 manager.identification_file_id = fileResult.value!.id
                 updateManagerFields.push("identification_file_id");
-                
-            }
-            else if (formDataManager[key as keyof typeof formDataManager] == null) continue;
-            else
-            {
+
+            } else if (formDataManager[key as keyof typeof formDataManager] == null) continue;
+            else {
                 user[key] = formDataManager[key as keyof typeof formDataManager];
                 updateManagerFields.push(key);
             }
-            
+
         }
 
-        if ( ! await managersManager.updateField(manager,updateManagerFields) )
+        if (!await managersManager.updateField(manager, updateManagerFields))
             return Responses.createServerErrorResponse("Could not update file id in manager account.");
     }
 
-    for (const key in formData) 
-    {
-        if ( user[key] === undefined ) continue;
+    for (const key in formData) {
+        if (user[key] === undefined) continue;
 
         user[key] = formData[key as keyof typeof formData];
         updatedFields.push(key);
@@ -176,13 +167,13 @@ export async function PATCH(request: NextRequest, context: any) {
 
     const result = await userManager.updateField(user, updatedFields);
 
-    if (!result) 
+    if (!result)
         return Responses.createServerErrorResponse();
     else
         return Responses.createSuccessResponse({}, "Account Updated.");
 }
 
-export async function DELETE(req:NextRequest, context: any) {
+export async function DELETE(request: Request, context: any) {
     const {params} = context;
 
     if (!params?.id) {
@@ -196,32 +187,31 @@ export async function DELETE(req:NextRequest, context: any) {
 
     if (!isAdmin && userId != params.id) return Responses.createForbiddenResponse();
 
-    if (await userManager.deleteById(params.id)) 
-        return Responses.createSuccessResponse(); 
-    else 
+    if (await userManager.deleteById(params.id))
+        return Responses.createSuccessResponse();
+    else
         return Responses.createNotFoundResponse();
 }
 
 
-export async function POST(req:NextRequest,context: any) 
-{
+export async function POST(request: NextRequest, context: any) {
     const {params} = await context;
 
-    if( ! await authorizationService.hasRole(UserRoleTypes.Admin) )
+    if (!await authorizationService.hasRole(UserRoleTypes.Admin))
         return Responses.createForbiddenResponse("Only admin can change verified State")
 
-    if( !params?.id )
+    if (!params?.id)
         return Responses.createBadRequestResponse();
 
     const manager = await managersManager.getById(params.id);
 
-    if(!manager)
+    if (!manager)
         return Responses.createNotFoundResponse("Manager not fount " + params.id);
 
     manager.verified = true;
-    
-    if ( await managersManager.updateField(manager,["verified"]) )
-        return Responses.createSuccessResponse(`Manager ${manager.id} is now verified.` );
-    
+
+    if (await managersManager.updateField(manager, ["verified"]))
+        return Responses.createSuccessResponse(`Manager ${manager.id} is now verified.`);
+
     return Responses.createServerErrorResponse(`Could't change ${manager.id} verified state.`)
 }

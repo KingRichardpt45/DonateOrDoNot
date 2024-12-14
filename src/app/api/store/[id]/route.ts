@@ -16,7 +16,7 @@ const fileManager = new FileManager();
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
 const fileService = Services.getInstance().get<FileService>("FileService");
 
-export async function DELETE(req:NextRequest, context: any) {
+export async function DELETE(request: Request, context: any) {
     const {params} = context;
 
     if (!params?.id) {
@@ -30,7 +30,7 @@ export async function DELETE(req:NextRequest, context: any) {
     if (!await storeItemManager.deleteById(params.id)) return Responses.createNotFoundResponse("No item was found with the provided id."); else return Responses.createSuccessResponse();
 }
 
-export async function GET(req:NextRequest, context: any) {
+export async function GET(request: Request, context: any) {
     const {params} = context;
 
     if (!params?.id) {

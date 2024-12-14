@@ -61,8 +61,7 @@ export async function PATCH(request: NextRequest, context: any) {
     }
 
     const updatedFields = [];
-    for (const key in formData) 
-    {   
+    for (const key in formData) {
         campaign[key] = formData[key as keyof typeof formData];
         updatedFields.push(key);
     }
@@ -78,4 +77,18 @@ export async function PATCH(request: NextRequest, context: any) {
     }
 
     return Responses.createSuccessResponse({}, "Campaign Updated.");
+}
+
+export async function GET(request: Request, context: any) {
+    const {params} = context;
+
+    if (!params?.id) {
+        return Responses.createNotFoundResponse();
+    }
+
+    const result = await donationCampaignManager.getById(params.id);
+    if (result == null) {
+        return Responses.createNotFoundResponse();
+    }
+    return Responses.createSuccessResponse(result);
 }

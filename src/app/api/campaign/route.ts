@@ -18,7 +18,7 @@ const putFormSchema = yup.object().shape({
     description: yup.string().trim().required().nonNullable().min(1).max(2000),
     objective_value: yup.number().required().nonNullable().positive().min(0),
     category: yup.string().trim().required().nonNullable(),
-    end_date: yup.date().required().nonNullable().min(new Date(), "End date must be in the future"),
+    end_date: yup.date().required().nonNullable().min(new Date(), "end_date must be in the future"),
     contact_email: yup.string().trim().required().nonNullable(),
     contact_phone_number: yup.string().trim().required().nonNullable(),
     campaign_manager_id: yup.number().required().nonNullable().positive().integer().min(0),
