@@ -64,7 +64,7 @@ export async function PATCH(request: NextRequest, context: any) {
     return Responses.createSuccessResponse({}, "Bank Account Updated.");
 }
 
-export async function GET(context: any) {
+export async function GET(req:NextRequest, context: any) {
     const {params} = context;
 
     if (!params?.id) {

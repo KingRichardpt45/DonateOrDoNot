@@ -9,19 +9,23 @@ import NotLoggedIn from "../components/authorization/notLogged";
 import { MainLayout } from "../components/coreComponents/mainLayout";
 import AdminPanel from "./AdminPanel"; // Import the client-side component
 
-
+import { Constraint } from "@/core/repository/Constraint";
 import { CampaignStatus } from "@/models/types/CampaignStatus";
-import { Constrain } from "@/core/repository/Constrain";
 import { Operator } from "@/core/repository/Operator";
 import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
 import { CampaignManagerManager } from "@/core/managers/CampaignManagerManager";
 import { DonationCampaignManager } from "@/core/managers/DonationCampaignManager";
 import { UserManager } from "@/core/managers/UserManager";
+import { EntityConverter } from "@/core/repository/EntityConverter";
+import { CampaignManager } from "@/models/CampaignManager";
 
 const campaignManagers = new CampaignManagerManager();
 const campaignsManager = new DonationCampaignManager();
 const UserList= new UserManager();
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
+
+
+const entityConverter = Services.getInstance().get<EntityConverter>("EntityConverter");
 
 export default async function Admin() {
   const user = await userProvider.getUser();
@@ -31,26 +35,27 @@ export default async function Admin() {
 
   // Fetch active campaigns dynamically
   const UnverifiedManagers = await campaignManagers.getByCondition(
-    [new Constrain("verified", Operator.EQUALS, false), new Constrain("Users.type", Operator.EQUALS, UserRoleTypes.CampaignManager)],(manager) => [new IncludeNavigation (manager.user, 0)]
+    [new Constraint("verified", Operator.EQUALS, false), new Constraint("Users.type", Operator.EQUALS, UserRoleTypes.CampaignManager)],(manager) => [new IncludeNavigation (manager.user, 0)]
   );
 
   const CampaignList = await campaignsManager.getByCondition( [ 
-    new Constrain("status",Operator.IN,status)
+    new Constraint("status",Operator.IN,status)
   ],
   (campaign)=>[new IncludeNavigation(campaign.files,0)],
   [],0,0
 )
+const managersArray: CampaignManager[]=[];
+UnverifiedManagers.forEach((manager) =>{
+  managersArray.push(entityConverter.toPlainObject(manager) as CampaignManager);
+});
 
-
-
-  console.log(UnverifiedManagers);
 
 
   return (
     <MainLayout passUser={user}>
       {user === null && <NotLoggedIn />}
       {!authorized && <NotAuthorized />}
-      {authorized && <AdminPanel campaigns={CampaignList} campaignManagers={UnverifiedManagers}/>}
+      {authorized && <AdminPanel campaigns={CampaignList} campaignManagers={managersArray as CampaignManager[]}/>}
     </MainLayout>
   );
 }

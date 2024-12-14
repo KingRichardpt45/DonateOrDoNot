@@ -182,7 +182,7 @@ export async function PATCH(request: NextRequest, context: any) {
         return Responses.createSuccessResponse({}, "Account Updated.");
 }
 
-export async function DELETE(context: any) {
+export async function DELETE(req:NextRequest, context: any) {
     const {params} = context;
 
     if (!params?.id) {
@@ -203,14 +203,14 @@ export async function DELETE(context: any) {
 }
 
 
-export async function POST( context: any) 
+export async function POST(req:NextRequest,context: any) 
 {
     const {params} = await context;
 
     if( ! await authorizationService.hasRole(UserRoleTypes.Admin) )
         return Responses.createForbiddenResponse("Only admin can change verified State")
 
-    if( !params.id )
+    if( !params?.id )
         return Responses.createBadRequestResponse();
 
     const manager = await managersManager.getById(params.id);

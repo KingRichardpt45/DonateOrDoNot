@@ -1,14 +1,16 @@
+"use server"
 import React from "react";
 import Link from "next/link"; // Import Link from Next.js
 import styles from "./campaignsAdmin.module.css";
 import { Campaign } from "@/models/Campaign";
 import { CampaignManager } from "@/models/CampaignManager";
 import { User } from "@/models/User";
-
+import CampaignManagerAction from "./campaignManagerAction";
 interface CampaignsAdminProps {
   campaigns: Campaign[]; // Pre-filtered and sorted campaigns
   campaignManagers: CampaignManager[]; // List of campaign managers
 }
+
 
 const campaignStatus = ["In Analysis", "Approved", "Active", "Reproved", "Closed"];
 const campaignManagerTypes = ["Autonomous", "Institution"];
@@ -54,10 +56,7 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
               <p>Type: {campaignManagerTypes[manager.type]}</p>
               {/* Accept and Deny buttons for unverified managers */}
               {manager.verified == false && (
-                <div className={styles.actionButtons}>
-                  <button className={styles.acceptButton}>Accept</button>
-                  <button className={styles.denyButton}>Deny</button>
-                </div>
+                <CampaignManagerAction managerId={(manager.id!)} />
               )}
             </div>
           ))}
