@@ -12,143 +12,98 @@ import { DonationManager } from "@/core/managers/DonationManager";
 import { DonorManager } from "@/core/managers/DonorManager";
 import { Constraint } from "@/core/repository/Constraint";
 import { Operator } from "@/core/repository/Operator";
-import { DonorStoreItem } from "@/models/DonorStoreItem";
 import { DonorBadgeManager } from "@/core/managers/DonorBadgesManager";
 import { DonorStoreItemManager } from "@/core/managers/DonorStoreItemManager";
 
-
-// Initialize userProvider to fetch the current logged-in user
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 
-let totalDonated = 0; // Total donated amount by the user
-let freqDon = 0; // Frequency of user's donations
-let item="";
-
-// Initialize managers for donations and donors
 const donationManager = new DonationManager();
 const donorBadgeManager = new DonorBadgeManager();
 const donorStoreItemManager = new DonorStoreItemManager();
 const donorManager = new DonorManager();
-const donorSItem = new DonorStoreItem();
 
 const ProfilePage = async () => {
-
   // Fetch user from session provider
   const user = await userProvider.getUser();
 
-  if(user === null)
-    return ( <NotLoggedIn /> );
+  if (user === null) {
+    return <NotLoggedIn />;
+  }
 
-  if(user !== null && (user as User).type !== UserRoleTypes.Donor)
-    return ( <NotAuthorized /> );
+  if (user.type !== UserRoleTypes.Donor) {
+    return <NotAuthorized />;
+  }
 
-  // Fetch all donations of the donor
-  const donations = (await donationManager.getDonationsOfDonor(user.id!,0,10));
-  const badges = await donorBadgeManager.getBadgeOfDonor(user.id!,0,10);
-  const items = await donorStoreItemManager.getItemsOfDonor(user.id!,0,10);
+  // Fetch all necessary data
+  const donations = await donationManager.getDonationsOfDonor(user.id!, 0, 10);
+  const badges = await donorBadgeManager.getBadgeOfDonor(user.id!, 0, 10);
+  const items = await donorStoreItemManager.getItemsOfDonor(user.id!, 0, 10);
 
-  // Fetch donor details using a condition (matching user ID)
   const Donor = await donorManager.getByCondition([
     new Constraint("id", Operator.EQUALS, user?.id),
   ]);
 
-
-  // Check if the donor exists and extract their data
-  if (Donor && Donor.length > 0) {
-    const donorData = Donor.find((donor) => donor.id === user?.id);
-
-    if (donorData) {
-      // Extract donation details if available
-      totalDonated = donorData.total_donated_value || 0;
-      freqDon = donorData.frequency_of_donation || 0;
-      item = donorSItem.store_item.name 
-
-      console.log(`Total donated value: ${totalDonated}`);
-      console.log(`Donation frequency: ${freqDon}`);
-    } else {
-      console.log("No donation data found for this user.");
-    }
-  } else {
-    console.log("No donor found.");
-  }
-
-  // Check user authorization
-  const authorized =
-    user !== null && (user as User).type === UserRoleTypes.Donor;
-
-  console.log(Donor);
+  // Extract donor data
+  const donorData = Donor?.find((donor) => donor.id === user.id);
+  const totalDonated = donorData?.total_donated_value || 0;
+  const freqDon = donorData?.frequency_of_donation || 0;
 
   return (
     <MainLayout passUser={user}>
-      {/* Show Not Logged In Component if user is null */}
-      {user === null && <NotLoggedIn />}
+      <div className={styles.ProfileContainer}>
+        {/* Sidebar */}
+        <SideProfile />
 
-      {/* Show Not Authorized Component if user is not a donor */}
-      {!authorized && <NotAuthorized />}
-
-      {/* Render Profile Page if user is authorized */}
-      {authorized && (
-        <>
-          <div className={styles.ProfileContainer}>
-            {/* Sidebar */}
-            <SideProfile />
-
-            {/* Main Content */}
-            <div className={styles.MainContent}>
-              {/* Statistics Section */}
-              <div className={styles.Statistics}>
-                <h2>Statistics</h2>
-                <div className={styles.StatisticsInfo}>
-                  <div>
-                    <h3>Number of Donations</h3>
-                    <p>{donations.isOK &&
-                        donations.value!.length
-                      }</p>
-                  </div>
-                  <div>
-                    <h3>Frequency of Donation</h3>
-                    <p>{freqDon}</p>
-                  </div>
-                  <div>
-                    <h3>Total Donated Value</h3>
-                    <p>${totalDonated}</p>
-                  </div>
-                </div>
+        {/* Main Content */}
+        <div className={styles.MainContent}>
+          {/* Statistics Section */}
+          <div className={styles.Statistics}>
+            <h2>Statistics</h2>
+            <div className={styles.StatisticsInfo}>
+              <div>
+                <h3>Number of Donations</h3>
+                <p>{donations.isOK && donations.value!.length}</p>
               </div>
-
-              {/* Last Donated Section */}
-              <div className={styles.LastDonated}>
-                <h2>Last Donated</h2>
-                <p>No recent donations</p>
+              <div>
+                <h3>Frequency of Donation</h3>
+                <p>{freqDon}</p>
               </div>
-
-              {/* My Badges Section */}
-              <div className={styles.MyBadges}>
-                <h2>My Badges</h2>
-                <div className={styles.BadgesGrid}>
-                  <p>No badges earned yet</p>
-                </div>
-              </div>
-
-              {/* Donated Campaigns Section */}
-              <div className={styles.DonatedCampaigns}>
-                <h2>Donated Campaigns</h2>
-                <div className={styles.CampaignsGrid}>
-                  <p>No campaigns donated yet</p>
-                </div>
-              </div>
-
-              {/* Last Bought Items Section */}
-              <div className={styles.LastBought}>
-                <h2>Last Bought</h2>
-                <div className={styles.ItemsGrid}>
-                  <p>{item}</p>
-                </div>
+              <div>
+                <h3>Total Donated Value</h3>
+                <p>${totalDonated}</p>
               </div>
             </div>
           </div>
-        </>
-      )}
+
+          {/* My Badges Section */}
+          <div className={styles.MyBadges}>
+            <h2>My Badges</h2>
+            <div className={styles.BadgesGrid}>
+              {badges.isOK && badges.value.length > 0 ? (
+                badges.value.map((badge, index) => (
+                  <div key={index}>{badge.name}</div>
+                ))
+              ) : (
+                <p>No badges earned yet</p>
+              )}
+            </div>
+          </div>
+
+          {/* Last Bought Items Section */}
+          <div className={styles.LastBought}>
+            <h2>Last Bought</h2>
+            <div className={styles.ItemsGrid}>
+              {items.isOK && items.value.length > 0 ? (
+                items.value.map((item, index) => (
+                  <div key={index}>{item.name}</div>
+                ))
+              ) : (
+                <p>No items bought yet</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </MainLayout>
   );
 };
