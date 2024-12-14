@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MainLayout } from "@/app/components/coreComponents/mainLayout";
 import SideProfile from "./sideProfile";
@@ -13,6 +14,8 @@ import { Constraint } from "@/core/repository/Constraint";
 import { Operator } from "@/core/repository/Operator";
 import { DonorBadgeManager } from "@/core/managers/DonorBadgesManager";
 import { DonorStoreItemManager } from "@/core/managers/DonorStoreItemManager";
+import { File as ModelFile} from "@/models/File";
+import Image from "next/image";
 import Link from "next/link";
 
 // Define the type for searchParams
@@ -54,7 +57,7 @@ const ProfilePage = async ({
   }
 
   // Fetch all necessary data
-   const donations = await donationManager.getDonationsOfDonor(user.id!, 0, 10);
+  const donations = await donationManager.getDonationsOfDonor(user.id!, 0, 10);
   const badges = await donorBadgeManager.getBadgeOfDonor(user.id!, 0, 100);
   const items = await donorStoreItemManager.getItemsOfDonor(user.id!, 0, 100);
 
@@ -111,18 +114,43 @@ const ProfilePage = async ({
             </div>
           </div>
 
-          {/* My Badges Section */}
-          <div className={styles.MyBadges}>
-            <h2>My Badges</h2>
-            <div className={styles.BadgesGrid}>
-              {currentBadges && currentBadges.length > 0 ? (
-                currentBadges.map((badge, index) => (
-                  <div key={index}>{badge.name}</div>
-                ))
-              ) : (
-                <p>No badges earned yet</p>
-              )}
-            </div>
+{/* My Badges Section */}
+<div className={styles.MyBadges}>
+  <h2>My Badges</h2>
+  <div className={styles.BadgesGrid}>
+    {currentBadges && currentBadges.length > 0 ? (
+      currentBadges.map((badge, index) => {
+        // Debugging geral
+        console.log("Badge data:", badge);
+        console.log("Badge image_id:", badge.image_id);
+        console.log("Badge image original_name:", (badge.image.value as ModelFile).original_name);
+        
+
+        // Debugging do caminho da imagem
+        const imagePath = `/documents/${badge.image_id}_${(badge.image.value as ModelFile).original_name}`;
+        console.log(`Image path for badge ${badge.name || "unknown"}:`, imagePath);
+
+        return (
+          <div key={index} className={styles.BadgeItem}>
+            <Image
+              src={imagePath}
+              alt={badge.name || "Badge"}
+              className={styles.BadgeImage}
+              width={50}
+              height={50}
+            />
+            <p>{badge.name}</p>
+          </div>
+        );
+      })
+    ) : (
+       <p>No badges earned yet</p>
+    )}
+  </div>
+
+
+
+
             <div className={styles.Pagination}>
               {[...Array(totalBadgesPages)].map((_, i) => (
                 <Link
