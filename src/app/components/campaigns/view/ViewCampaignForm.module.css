@@ -1,0 +1,261 @@
+/* General Page Styles */
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #2c002b;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    background-color: #2c002b;
+}
+
+/* Carousel Styles */
+.carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.imageTrain {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+.navButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.activeDot {
+    background-color: #6a0dad;
+}
+
+/* Overlay Styles */
+.overlay {
+    padding: 1.5rem;
+    text-align: center;
+    background-color: #222;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.bottomOverlay {
+    padding: 1rem;
+    text-align: center;
+    background-color: #6a0dad;
+    color: rgb(162, 0, 255);
+}
+
+/* Gallery Section */
+.gallerySection {
+    text-align: center;
+    padding: 2rem 1rem;
+    background-color: #6a0dad;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    justify-content: center;
+    align-content: center;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.galleryItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    height: 250px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.galleryImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pdfPreview, .videoPreview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.videoPreview {
+    background-color: rgba(0, 0, 0, 0.377);
+    width: 300px;
+    height: 200px;
+}
+
+/* File Preview Container */
+.filePreviewContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    padding: 10px 15px;
+    background-color: rgba(26, 0, 37, 0.7);
+    border-radius: 5px;
+    min-height: 120px;
+    max-width: 100%;
+    min-width: 1500px;
+    overflow-x: scroll;
+}
+
+.fileForm {
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+    color: white;
+}
+
+.fileFormTitle {
+    color: white;
+}
+
+.previewVideo {
+    width: 300px;
+    height: 200px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 10, 0.692);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    position: relative;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 80%;
+    color: #fff;
+}
+
+.modalImage {
+    width: 100%;
+    height: auto;
+}
+
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ffffff;
+    color: #6a0dad;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Progress Bar */
+.progressContainer {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+    position: relative;
+    color: white;
+}
+
+.progressBar {
+    width: 100%;
+    height: 20px;
+    background-color: #ddd;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: green;
+    transition: width 0.3s ease-in-out;
+}
+
+.progressText, .progressTextRight {
+    position: absolute;
+    top: -30px;
+    font-size: 14px;
+}
+
+.progressText {
+    left: 0;
+}
+
+.progressTextRight {
+    right: 0;
+}
+
+/* Campaign Container */
+.campaignContainer {
+    margin-top: 30px;
+}
+
+.heading {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: white;
+    position: relative;
+    margin-left: 46%;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+}
