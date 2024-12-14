@@ -98,7 +98,7 @@ const ProfilePage = async ({
             <div className={styles.StatisticsInfo}>
               <div>
                 <h3>Number of Donations</h3>
-                <p>{donations.isOK && donations.value!.length}</p>
+                <p>{donorData?.donations.isArray.length}</p>
               </div>
               <div>
                 <h3>Frequency of Donation</h3>
