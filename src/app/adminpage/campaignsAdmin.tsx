@@ -32,7 +32,7 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
               )}
               {/* Edit button for campaigns in "In Analysis" state */}
               {campaign.status === 0 && (
-                <Link href={`/edit-campaign?id=${campaign.id}`}>
+                <Link href={`campaigns/edit/${campaign.id}`}>
                   <button className={styles.editButton}>Edit</button>
                 </Link>
               )}

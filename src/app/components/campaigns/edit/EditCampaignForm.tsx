@@ -16,6 +16,7 @@ import { array } from "yup";
 import { StringUtils } from "@/core/utils/StringUtils";
 import { ActionResultNotificationError } from "../../actionsNotifications/ActionResultNotificationError";
 import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
+import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 
 interface AddedFile
 { 
@@ -39,7 +40,7 @@ interface FormsData
   badgePartnerFormData:FormData ,
 }
 
-const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,campaign}) =>
+const EditCampaignForm :React.FC<{userType:number,userId:number,campaign:Campaign}> = ({userType,userId,campaign}) =>
 {
   const [ firstRender, setFirstRender ] = useState<boolean>(true);
   const [ render,setRender] = useState<number>(0);
@@ -383,6 +384,8 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
       setSubmitted(true);
   };
 
+  const isAdmin = userType === UserRoleTypes.Admin;
+
   return (
     <div className={styles.CampaignCreateContainer}>
       <form name="mainForm" className={styles.FormContainer} ref={mainForm}>
@@ -395,7 +398,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
             value={fieldsValue.get("title")}
             className={`${styles.inputField} ${isChanged("title")}`} 
             placeholder="Campaign Title"
-            onChange={(e)=>{updateField("title",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
+            onChange={(e)=>{!isAdmin && updateField("title",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
           />
         </div>
         <div className={styles.TextForm}>
@@ -406,22 +409,24 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               className={`${styles.inputField} ${isChanged("description")}`}  
               rows={4} 
               value={fieldsValue.get("description")}
-              onChange={(e)=>{updateField("description",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
+              onChange={(e)=>{!isAdmin && updateField("description",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
               placeholder="Campaign description"
             ></textarea>
         </div>
         <div className={styles.optionsContainer}>
           <div style={{flexGrow:1 , minWidth:"32.5%"}}>
             <div className={styles.FormTitle}><b>Campaign Category</b></div>
+            <div className={isAdmin ? styles.disabledDropdown : ""}>
             <DropdownInput 
               width={"100%"} 
               heigh={40} 
-              color="rgba(26, 0, 37, 1)" 
+              color="rgba(26, 0, 37, 1)"
               value={fieldsValue.get("category") as string}
               customContainerStyle={isChanged("category")}
               options={["Health","School","StartUp","Debt"]} 
-              onChange={(value)=>{updateField("category",FieldEntitiesTypes.CAMPAIGN,value);}}
+              onChange={(value)=>{!isAdmin && updateField("category",FieldEntitiesTypes.CAMPAIGN,value);}}
             ></DropdownInput>
+            </div>
           </div>
           <div style={{flexGrow:1}}>
             <div className={styles.FormTitle}><b>Goal Amount</b></div>
@@ -430,7 +435,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               id="objective_value" 
               type="number" 
               value={fieldsValue.get("objective_value")}
-              onChange={(e)=>{updateField("objective_value",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
+              onChange={(e)=>{!isAdmin && updateField("objective_value",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
               className={`${styles.inputField2} ${isChanged("objective_value")}`} 
               placeholder="Goal Amount €"
             />
@@ -442,7 +447,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               id="end_date" 
               type="date" 
               value={fieldsValue.get("end_date")}
-              onChange={(e)=>{updateField("end_date",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
+              onChange={(e)=>{!isAdmin && updateField("end_date",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
               className={`${styles.inputField2} ${isChanged("end_date")}`} 
             />
           </div>
@@ -456,7 +461,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               id="bank_name" 
               type="text" 
               value={fieldsValue.get("bank_name")}
-              onChange={(e)=>{updateField("bank_name",FieldEntitiesTypes.BANK,e.target.value);}}
+              onChange={(e)=>{!isAdmin && updateField("bank_name",FieldEntitiesTypes.BANK,e.target.value);}}
               className={`${styles.inputFieldBank} ${isChanged("bank_name")}`} 
               placeholder="Bank Name"
             />
@@ -465,7 +470,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               id="iban" 
               type="text" 
               value={fieldsValue.get("iban")}
-              onChange={(e)=>{updateField("iban",FieldEntitiesTypes.BANK,e.target.value);}}
+              onChange={(e)=>{!isAdmin && updateField("iban",FieldEntitiesTypes.BANK,e.target.value);}}
               className={`${styles.inputFieldBank} ${isChanged("iban")}`} 
               placeholder="IBAN"
             />
@@ -474,7 +479,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               id="account_holder" 
               type="text" 
               value={fieldsValue.get("account_holder")}
-              onChange={(e)=>{updateField("account_holder",FieldEntitiesTypes.BANK,e.target.value);}}
+              onChange={(e)=>{!isAdmin && updateField("account_holder",FieldEntitiesTypes.BANK,e.target.value);}}
               className={`${styles.inputFieldBank} ${isChanged("account_holder")}`} 
               placeholder="Account Owner"
             />
@@ -489,7 +494,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               type="email" 
               className={`${styles.inputFieldBank} ${isChanged("contact_email")}`} 
               value={fieldsValue.get("contact_email")}
-              onChange={(e)=>{updateField("contact_email",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
+              onChange={(e)=>{!isAdmin && updateField("contact_email",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
               placeholder="Contact email"
             />
             <input 
@@ -498,7 +503,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               type="number" 
               className={`${styles.inputFieldBank} ${isChanged("contact_phone_number")}`} 
               value={fieldsValue.get("contact_phone_number")}
-              onChange={(e)=>{updateField("contact_phone_number",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
+              onChange={(e)=>{!isAdmin && updateField("contact_phone_number",FieldEntitiesTypes.CAMPAIGN,e.target.value);}}
               placeholder="Contact Phone Number"
             />
           </div>
@@ -526,23 +531,23 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               </div>
               { 
                 badgeFamily && badgeFamily.image.value &&
-                <input className={styles.badgeInput}
+                !isAdmin && <input className={styles.badgeInput}
                   type="file"
                   id="badge_image"
                   name="campaign_image"
                   accept="image/png, image/gif, image/jpeg"
-                  onChange={(e)=>{ 
-                    removedFiles.push(badgeFamily.image.value as ModelFIle); 
-                    if(e.target.files) setBadgeFamilyFile(e.target.files[0]); 
-                    setBadgeFamily(null);
-                    console.log("changed");
-                    
-                  }}
+                  onChange={(e)=>{
+                      removedFiles.push(badgeFamily.image.value as ModelFIle); 
+                      if(e.target.files) setBadgeFamilyFile(e.target.files[0]); 
+                      setBadgeFamily(null);
+                      console.log("changed");
+                    } 
+                  }
                 />
               }
               { 
                 !badgeFamily && 
-                <input className={styles.badgeInput}
+                !isAdmin && <input className={styles.badgeInput}
                   type="file"
                   id="badge_image"
                   name="campaign_image"
@@ -556,13 +561,13 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
                 placeholder="Name"
                 className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignFamily}_name`)}`} 
                 value={ fieldsValue.get(`${BadgeTypes.CampaignFamily}_name`) }
-                onChange={(e)=>{updateField(`${BadgeTypes.CampaignFamily}_name`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignFamily);}}
+                onChange={(e)=>{!isAdmin && updateField(`${BadgeTypes.CampaignFamily}_name`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignFamily);}}
               />
               <input 
                 type="text" 
                 className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignFamily}_description`)}`} 
                 value={ fieldsValue.get(`${BadgeTypes.CampaignFamily}_description`) }
-                onChange={(e)=>{updateField(`${BadgeTypes.CampaignFamily}_description`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignFamily);}}
+                onChange={(e)=>{!isAdmin && updateField(`${BadgeTypes.CampaignFamily}_description`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignFamily);}}
                 placeholder="Description"
               />
             </div>
@@ -584,13 +589,13 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               </div>
               { 
                 badgeHelper && badgeHelper.image.value &&
-                <input className={styles.badgeInput}
+                !isAdmin && <input className={styles.badgeInput}
                   type="file"
                   id="badge_image"
                   name="campaign_image"
                   accept="image/png, image/gif, image/jpeg"
                   onChange={(e)=>{ 
-                    removedFiles.push(badgeHelper.image.value as ModelFIle); 
+                    !isAdmin && removedFiles.push(badgeHelper.image.value as ModelFIle); 
                     if(e.target.files) {
                       setBadgeHelperFile(e.target.files[0]); 
                       setBadgeHelper(null);
@@ -600,7 +605,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               }
               { 
                 !badgeHelper && 
-                <input className={styles.badgeInput}
+                !isAdmin && <input className={styles.badgeInput}
                   type="file"
                   id="badge_image"
                   name="campaign_image"
@@ -613,13 +618,13 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
                 placeholder="Name"
                 className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignHelper}_name`)}`} 
                 value={ fieldsValue.get(`${BadgeTypes.CampaignHelper}_name`) }
-                onChange={(e)=>{updateField(`${BadgeTypes.CampaignHelper}_name`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignHelper);}}
+                onChange={(e)=>{!isAdmin && updateField(`${BadgeTypes.CampaignHelper}_name`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignHelper);}}
               />
               <input 
                 type="text" 
                 className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignHelper}_description`)}`} 
                 value={ fieldsValue.get(`${BadgeTypes.CampaignHelper}_description`) }
-                onChange={(e)=>{updateField(`${BadgeTypes.CampaignHelper}_description`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignHelper);}}
+                onChange={(e)=>{!isAdmin && updateField(`${BadgeTypes.CampaignHelper}_description`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignHelper);}}
               />
             </div>
             <div className={styles.badgeContainer}>
@@ -640,13 +645,13 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               </div>
               { 
                 badgePartner && badgePartner.image.value &&
-                <input className={styles.badgeInput}
+                !isAdmin && <input className={styles.badgeInput}
                   type="file"
                   id="badge_image"
                   name="campaign_image"
                   accept="image/png, image/gif, image/jpeg"
                   onChange={(e)=>{ 
-                    removedFiles.push(badgePartner.image.value as ModelFIle); 
+                    !isAdmin && removedFiles.push(badgePartner.image.value as ModelFIle); 
                     if(e.target.files) {
                       setBadgePartnerFile(e.target.files[0]); 
                       setBadgePartner(null);
@@ -656,7 +661,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               }
               { 
                 !badgePartner && 
-                <input className={styles.badgeInput}
+                !isAdmin && <input className={styles.badgeInput}
                   type="file"
                   id="badge_image"
                   name="campaign_image"
@@ -669,14 +674,14 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
                 placeholder="Name"
                 className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignPartner}_name`)}`} 
                 value={ fieldsValue.get(`${BadgeTypes.CampaignPartner}_name`) }
-                onChange={(e)=>{updateField(`${BadgeTypes.CampaignPartner}_name`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignPartner);}}
+                onChange={(e)=>{!isAdmin && updateField(`${BadgeTypes.CampaignPartner}_name`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignPartner);}}
               />
               <input 
                 type="text" 
                 placeholder="Description"
                 className={`${styles.inputFieldBank} ${isChanged(`${BadgeTypes.CampaignPartner}_description`)}`} 
                 value={ fieldsValue.get(`${BadgeTypes.CampaignPartner}_description`) }
-                onChange={(e)=>{updateField(`${BadgeTypes.CampaignPartner}_description`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignPartner);}}
+                onChange={(e)=>{!isAdmin && updateField(`${BadgeTypes.CampaignPartner}_description`,FieldEntitiesTypes.BADGE,e.target.value,BadgeTypes.CampaignPartner);}}
               />
             </div>
           </div>
@@ -688,7 +693,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
           </div>
           {
             mainImage.length > 0 &&
-            <input
+            !isAdmin && <input
                 
                 type="file"
                 id="campaign_image"
@@ -697,7 +702,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
                 onChange={(e)=>{ 
                     if(e.target.files)
                     {
-                      removeFile(mainImage[0],mainImage,setMainImage);
+                      !isAdmin && removeFile(mainImage[0],mainImage,setMainImage);
                       setMainImageAdded(e.target.files[0] ) 
                     }
                   }
@@ -737,7 +742,8 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
           <div className={styles.fileFormTitle}>
               <b>Campaign Images</b>
           </div>
-          <input
+          {
+          !isAdmin && <input
               type="file"
               id="campaign_image"
               name="campaign_image"
@@ -745,6 +751,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               multiple
               onChange={(e)=> {addFile(e.target.files? e.target.files: new FileList(),imagesAdded)}}
               />
+              }
           </div>
         <div className={styles.filePreviewContainer}>
         {images.map((image, index) => (
@@ -755,7 +762,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
                 className={styles.previewImage}
                 />
             <button
-                onClick={() => removeFile(image,images,setImages)}
+                onClick={() => !isAdmin && removeFile(image,images,setImages)}
                 className={styles.removeButton}
                 >
                 X
@@ -770,7 +777,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               <img src={URL.createObjectURL(file)} alt={file.name} className={styles.previewImage} />
             }
             <button
-                onClick={() => removeAddedFile(file,imagesAdded)}
+                onClick={() => !isAdmin && removeAddedFile(file,imagesAdded)}
                 className={styles.removeButton}
                 >
                 X
@@ -783,14 +790,14 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
         {/* Campaign Videos Upload */}
         <div className={styles.fileForm}>
         <div className={styles.fileFormTitle}><b>Campaign Videos</b></div>
-        <input
+        {!isAdmin && <input
             type="file"
             name="campaign_video"
             id="campaign_video"
             accept="video/mp4"
             multiple
-            onChange={(e)=>addFile(e.target.files? e.target.files: new FileList(),videosAdded)}
-            />
+            onChange={(e)=>!isAdmin && addFile(e.target.files? e.target.files: new FileList(),videosAdded)}
+            />}
         </div>
         <div className={styles.filePreviewContainer}>
         {videos.map((video, index) => (
@@ -803,7 +810,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
                 Your browser does not support the video tag.
             </video>
             <button
-                onClick={() => removeFile(video,videos,setVideos)}
+                onClick={() => !isAdmin && removeFile(video,videos,setVideos)}
                 className={styles.removeButton}
                 >
                 X
@@ -821,7 +828,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               </video>
             }
             <button
-                onClick={() => removeAddedFile(file,videosAdded)}
+                onClick={() => !isAdmin && removeAddedFile(file,videosAdded)}
                 className={styles.removeButton}
                 >
                 X
@@ -834,14 +841,14 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
         {/* Campaign File Upload */}
         <div className={styles.fileForm}>
         <div className={styles.fileFormTitle}><b>Campaign Files</b></div>
-        <input
+        {!isAdmin && <input
             type="file"
             name="campaign_file"
             id="campaign_file"
             accept=".pdf, .docx, .xlsx, .txt"
             multiple
             onChange={(e)=>{addFile(e.target.files? e.target.files: new FileList() ,filesAdded)}}
-            />
+            />}
         </div>
         <div className={styles.filePreviewContainer}>
         {files.map((file, index) => (
@@ -852,7 +859,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
               </object>
             }
             <button
-                onClick={() => removeFile(file,files,setFiles)}
+                onClick={() => !isAdmin && removeFile(file,files,setFiles)}
                 className={styles.removeButton}
                 >
                 X
@@ -880,7 +887,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
         }
         </div>
         {
-          !submitted &&
+          !submitted && !isAdmin &&
           <div className={styles.ButtonFormContainer}>
             <div className={styles.line}>
               <div className={styles.ButtonForm} >
@@ -897,7 +904,7 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
           </div>
         }
         {
-          submitted &&
+          submitted && !isAdmin &&
           <div className={styles.ButtonFormContainer}>
             <div className={styles.line}>
               <div className={styles.ButtonForm}>
@@ -916,6 +923,18 @@ const EditCampaignForm :React.FC<{userId:number,campaign:Campaign}> = ({userId,c
           </div>
           
         }
+        {isAdmin && (
+      <div className={styles.ButtonFormContainer}>
+        <div className={styles.line}>
+          <div className={styles.ButtonForm}>
+            <button className={styles.submitButton} >Accept</button>
+          </div>
+          <div className={styles.ButtonForm}>
+            <button className={styles.submitButtonUpdate}>Deny</button>
+          </div>
+        </div>
+      </div>
+    )}
       </div>
       <div>
       { 

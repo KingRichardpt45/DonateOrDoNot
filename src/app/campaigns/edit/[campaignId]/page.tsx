@@ -56,7 +56,7 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
     );
   }
   campaign.files.value  = await filesManager.getByCondition([new Constraint("campaign_id",Operator.EQUALS,campaign.id)],(v)=>[],[],0,0);
-  const authorized = user?.type == UserRoleTypes.CampaignManager && user.id == campaign.campaign_manager_id;
+  const authorized = (user?.type == UserRoleTypes.CampaignManager || user?.type == UserRoleTypes.Admin) && (user.id == campaign.campaign_manager_id || user?.type == UserRoleTypes.Admin);
   const campaignAdPain = entityConverter.toPlainObject(campaign) as Campaign;
   
   return (
@@ -73,7 +73,7 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
         authorized &&
         <div className={styles.page}>
           <h1>Edit Campaign</h1>
-            <EditCampaignForm userId={user.id!} campaign={ campaignAdPain as Campaign}/> 
+            <EditCampaignForm userType={user?.type} userId={user.id!} campaign={ campaignAdPain as Campaign}/> 
         </div>
       }
     </MainLayout>
