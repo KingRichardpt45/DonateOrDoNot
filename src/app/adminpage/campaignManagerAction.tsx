@@ -1,5 +1,6 @@
 "use client"; // Indicating that this is a client-side component
 import { useState } from "react";
+import styles from "./campaignsAdmin.module.css";
 
 interface CampaignManagerActionProps {
   managerId: number; // The manager ID passed to the action buttons
@@ -50,16 +51,16 @@ const CampaignManagerAction: React.FC<CampaignManagerActionProps> = ({ managerId
   return (
     <div>
       {error && <p>{error}</p>}
-      <div className="actionButtons">
+      <div className={styles.actionDisplay}>
         <button
-          className="acceptButton"
+          className={styles.acceptButton}
           onClick={() => handleAction("accept")}
           disabled={loading}
         >
           {loading ? "Processing..." : "Accept"}
         </button>
         <button
-          className="denyButton"
+          className={styles.denyButton}
           onClick={() => handleAction("deny")}
           disabled={loading}
         >
