@@ -20,7 +20,7 @@ import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
 
 
 
-import CampaignsList from "../SearchPage/CampaignsList";
+import CampaignsList from "./CampaignsList";
 
 import { Campaign } from "@/models/Campaign";
 import { FileManager } from "@/core/managers/FileManager";
