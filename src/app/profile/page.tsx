@@ -16,6 +16,8 @@ import { DonorStoreItemManager } from "@/core/managers/DonorStoreItemManager";
 import { File as ModelFile } from "@/models/File";
 import Image from "next/image";
 import Link from "next/link";
+import BadgesSection from "./badgeSection";
+import ItemsSection from "./itemSection";
 
 // Define the type for searchParams
 type SearchParams = {
@@ -34,13 +36,19 @@ const ProfilePage = async ({
 }: {
   searchParams: SearchParams;
 }) => {
-  const page = parseInt(
-    (Array.isArray(searchParams.page)
-      ? searchParams.page[0]
-      : searchParams.page) || "1"
+  const badgesPage = parseInt(
+    (Array.isArray(searchParams.badgesPage)
+      ? searchParams.badgesPage[0]
+      : searchParams.badgesPage) || "1"
   );
-  const badgesPerPage = 5;
-  const itemsPerPage = 5;
+  
+  const itemsPage = parseInt(
+    (Array.isArray(searchParams.itemsPage)
+      ? searchParams.itemsPage[0]
+      : searchParams.itemsPage) || "1"
+  );
+  const badgesPerPage = 10;
+  const itemsPerPage = 10;
 
   // Fetch user from session provider
   const user = await userProvider.getUser();
@@ -68,14 +76,14 @@ const ProfilePage = async ({
   const freqDon = donorData?.frequency_of_donation || 0;
 
   // Pagination logic
-  const indexOfLastBadge = page * badgesPerPage;
+  const indexOfLastBadge = badgesPage * badgesPerPage;
   const indexOfFirstBadge = indexOfLastBadge - badgesPerPage;
   const currentBadges = badges.value?.slice(
     indexOfFirstBadge,
     indexOfLastBadge
   );
 
-  const indexOfLastItem = page * itemsPerPage;
+  const indexOfLastItem = itemsPage  * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = items.value?.slice(indexOfFirstItem, indexOfLastItem);
 
@@ -109,105 +117,19 @@ const ProfilePage = async ({
             </div>
           </div>
 
-          {/* My Badges Section */}
-          <div className={styles.MyBadges}>
-            <h2>My Badges</h2>
-            <div className={styles.BadgesGrid}>
-              {currentBadges && currentBadges.length > 0 ? (
-                currentBadges.map((badge, index) => {
-                  // Debugging geral
-                  console.log("Badge data:", badge);
-                  console.log("Badge image_id:", badge.image_id);
-                  console.log(
-                    "Badge image original_name:",
-                    (badge.image.value as ModelFile).original_name
-                  );
-
-                  // Debugging do caminho da imagem
-                  const imagePathBadge = `/documents/${badge.image_id}_${
-                    (badge.image.value as ModelFile).original_name
-                  }`;
-                  console.log(
-                    `Image path for badge ${badge.name || "unknown"}:`,
-                    imagePathBadge
-                  );
-
-                  return (
-                    <div key={index} className={styles.BadgeItem}>
-                      <Image
-                        src={imagePathBadge}
-                        alt={badge.name || "Badge"}
-                        className={styles.BadgeImage}
-                        width={50}
-                        height={50}
-                      />
-                      <p>{badge.name}</p>
-                    </div>
-                  );
-                })
-              ) : (
-                <p>No badges earned yet</p>
-              )}
-            </div>
-
-            <div className={styles.Pagination}>
-              {[...Array(totalBadgesPages)].map((_, i) => (
-                <Link
-                  key={i}
-                  href={`/profile?page=${i + 1}`}
-                  className={page === i + 1 ? styles.Active : ""}
-                >
-                  {i + 1}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Last Bought Items Section */}
-          <div className={styles.LastBought}>
-            <h2>Last Bought</h2>
-            <div className={styles.ItemsGrid}>
-              {currentItems && currentItems.length > 0 ? (
-                currentItems.map((item, index) => {
-                  // Debugging do caminho da imagem
-                  const imagePathItem = `/documents/${item.image_id}_${
-                    (item.image.value as ModelFile).original_name
-                  }`;
-                  console.log(
-                    `Image path for item ${item.name || "unknown"}:`,
-                    imagePathItem
-                  );
-
-                  return (
-                    <div key={index} className={styles.BadgeItem}>
-                      <Image
-                        src={imagePathItem}
-                        alt={item.name || "item"}
-                        className={styles.BadgeImage}
-                        width={50}
-                        height={50}
-                      />
-                      <p>{item.name}</p>
-                      <p>{item.cost}</p>
-                    </div>
-                  );
-                })
-              ) : (
-                <p>No items bought yet</p>
-              )}
-            </div>
-            <div className={styles.Pagination}>
-              {[...Array(totalItemsPages)].map((_, i) => (
-                <Link
-                  key={i}
-                  href={`/profile?page=${i + 1}`}
-                  className={page === i + 1 ? styles.Active : ""}
-                >
-                  {i + 1}
-                </Link>
-              ))}
-            </div>
-          </div>
+          <BadgesSection
+            badges={badges.value || []}
+            currentPage={badgesPage}
+            itemsPerPage={badgesPerPage}
+            totalPages={totalBadgesPages}
+          />
+          
+          <ItemsSection
+            items={items.value || []}
+            currentPage={itemsPage}
+            itemsPerPage={itemsPerPage}
+            totalPages={totalItemsPages}
+          />
         </div>
       </div>
     </MainLayout>
