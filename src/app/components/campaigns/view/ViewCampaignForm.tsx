@@ -105,20 +105,6 @@ const ViewCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>{
           setFirstRender(false);
         }
 
-  const documents = [
-    { type: "image", src: "/images/Elephant.png", alt: "Elephant Image" },
-    { type: "image", src: "/images/hunger.png", alt: "Hunger Image" },
-    { type: "image", src: "/images/Elephant.png", alt: "Elephant Image" },
-    { type: "image", src: "/images/hunger.png", alt: "Hunger Image" },
-    { type: "image", src: "/images/hunger.png", alt: "Hunger Image" },
-    { type: "image", src: "/images/Elephant.png", alt: "Elephant Image" },
-    { type: "video", src: "/images/Musiquence DLC 2024-07-05 18-02-16.mp4", alt: "Sample Video" },
-    { type: "video", src: "/images/Musiquence DLC 2024-07-05 18-02-16.mp4", alt: "Sample Video" },
-    { type: "video", src: "/images/Musiquence DLC 2024-07-05 18-02-16.mp4", alt: "Sample Video" },
-    { type: "pdf", src: "/documents/PMS-Project-2024.pdf", alt: "Sample PDF" },
-    { type: "pdf", src: "/documents/PMS-Project-2024.pdf", alt: "Sample PDF" },
-    { type: "pdf", src: "/documents/PMS-Project-2024.pdf", alt: "Sample PDF" },
-  ];
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ type: "", src: "", alt: "" });
