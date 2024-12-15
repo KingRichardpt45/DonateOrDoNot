@@ -3,19 +3,18 @@ import { DonorManager } from "@/core/managers/DonorManager";
 import styles from "./sideProfile.module.css";
 import { Services } from "@/services/Services";
 import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
-
+import {File as ModelFile} from "@/models/File";
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const SideProfile = async () => {
   const user = await userProvider.getUser();
-  console.log(user?.profileImage)
   
   return (
     <div className={styles.Sidebar}>
    <img
-  src={
-    Array.isArray(user?.profileImage?.value)
-      ? user.profileImage.value[0]?.file_path || "/images/ProfileImageDefault.png"
-      : user?.profileImage?.value?.file_path || "/images/ProfileImageDefault.png"
+  src={`/documents/${user?.profile_image_id}_${
+                (user?.profileImage.value as ModelFile).original_name
+              }`
+    
   }
   alt={`${user?.first_name ?? "User"} ${user?.last_name ?? ""}`}
   className={styles.ProfileImage}
