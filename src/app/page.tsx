@@ -12,11 +12,7 @@ export default async function Home()
 {
   return (
     <MainLayout passUser={null}>
-    <div className={styles.page}>
-      <main className={styles.main}> 
         <Campaign/>
-      </main> 
-    </div>
     </MainLayout>
   );
 }
