@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MainLayout } from "@/app/components/coreComponents/mainLayout";
 import SideProfile from "./sideProfile";
@@ -14,7 +13,7 @@ import { Constraint } from "@/core/repository/Constraint";
 import { Operator } from "@/core/repository/Operator";
 import { DonorBadgeManager } from "@/core/managers/DonorBadgesManager";
 import { DonorStoreItemManager } from "@/core/managers/DonorStoreItemManager";
-import { File as ModelFile} from "@/models/File";
+import { File as ModelFile } from "@/models/File";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -29,8 +28,6 @@ const donationManager = new DonationManager();
 const donorBadgeManager = new DonorBadgeManager();
 const donorStoreItemManager = new DonorStoreItemManager();
 const donorManager = new DonorManager();
-
-
 
 const ProfilePage = async ({
   searchParams,
@@ -69,8 +66,6 @@ const ProfilePage = async ({
   const donorData = Donor?.find((donor) => donor.id === user.id);
   const totalDonated = donorData?.total_donated_value || 0;
   const freqDon = donorData?.frequency_of_donation || 0;
-
-
 
   // Pagination logic
   const indexOfLastBadge = page * badgesPerPage;
@@ -114,42 +109,46 @@ const ProfilePage = async ({
             </div>
           </div>
 
-{/* My Badges Section */}
-<div className={styles.MyBadges}>
-  <h2>My Badges</h2>
-  <div className={styles.BadgesGrid}>
-    {currentBadges && currentBadges.length > 0 ? (
-      currentBadges.map((badge, index) => {
-        // Debugging geral
-        console.log("Badge data:", badge);
-        console.log("Badge image_id:", badge.image_id);
-        console.log("Badge image original_name:", (badge.image.value as ModelFile).original_name);
-        
+          {/* My Badges Section */}
+          <div className={styles.MyBadges}>
+            <h2>My Badges</h2>
+            <div className={styles.BadgesGrid}>
+              {currentBadges && currentBadges.length > 0 ? (
+                currentBadges.map((badge, index) => {
+                  // Debugging geral
+                  console.log("Badge data:", badge);
+                  console.log("Badge image_id:", badge.image_id);
+                  console.log(
+                    "Badge image original_name:",
+                    (badge.image.value as ModelFile).original_name
+                  );
 
-        // Debugging do caminho da imagem
-        const imagePath = `/documents/${badge.image_id}_${(badge.image.value as ModelFile).original_name}`;
-        console.log(`Image path for badge ${badge.name || "unknown"}:`, imagePath);
+                  // Debugging do caminho da imagem
+                  const imagePathBadge = `/documents/${badge.image_id}_${
+                    (badge.image.value as ModelFile).original_name
+                  }`;
+                  console.log(
+                    `Image path for badge ${badge.name || "unknown"}:`,
+                    imagePathBadge
+                  );
 
-        return (
-          <div key={index} className={styles.BadgeItem}>
-            <Image
-              src={imagePath}
-              alt={badge.name || "Badge"}
-              className={styles.BadgeImage}
-              width={50}
-              height={50}
-            />
-            <p>{badge.name}</p>
-          </div>
-        );
-      })
-    ) : (
-       <p>No badges earned yet</p>
-    )}
-  </div>
-
-
-
+                  return (
+                    <div key={index} className={styles.BadgeItem}>
+                      <Image
+                        src={imagePathBadge}
+                        alt={badge.name || "Badge"}
+                        className={styles.BadgeImage}
+                        width={50}
+                        height={50}
+                      />
+                      <p>{badge.name}</p>
+                    </div>
+                  );
+                })
+              ) : (
+                <p>No badges earned yet</p>
+              )}
+            </div>
 
             <div className={styles.Pagination}>
               {[...Array(totalBadgesPages)].map((_, i) => (
@@ -169,9 +168,30 @@ const ProfilePage = async ({
             <h2>Last Bought</h2>
             <div className={styles.ItemsGrid}>
               {currentItems && currentItems.length > 0 ? (
-                currentItems.map((item, index) => (
-                  <div key={index}>{item.name}</div>
-                ))
+                currentItems.map((item, index) => {
+                  // Debugging do caminho da imagem
+                  const imagePathItem = `/documents/${item.image_id}_${
+                    (item.image.value as ModelFile).original_name
+                  }`;
+                  console.log(
+                    `Image path for item ${item.name || "unknown"}:`,
+                    imagePathItem
+                  );
+
+                  return (
+                    <div key={index} className={styles.BadgeItem}>
+                      <Image
+                        src={imagePathItem}
+                        alt={item.name || "item"}
+                        className={styles.BadgeImage}
+                        width={50}
+                        height={50}
+                      />
+                      <p>{item.name}</p>
+                      <p>{item.cost}</p>
+                    </div>
+                  );
+                })
               ) : (
                 <p>No items bought yet</p>
               )}
