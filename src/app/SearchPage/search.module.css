@@ -41,19 +41,22 @@
   /* Individual campaign card */
   .campaignCard {
     background: #4b0082;
-    border-radius: 20px; /* Increased border radius */
+    border-radius: 20px;
     padding: 20px;
-    width: 250px; /* Increased card width */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+    width: 100%;
+    max-width: 250px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  /* Hover effect for campaign cards */
-  .campaignCard:hover {
-    transform: scale(1.1);
+    will-change: transform;
+    overflow: hidden; /* Prevents content overflow */
+}
+
+.campaignCard:hover {
+    transform: scale(1.05);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-  }
+}
+
   
   /* Image styling */
   .image {
@@ -65,10 +68,14 @@
   /* Campaign title styling */
   .title {
     margin-top: 10px;
-    font-size: 18px; /* Increased font size */
+    font-size: 18px;
     font-weight: bold;
     color: #fff;
-  }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
   
   /* View more button styling */
   .viewMore {
@@ -89,3 +96,14 @@
     background-color: #ff1493;
     transform: scale(1.05);
   }
+
+  @media (max-width: 768px) {
+    .campaignList {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .campaignCard {
+        max-width: 100%;
+    }
+}
