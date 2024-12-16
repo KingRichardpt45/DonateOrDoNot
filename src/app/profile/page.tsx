@@ -13,55 +13,55 @@ import { Constraint } from "@/core/repository/Constraint";
 import { Operator } from "@/core/repository/Operator";
 import { DonorBadgeManager } from "@/core/managers/DonorBadgesManager";
 import { DonorStoreItemManager } from "@/core/managers/DonorStoreItemManager";
-import { File as ModelFile } from "@/models/File";
-import Image from "next/image";
-import Link from "next/link";
+import { FileManager } from "@/core/managers/FileManager";
 import BadgesSection from "./badgeSection";
 import ItemsSection from "./itemSection";
+import CampaignsSection from "./campaignSection";
 
-// Define the type for searchParams
+// Define o tipo para searchParams
 type SearchParams = {
   [key: string]: string | string[] | undefined;
 };
 
+// Instâncias de serviços
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
-
 const donationManager = new DonationManager();
 const donorBadgeManager = new DonorBadgeManager();
 const donorStoreItemManager = new DonorStoreItemManager();
 const donorManager = new DonorManager();
+const filesManager = new FileManager();
 
-const ProfilePage = async ({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) => {
+const ProfilePage = async ({ searchParams }: { searchParams: SearchParams }) => {
+  // Paginação
   const badgesPage = parseInt(
     (Array.isArray(searchParams.badgesPage)
       ? searchParams.badgesPage[0]
       : searchParams.badgesPage) || "1"
   );
-  
+
   const itemsPage = parseInt(
     (Array.isArray(searchParams.itemsPage)
       ? searchParams.itemsPage[0]
       : searchParams.itemsPage) || "1"
   );
+
+  const campaignsPage = parseInt(
+    (Array.isArray(searchParams.campaignsPage)
+      ? searchParams.campaignsPage[0]
+      : searchParams.campaignsPage) || "1"
+  );
+
   const badgesPerPage = 10;
   const itemsPerPage = 10;
+  const campaignsPerPage = 5;
 
-  // Fetch user from session provider
+  // Buscar usuário autenticado
   const user = await userProvider.getUser();
 
-  if (user === null) {
-    return <NotLoggedIn />;
-  }
+  if (!user) return <NotLoggedIn />;
+  if (user.type !== UserRoleTypes.Donor) return <NotAuthorized />;
 
-  if (user.type !== UserRoleTypes.Donor) {
-    return <NotAuthorized />;
-  }
-
-  // Fetch all necessary data
+  // Buscar dados necessários
   const donations = await donationManager.getDonationsOfDonor(user.id!, 0, 10);
   const badges = await donorBadgeManager.getBadgeOfDonor(user.id!, 0, 100);
   const items = await donorStoreItemManager.getItemsOfDonor(user.id!, 0, 100);
@@ -70,25 +70,33 @@ const ProfilePage = async ({
     new Constraint("id", Operator.EQUALS, user?.id),
   ]);
 
-  // Extract donor data
   const donorData = Donor?.find((donor) => donor.id === user.id);
   const totalDonated = donorData?.total_donated_value || 0;
   const freqDon = donorData?.frequency_of_donation || 0;
 
-  // Pagination logic
-  const indexOfLastBadge = badgesPage * badgesPerPage;
-  const indexOfFirstBadge = indexOfLastBadge - badgesPerPage;
-  const currentBadges = badges.value?.slice(
-    indexOfFirstBadge,
-    indexOfLastBadge
-  );
+  // Buscar imagem da campanha associada a uma doação
+  const campaignImage = await filesManager.getByCondition([
+    new Constraint("campaign_id", Operator.EQUALS, donations.value![0].campaign_id), // Exemplo de campanha fixa
+    
+  ]);
+  const campaignImagePath = campaignImage?.[0]?.original_name
+  ? `/documents/${campaignImage[0].user_id}_${campaignImage[0].original_name}`
+  : "/default_campaign.jpg"; // Caminho padrão caso não tenha imagem
 
-  const indexOfLastItem = itemsPage  * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = items.value?.slice(indexOfFirstItem, indexOfLastItem);
+console.log(campaignImagePath);
+  // Dados de campanha mockados (com base na imagem buscada)
+  const campaigns = [
+    {
+      name: "My Donated Campaign",
+      description: "Campaign description goes here",
+      imagePath: campaignImagePath,
+    },
+  ];
 
-  const totalBadgesPages = Math.ceil(badges.value?.length / badgesPerPage);
-  const totalItemsPages = Math.ceil(items.value?.length / itemsPerPage);
+  // Paginação para campanhas
+  const indexOfLastCampaign = campaignsPage * campaignsPerPage;
+  const indexOfFirstCampaign = indexOfLastCampaign - campaignsPerPage;
+  const currentCampaigns = campaigns.slice(indexOfFirstCampaign, indexOfLastCampaign);
 
   return (
     <MainLayout passUser={user}>
@@ -104,7 +112,7 @@ const ProfilePage = async ({
             <div className={styles.StatisticsInfo}>
               <div>
                 <h3>Number of Donations</h3>
-                <p>{donorData?.donations.isArray.length}</p>
+                <p>{donations.value?.length || 0}</p>
               </div>
               <div>
                 <h3>Frequency of Donation</h3>
@@ -117,18 +125,34 @@ const ProfilePage = async ({
             </div>
           </div>
 
+          {/* Seção de Badges */}
           <BadgesSection
-            badges={badges.value || []}
+            badges={badges.value?.slice(
+              (badgesPage - 1) * badgesPerPage,
+              badgesPage * badgesPerPage
+            )}
             currentPage={badgesPage}
             itemsPerPage={badgesPerPage}
-            totalPages={totalBadgesPages}
+            totalPages={Math.ceil(badges.value?.length / badgesPerPage)}
           />
-          
+
+          {/* Seção de Items */}
           <ItemsSection
-            items={items.value || []}
+            items={items.value?.slice(
+              (itemsPage - 1) * itemsPerPage,
+              itemsPage * itemsPerPage
+            )}
             currentPage={itemsPage}
             itemsPerPage={itemsPerPage}
-            totalPages={totalItemsPages}
+            totalPages={Math.ceil(items.value?.length / itemsPerPage)}
+          />
+
+          {/* Seção de Campanhas */}
+          <CampaignsSection
+            campaigns={currentCampaigns}
+            currentPage={campaignsPage}
+            itemsPerPage={campaignsPerPage}
+            totalPages={1}
           />
         </div>
       </div>
