@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./components.module.css"; // Crie um arquivo CSS para o carrossel, ou ajuste a importação de estilos existente
 import { Campaign } from "@/models/Campaign";
 import { FileTypes } from "@/models/types/FileTypes";
@@ -11,7 +11,6 @@ const Carousel: React.FC<{}> = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   //const [mainImageID,setMainImagesID] = useState<ModelFile[]>([]);
-  const [firstRender,setFirstRender] = useState<Boolean>(true);
 
   const [tops,setTopCampaign] = useState<{MainImagesArray:ModelFile[],campains:Campaign[]}>({MainImagesArray:[],campains:[]});
 
@@ -27,12 +26,8 @@ const Carousel: React.FC<{}> = () => {
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(nextItem, 3000);
-    return () => clearInterval(interval);
-  }, []);
-  
-  if(firstRender){
+  useEffect(() => 
+  { 
     fetch("/api/campaign/top",{method:"GET"}).then(
       async (response)=>{
         if (response.ok){
@@ -50,8 +45,10 @@ const Carousel: React.FC<{}> = () => {
         }
       }
     );
-    setFirstRender(false);
-  }
+
+    const interval = setInterval(nextItem, 3000);
+    return () => clearInterval(interval);
+  }, []); 
     
     return (
       <div className={styles.carousel}>
