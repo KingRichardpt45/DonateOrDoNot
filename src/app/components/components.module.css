@@ -715,7 +715,38 @@
 }
 
 
+.notificationMarkSeen
+{
+  background-color: #00bcd4;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
+.notificationMarkSeen:hover{
+  background-color: #068899;
+}
+
+.notificationContainer
+{
+  display: flex;
+  flex-direction: column;
+  background-color: #2f024d;
+}
+
+.notificationTitle
+{
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #ffffff;
+ 
+}
+
+.notificationMessage
+{
+  margin-bottom: 5px;
+}
 
 
 /*---------------------------------------------*/
