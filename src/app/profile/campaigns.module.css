@@ -1,0 +1,117 @@
+/* Container principal para a seção */
+.MyCampaigns {
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.6); /* Fundo semi-transparente */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    margin: 20px auto;
+    
+    color: #ffffff;
+    overflow: hidden;
+  }
+  
+  /* Cabeçalho da seção */
+  .CampaignsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .CampaignsHeader h2 {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 0;
+    color: #f0f0f0;
+  }
+  
+  .TotalCampaigns {
+    font-size: 16px;
+    font-weight: normal;
+    color: #ccc;
+  }
+  
+  /* Grid das campanhas */
+  .CampaignsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Item individual de campanha */
+  .CampaignItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+  }
+  
+  .CampaignItem:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Imagem da campanha */
+  .CampaignImage {
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+  }
+  
+  /* Nome da campanha */
+  .CampaignDetails {
+    text-align: center;
+  }
+  
+  .CampaignDetails h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    margin: 0;
+    text-transform: capitalize;
+  }
+  
+  /* Paginação */
+  .Pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .Pagination a {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 10px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
+  }
+  
+  .Pagination a:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  
+  .Pagination .Active {
+    background-color: #ff7f50; /* Cor de destaque para a página ativa */
+    color: #fff;
+  }
+  
+  .Pagination a:active {
+    transform: scale(0.95);
+  }
+  
