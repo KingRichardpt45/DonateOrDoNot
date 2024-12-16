@@ -1,13 +1,10 @@
 import React from "react";
 import Image from "next/image";
-import styles from "./profile.module.css";
+import Link from "next/link";
+import styles from "./campaigns.module.css";
 
 interface CampaignProps {
-  campaigns: {
-    name: string;
-    description: string;
-    imagePath: string;
-  }[];
+  campaigns: any[];
   currentPage: number;
   itemsPerPage: number;
   totalPages: number;
@@ -19,21 +16,52 @@ const CampaignsSection: React.FC<CampaignProps> = ({
   itemsPerPage,
   totalPages,
 }) => {
+  const indexOfLastCampaign = currentPage * itemsPerPage;
+  const indexOfFirstCampaign = indexOfLastCampaign - itemsPerPage;
+  const currentCampaigns = campaigns.slice(indexOfFirstCampaign, indexOfLastCampaign);
+  const totalCampaigns = campaigns.length;
+
   return (
-    <div className={styles.CampaignSection}>
-      <h2>My Campaigns</h2>
+    <div className={styles.MyCampaigns}>
+      <div className={styles.CampaignsHeader}>
+        <h2>My Campaigns</h2>
+        <span className={styles.TotalCampaigns}>
+          Number of Campaigns: {totalCampaigns}
+        </span>
+      </div>
+
       <div className={styles.CampaignsGrid}>
-        {campaigns.map((campaign, index) => (
-          <div key={index} className={styles.CampaignCard}>
-            <Image
-              src={campaign.imagePath}
-              alt={campaign.name}
-              width={200}
-              height={150}
-            />
-            <h3>{campaign.name}</h3>
-            <p>{campaign.description}</p>
-          </div>
+        {currentCampaigns && currentCampaigns.length > 0 ? (
+          currentCampaigns.map((campaign, index) => (
+            <div key={index} className={styles.CampaignItem}>
+              <Image
+                src={campaign.imagePath}
+                alt={campaign.name || "Campaign"}
+                className={styles.CampaignImage}
+                width={100}
+                height={100}
+              />
+              <div className={styles.CampaignDetails}>
+                <h3>{campaign.name}</h3>
+                
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No campaigns available</p>
+        )}
+      </div>
+
+      {/* Pagination */}
+      <div className={styles.Pagination}>
+        {[...Array(totalPages)].map((_, i) => (
+          <Link
+            key={i}
+            href={`?campaignsPage=${i + 1}`}
+            className={currentPage === i + 1 ? styles.Active : ""}
+          >
+            {i + 1}
+          </Link>
         ))}
       </div>
     </div>

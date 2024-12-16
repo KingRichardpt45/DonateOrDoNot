@@ -17,51 +17,37 @@ import { FileManager } from "@/core/managers/FileManager";
 import BadgesSection from "./badgeSection";
 import ItemsSection from "./itemSection";
 import CampaignsSection from "./campaignSection";
+import { DonationCampaignManager } from "@/core/managers/DonationCampaignManager";
 
-// Define o tipo para searchParams
 type SearchParams = {
   [key: string]: string | string[] | undefined;
 };
 
-// Instâncias de serviços
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const donationManager = new DonationManager();
 const donorBadgeManager = new DonorBadgeManager();
 const donorStoreItemManager = new DonorStoreItemManager();
 const donorManager = new DonorManager();
 const filesManager = new FileManager();
+const campaignManager = new DonationCampaignManager();
 
 const ProfilePage = async ({ searchParams }: { searchParams: SearchParams }) => {
+
+
   // Paginação
-  const badgesPage = parseInt(
-    (Array.isArray(searchParams.badgesPage)
-      ? searchParams.badgesPage[0]
-      : searchParams.badgesPage) || "1"
-  );
-
-  const itemsPage = parseInt(
-    (Array.isArray(searchParams.itemsPage)
-      ? searchParams.itemsPage[0]
-      : searchParams.itemsPage) || "1"
-  );
-
-  const campaignsPage = parseInt(
-    (Array.isArray(searchParams.campaignsPage)
-      ? searchParams.campaignsPage[0]
-      : searchParams.campaignsPage) || "1"
-  );
+  const badgesPage = parseInt(searchParams.badgesPage?.toString() || "1");
+  const itemsPage = parseInt(searchParams.itemsPage?.toString() || "1");
+  const campaignsPage = parseInt(searchParams.campaignsPage?.toString() || "1");
 
   const badgesPerPage = 10;
   const itemsPerPage = 10;
-  const campaignsPerPage = 5;
+  const campaignsPerPage = 5; // Alterado para 5 campanhas por página
 
-  // Buscar usuário autenticado
   const user = await userProvider.getUser();
 
   if (!user) return <NotLoggedIn />;
   if (user.type !== UserRoleTypes.Donor) return <NotAuthorized />;
 
-  // Buscar dados necessários
   const donations = await donationManager.getDonationsOfDonor(user.id!, 0, 10);
   const badges = await donorBadgeManager.getBadgeOfDonor(user.id!, 0, 100);
   const items = await donorStoreItemManager.getItemsOfDonor(user.id!, 0, 100);
@@ -69,44 +55,42 @@ const ProfilePage = async ({ searchParams }: { searchParams: SearchParams }) => 
   const Donor = await donorManager.getByCondition([
     new Constraint("id", Operator.EQUALS, user?.id),
   ]);
-
   const donorData = Donor?.find((donor) => donor.id === user.id);
   const totalDonated = donorData?.total_donated_value || 0;
   const freqDon = donorData?.frequency_of_donation || 0;
 
-  // Buscar imagem da campanha associada a uma doação
-  const campaignImage = await filesManager.getByCondition([
-    new Constraint("campaign_id", Operator.EQUALS, donations.value![0].campaign_id), // Exemplo de campanha fixa
-    
-  ]);
-  const campaignImagePath = campaignImage?.[0]?.original_name
-  ? `/documents/${campaignImage[0].user_id}_${campaignImage[0].original_name}`
-  : "/default_campaign.jpg"; // Caminho padrão caso não tenha imagem
+  // Buscar campanhas associadas às doações
+  const campaigns = await Promise.all(
+    donations.value!.map(async (donation) => {
+      const [campaignImage] = await filesManager.getByCondition([
+        new Constraint("campaign_id", Operator.EQUALS, donation.campaign_id),
+      ]);
 
-console.log(campaignImagePath);
-  // Dados de campanha mockados (com base na imagem buscada)
-  const campaigns = [
-    {
-      name: "My Donated Campaign",
-      description: "Campaign description goes here",
-      imagePath: campaignImagePath,
-    },
-  ];
+      const [donatedCampaign] = await campaignManager.getByCondition([
+        new Constraint("id", Operator.EQUALS, donation.campaign_id),
+      ]);
+
+      return {
+        name: donatedCampaign?.title || "Unknown Campaign",
+        description: donatedCampaign?.description || "No description available",
+        imagePath: campaignImage?.original_name
+          ? `/documents/${campaignImage.id}_${campaignImage.original_name}`
+          : "/default_campaign.jpg",
+      };
+    })
+  );
 
   // Paginação para campanhas
   const indexOfLastCampaign = campaignsPage * campaignsPerPage;
   const indexOfFirstCampaign = indexOfLastCampaign - campaignsPerPage;
   const currentCampaigns = campaigns.slice(indexOfFirstCampaign, indexOfLastCampaign);
 
+
   return (
     <MainLayout passUser={user}>
       <div className={styles.ProfileContainer}>
-        {/* Sidebar */}
         <SideProfile />
-
-        {/* Main Content */}
         <div className={styles.MainContent}>
-          {/* Statistics Section */}
           <div className={styles.Statistics}>
             <h2>Statistics</h2>
             <div className={styles.StatisticsInfo}>
@@ -125,7 +109,6 @@ console.log(campaignImagePath);
             </div>
           </div>
 
-          {/* Seção de Badges */}
           <BadgesSection
             badges={badges.value?.slice(
               (badgesPage - 1) * badgesPerPage,
@@ -136,7 +119,6 @@ console.log(campaignImagePath);
             totalPages={Math.ceil(badges.value?.length / badgesPerPage)}
           />
 
-          {/* Seção de Items */}
           <ItemsSection
             items={items.value?.slice(
               (itemsPage - 1) * itemsPerPage,
@@ -147,13 +129,15 @@ console.log(campaignImagePath);
             totalPages={Math.ceil(items.value?.length / itemsPerPage)}
           />
 
+          
           {/* Seção de Campanhas */}
-          <CampaignsSection
-            campaigns={currentCampaigns}
-            currentPage={campaignsPage}
-            itemsPerPage={campaignsPerPage}
-            totalPages={1}
-          />
+<CampaignsSection
+  campaigns={campaigns}
+  currentPage={campaignsPage}
+  itemsPerPage={campaignsPerPage}
+  totalPages={Math.ceil(campaigns.length / campaignsPerPage)}
+/>
+
         </div>
       </div>
     </MainLayout>
