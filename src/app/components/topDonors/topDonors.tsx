@@ -10,9 +10,9 @@ type TopDonorsListProps = {
 const TopDonors: React.FC<TopDonorsListProps> = ({ podiumDonors }) => {
   return (
     <div className={styles.TopDonorComponent}>
-      <h1>Top Donors</h1>
+      {podiumDonors!=null && (<h1>Top Donors</h1>)} 
       <div className={styles.TopDonorContainer}>
-        {podiumDonors[3] && (
+        {podiumDonors!=null &&podiumDonors[3] && (
           <div className={styles.FourthTop}>
             <img
               src="/images/ProfileImageDefault.png"
@@ -24,7 +24,7 @@ const TopDonors: React.FC<TopDonorsListProps> = ({ podiumDonors }) => {
           </div>
         )}
         
-        {podiumDonors[2] && (
+        {podiumDonors!=null && podiumDonors[2] && (
           <div className={styles.ThreeTop}>
             <img
               src="/images/ProfileImageDefault.png"
@@ -36,7 +36,7 @@ const TopDonors: React.FC<TopDonorsListProps> = ({ podiumDonors }) => {
           </div>
         )}
 
-        {podiumDonors[0] && (
+        {podiumDonors!=null && podiumDonors[0] && (
           <div className={styles.FirstTop}>
             <img
               src="/images/ProfileImageDefault.png"
@@ -48,7 +48,7 @@ const TopDonors: React.FC<TopDonorsListProps> = ({ podiumDonors }) => {
           </div>
         )}
 
-        {podiumDonors[1] && (
+        {podiumDonors!=null && podiumDonors[1] && (
           <div className={styles.SecondTop}>
             <img
               src="/images/ProfileImageDefault.png"
@@ -60,7 +60,7 @@ const TopDonors: React.FC<TopDonorsListProps> = ({ podiumDonors }) => {
           </div>
         )}
 
-        {podiumDonors[4] && (
+        {podiumDonors!=null && podiumDonors[4] && (
           <div className={styles.FifthTop}>
             <img
               src="/images/ProfileImageDefault.png"

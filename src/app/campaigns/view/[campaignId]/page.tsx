@@ -79,7 +79,7 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
       {
         authorized &&
         <div className={styles.page}>
-          <ViewCampaignForm campaign={ campaignAdPain as Campaign} topDonors= {topDonors.value as Donor[]} />
+          <ViewCampaignForm campaign={ campaignAdPain as Campaign} topDonors= {topDonors.value as Donor[]} donorId={user.id!} />
         </div>
       }
     </MainLayout>
