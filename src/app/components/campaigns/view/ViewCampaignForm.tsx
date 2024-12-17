@@ -21,6 +21,8 @@ import { ActionResultNotificationSuccess } from "../../actionsNotifications/Acti
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { CampaignStatus } from "@/models/types/CampaignStatus";
 import CarouselCampaign from "../../CampaignCarrousel/carouselCampaign";
+import TopDonors from "../../topDonors/topDonors";
+import { Donor } from "@/models/Donor";
 
 interface AddedFile
 { 
@@ -44,7 +46,9 @@ interface FormsData
   badgePartnerFormData:FormData ,
 }
 
-const ViewCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>{
+
+
+const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[]}> = ({campaign, topDonors}) =>{
 
     const [ firstRender, setFirstRender ] = useState<boolean>(true);
     const [ render,setRender] = useState<number>(0);
@@ -156,6 +160,10 @@ const ViewCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>{
             </div>
           </div>
         </div>
+        
+        <div><TopDonors
+            podiumDonors={topDonors}
+          /></div>
 
         <div className={styles.fileFormTitle}><b>Campaign Images</b></div>
         <div className={styles.filePreviewContainer}>
