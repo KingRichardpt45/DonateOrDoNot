@@ -45,10 +45,19 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     async getAll(includeFunction: (entity: Entity) => IncludeNavigation[] = () => [], orderBy: unknown[] = [], limit: number = 0, offset: number = 0): Promise<Entity[]> {
         const includes = includeFunction(this.modelFactory.create(this.entityName) as Entity);
-        let query = this.dbConnection(this.tableName);
+
+        let queryPagination = this.dbConnection( this.tableName);
+        queryPagination = this.applyPagination(queryPagination,limit,offset);
+        queryPagination = queryPagination.select(this.typeObject.getPrimaryKeyParts()[0]);
+
+        const limitedResult:unknown[] = [];
+        (await queryPagination).forEach( (v) => limitedResult.push( v[this.typeObject.getPrimaryKeyParts()[0]] ));
+
+        let query = this.dbConnection( this.tableName);
         const selectColumns = this.selectEntityColumn();
         query = this.include(query, includes, selectColumns);
-        query = this.applyPaginationAndSorting(query, orderBy, limit, offset);
+        query = this.addConstraints(query, [new Constraint(`${this.tableName}.${this.typeObject.getPrimaryKeyParts()[0]}`,Operator.IN,limitedResult)]);
+        query = this.applySorting(query, orderBy);
 
         const result = await query.select(selectColumns);
 
@@ -58,6 +67,7 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     async getByPrimaryKey(primaryKeyParts: PrimaryKeyPart[], includeFunction: (entity: Entity) => IncludeNavigation[] = () => []): Promise<Entity | null> 
     {
         const includes = includeFunction(this.modelFactory.create(this.entityName) as Entity);
+
         let query = this.dbConnection(this.tableName);
         const selectColumns = this.selectEntityColumn();
         query = this.include(query, includes, selectColumns);
@@ -76,15 +86,24 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
 
     async getByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[] = () => [], orderBy: unknown[], limit: number = 0, offset: number = 0): Promise<Entity[]> {
         const includes = includeFunction(this.modelFactory.create(this.entityName) as Entity);
+
         constraints = this.filterConstraints(constraints,includes);
-        let query = this.dbConnection(this.tableName);
+        let queryPagination = this.dbConnection( this.tableName);
+        queryPagination = this.applyPagination(queryPagination,limit,offset);
+        queryPagination = queryPagination.select(this.typeObject.getPrimaryKeyParts()[0]);
+
+        const limitedResult:unknown[] = [];
+        (await queryPagination).forEach( (v) => limitedResult.push( v[this.typeObject.getPrimaryKeyParts()[0]] ));
+
         const selectColumns = this.selectEntityColumn();
+        
+        let query = this.dbConnection( this.tableName);
         query = this.include(query, includes, selectColumns);
-        query = this.addConstraints(query, constraints);
-        query = this.applyPaginationAndSorting(query, orderBy, limit, offset);
-
+        query = this.addConstraints(query, [new Constraint(`${this.tableName}.${this.typeObject.getPrimaryKeyParts()[0]}`,Operator.IN,limitedResult),...constraints]);
+        query = this.applySorting(query, orderBy);
+        
         const result = await query.select(selectColumns);
-
+        
         return this.constructEntities(result, includes);
     }
 
@@ -97,6 +116,10 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
     private selectEntityColumn(): string[] {
         //return this.typeObject.getKeys().map( name => `${this.tableName}.${name} as entity.${name}`);
         return [`${this.tableName}.*`];
+    }
+
+    private selectEntityColumnPagination(): string[] {
+        return this.typeObject.getKeys().map( name => `${name}`);
     }
 
     private filterConstraints(constraints: Constraint[], includes:IncludeNavigation[] ): Constraint[] {
@@ -442,12 +465,17 @@ export class RepositoryAsync<Entity extends IEntity> implements IRepositoryAsync
         return query;
     }
 
-    private applyPaginationAndSorting(query: Knex.QueryBuilder, orderBy: any[], limit: number, offset: number): Knex.QueryBuilder {
+    private applySorting(query: Knex.QueryBuilder, orderBy: any[]): Knex.QueryBuilder {
         if (orderBy.length > 0)
             query = query.orderBy(orderBy);
 
+        return query;
+    }
+
+    private applyPagination(query: Knex.QueryBuilder, limit: number, offset: number) : Knex.QueryBuilder
+    {
         if (limit != 0)
-            query = query.limit(limit);
+            query = query.limit(limit,);
 
         if (offset != 0)
             query = query.offset(offset);
