@@ -10,7 +10,7 @@ type TopDonorsListProps = {
 const TopDonors: React.FC<TopDonorsListProps> = ({ podiumDonors }) => {
   return (
     <div className={styles.TopDonorComponent}>
-      {podiumDonors!=null && (<h1>Top Donors</h1>)} 
+      {podiumDonors.length!=0 && (<h1>Top Donors</h1>)} 
       <div className={styles.TopDonorContainer}>
         {podiumDonors!=null &&podiumDonors[3] && (
           <div className={styles.FourthTop}>

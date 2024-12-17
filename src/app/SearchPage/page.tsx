@@ -41,7 +41,7 @@ export default async function Search() {
   // Default campaigns array used for testing or displaying sample data
   
 
-  const status = [CampaignStatus.Active, CampaignStatus.Approved, CampaignStatus.InAnalysis];
+  const status = [CampaignStatus.Active];
   
   
   const CampaignList = await campaignsManager.getByCondition( [ 

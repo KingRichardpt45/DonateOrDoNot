@@ -16,6 +16,7 @@ import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
 import { CampaignBadge } from "@/models/CampaignBadge";
 import { Badge } from "@/models/Badge";
 import { Donor } from "@/models/Donor";
+import { User } from "@/models/User";
 
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const campaignsManager = new  DonationCampaignManager();
@@ -64,7 +65,12 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
   const campaignAdPain = entityConverter.toPlainObject(campaign) as Campaign;
   
   
-  const topDonors = await donationcampaignmanager.getTopDonors(campaign.id!,0,5);
+  const result = await donationcampaignmanager.getTopDonors(campaign.id!,0,5);
+  const topDonors:Donor[] = result.value!;
+  const plainTopDonors:Donor[]  = [];
+  if(result.isOK){
+    topDonors.forEach((donor) => plainTopDonors.push(entityConverter.toPlainObject(donor)as Donor) );
+  }
   
   return (
     <MainLayout passUser={user}>
@@ -79,7 +85,7 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
       {
         authorized &&
         <div className={styles.page}>
-          <ViewCampaignForm campaign={ campaignAdPain as Campaign} topDonors= {topDonors.value as Donor[]} donorId={user.id!} />
+          <ViewCampaignForm campaign={ campaignAdPain as Campaign} topDonors= {plainTopDonors as Donor[]} donorId={user.id!} />
         </div>
       }
     </MainLayout>

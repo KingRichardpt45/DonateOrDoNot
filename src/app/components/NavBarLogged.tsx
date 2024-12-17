@@ -7,7 +7,7 @@ import styles from './components.module.css';
 import Image from 'next/image';
 import SideMenu from './SideMenu';
 import { Notification } from '@/models/Notification';
-import { StringCaseConverter } from '@/core/utils/StringCaseConverter';
+import { StringCaseConverter } from '@/core/Utils/StringCaseConverter';
 import { NotificationTypes } from '@/models/types/NotificationTypes';
 import { useConnectionContext } from './coreComponents/ioConnectionProvider';
 import { EventNotification } from '@/services/hubs/events/EventNotification';

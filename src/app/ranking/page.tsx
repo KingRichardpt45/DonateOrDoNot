@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Donor } from "@/models/Donor";
 import { DonorManager } from "@/core/managers/DonorManager";
 import { MainLayout } from "../components/coreComponents/mainLayout";
-import { Constrain } from '@/core/repository/Constrain';
+import { Constraint } from '@/core/repository/Constraint';
 import { Operator } from '@/core/repository/Operator';
 import TopDonorsList from "../components/topDonors/TopDonorsList";
 import styles from "./rankingPage.module.css";
