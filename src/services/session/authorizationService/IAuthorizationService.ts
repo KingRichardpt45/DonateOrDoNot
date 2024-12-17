@@ -13,6 +13,8 @@ export interface IAuthorizationService {
      */
     hasSession(): Promise<boolean>
 
+    getId(): Promise<number | null>
+
     /**
      * Checks if the current user has the specified roles.
      *

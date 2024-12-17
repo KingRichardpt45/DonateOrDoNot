@@ -4,8 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "devOriginal": "next dev",
-    "dev": "nodemon src/server.js",
+    "dev": "next dev",
+    "dev2": "nodemon src/server.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -23,8 +23,11 @@
     "react": "19.0.0-rc-69d4b800-20241021",
     "react-dom": "19.0.0-rc-69d4b800-20241021",
     "server-only": "^0.0.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.5.4",
+    "ws": "^8.18.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {

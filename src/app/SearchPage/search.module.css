@@ -1,0 +1,112 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 140vh;
+}
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+  
+/* Container for the entire page */
+.container {
+    text-align: center;
+    padding: 0px;
+    color: #fff;
+    overflow: hidden;
+  }
+  
+  /* Campaign container styling */
+  .campaignContainer {
+    margin-top: 30px;
+    height: auto;
+    overflow: visible; /* Ensures content is not cut off */
+}
+  
+  
+  /* Heading for campaigns */
+  .heading {
+    font-size: 28px; /* Increased font size for the heading */
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  
+  /* Campaign list styling */
+  .campaignList {
+    display: flex;
+    flex-wrap: wrap; /* Allows cards to wrap to the next row */
+    gap: 30px;
+    justify-content: center;
+    align-items: stretch;
+}
+
+  
+.campaignCard {
+  flex: 0 1 250px; /* Prevent shrinking, but wrap if necessary */
+  max-width: 250px;
+  background: #4b0082;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  transition: transform 0.3s ease;
+  box-sizing: border-box;
+}
+
+.campaignCard:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+  
+  /* Image styling */
+  .image {
+    width: 100%;
+    border-radius: 15px; /* Slightly rounded image corners */
+    margin-bottom: 15px; /* Space below the image */
+  }
+  
+  /* Campaign title styling */
+  .title {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+  
+  /* View more button styling */
+  .viewMore {
+    margin-top: 30px; /* Increased margin for spacing */
+    padding: 12px 25px; /* Increased button size */
+    background-color: #ff69b4;
+    border: none;
+    border-radius: 25px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 18px; /* Increased font size */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  /* Hover effect for view more button */
+  .viewMore:hover {
+    background-color: #ff1493;
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 768px) {
+    .campaignList {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .campaignCard {
+        max-width: 100%;
+    }
+}

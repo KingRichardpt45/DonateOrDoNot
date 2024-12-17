@@ -22,6 +22,12 @@ export class AuthorizationService implements IAuthorizationService {
         this.noRolePage = noRolePageUrl;
     }
 
+    async getId(): Promise<number | null> {
+        const user = await this.userProvider.getUser();
+
+        return user?.id ?? null
+    }
+
     async hasSession(): Promise<boolean> {
         return await this.userProvider.getUser() != null;
     }

@@ -14,7 +14,8 @@ import { BadgeTypes } from "@/models/types/BadgeTypes";
 import { IncludeNavigation } from "../repository/IncludeNavigation";
 
 
-export class DonorManager extends EntityManager<Donor> 
+
+export class DonorManager extends EntityManager<Donor>
 {
     static getByCondition(arg0: any[], arg1: (campaign: any) => any[], arg2: never[], arg3: number, arg4: number): Donor[] | PromiseLike<Donor[]> {
       throw new Error('Method not implemented.');
@@ -32,7 +33,7 @@ export class DonorManager extends EntityManager<Donor>
         this.badgeRepo = new RepositoryAsync(Badge);
     }
 
-    async signUp(donor: Donor): Promise<OperationResult<Donor | null, FormError>> 
+    async signUp(donor: Donor): Promise<OperationResult<Donor | null, FormError>>
     {
         const createdDonor = await this.repository.create(donor);
         return new OperationResult(createdDonor,[]);
@@ -69,7 +70,7 @@ export class DonorManager extends EntityManager<Donor>
             return new OperationResult(donors,[]);
     }
 
-    async byStoreItem(donorId:number,storeItemId:number): Promise< OperationResult<boolean,FormError> >
+    async buyStoreItem(donorId:number,storeItemId:number): Promise< OperationResult<boolean,FormError> >
     {
         const errors = []
 
@@ -115,7 +116,7 @@ export class DonorManager extends EntityManager<Donor>
         {
             if ( (badge.type == BadgeTypes.FrequencyOfDonations && donor.best_frequency_of_donation! < badge.value!) ||
                  (badge.type == BadgeTypes.TotalDonations && donor.total_donated_value! < badge.value!) ||
-                 (badge.type == BadgeTypes.TotalValueDonated && donor.total_donated_value! < badge.value!) ) 
+                 (badge.type == BadgeTypes.TotalValueDonated && donor.total_donated_value! < badge.value!) )
             {
                 errors.push( new FormError("donor_id", ["Doesn't meet the requirements to unlock the badge."]) );
             }

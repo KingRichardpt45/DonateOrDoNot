@@ -111,7 +111,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
     return (
         <div>
             <div className={styles.searchContainer}>
-                <DropdownInput width={200} heigh={30} color="#3b3b3b" options={["Startup","Health","School","Debt"]} onChange={onDroopCategoryChange}/>
+                <DropdownInput width={200} heigh={30} color="#3b3b3b" options={["Startup", "Health", "School", "Debt"]} onChange={onDroopCategoryChange} customContainerStyle={""} value={""}/>
                 <select 
                     name="type"
                     id="type"

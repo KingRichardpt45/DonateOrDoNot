@@ -4,7 +4,7 @@ import {User} from "@/models/User";
 import {ISessionUserCacheService} from "./ISessionCacheService";
 import {Mutex} from "async-mutex";
 import {RepositoryAsync} from "@/core/repository/RepositoryAsync";
-import {Constrain} from "@/core/repository/Constrain";
+import {Constraint} from "@/core/repository/Constraint";
 import {IncludeNavigation} from "@/core/repository/IncludeNavigation";
 import {Operator} from "@/core/repository/Operator";
 
@@ -47,7 +47,7 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
     private async storeAux(session: Session): Promise<User>
     {   
         const user = await this.userRepository.getFirstByCondition(
-            [new Constrain("id", Operator.EQUALS, session.userId)],
+            [new Constraint("id", Operator.EQUALS, session.userId)],
             (user) => [new IncludeNavigation(user.address, 0),new IncludeNavigation(user.profileImage, 0)],
             [], 0, 0
         );

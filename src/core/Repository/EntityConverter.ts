@@ -192,10 +192,10 @@ export class EntityConverter {
 
             else if(  entity[navigationKey].isArray() )
             {
-                object[navigationKey] = { value: Array<{value:any}>() };
+                object[navigationKey] = { value: Array<any>() };
                 for (const entityItem of entity[navigationKey].value ) 
                 {
-                    (object[navigationKey] as {value:any}[]).push( { value: this.toPlainObject(entityItem) } )
+                    ( object[navigationKey] as {value: any[]} ).value.push( this.toPlainObject(entityItem) );
                 }
             }        
         }

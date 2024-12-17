@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import styles from "./selectWithInput.module.css"
 
-const DropdownInput : React.FC<{ width:number|string,heigh:number, color:string , options:string[],onChange: (v:string) => any }>= ({ width,heigh,color, options,onChange}) => {
+const DropdownInput : React.FC<{ customContainerStyle:string, value:string,width:number|string,heigh:number, color:string , options:string[],onChange: (v:string) => any }>= 
+({ customContainerStyle,value,width,heigh,color, options,onChange}) => {
 
-    const [value, setInputValue] = useState("");
+    const [inputValue, setInputValue] = useState(value);
     const [enableOptions, setEnableOptions] = useState("");
   
     function updateInputValue(event: React.ChangeEvent<HTMLInputElement>)
@@ -44,10 +45,10 @@ const DropdownInput : React.FC<{ width:number|string,heigh:number, color:string 
     return (
         <div tabIndex={0} 
             onBlur={handleBlur}
-            className={styles.mainContainer}
+            className={`${styles.mainContainer} ${customContainerStyle}`}
         >
             <div className={styles.DropdownInputContainer} style={{ width:width,height:heigh,backgroundColor:color} as React.CSSProperties}>
-                <input type="text" placeholder="Select" style={{ height:heigh,backgroundColor:color }} className={styles.DropdownInput}  value={value} onChange={updateInputValue} onClick={onClickInput}/>
+                <input type="text" placeholder="Select" style={{ height:heigh,backgroundColor:color }} className={styles.DropdownInput}  value={inputValue} onChange={updateInputValue} onClick={onClickInput}/>
                 <button className={styles.DroopClick} onClick={(e)=>{ e.preventDefault(); onDroopClick()}}>
                     <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m19 9l-7 6l-7-6"/></svg>
                 </button>

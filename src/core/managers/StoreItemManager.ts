@@ -1,11 +1,10 @@
-import { StoreItem } from "@/models/StoreItem";
-import { EntityManager } from "./EntityManager";
-import { SearchableEntity } from "./SerachableEntity";
-import { Constrain } from "../repository/Constrain";
-import { OperationResult } from "../utils/operation_result/OperationResult";
-import { SimpleError } from "../utils/operation_result/SimpleError";
-import { Operator } from "../repository/Operator";
-import { IncludeNavigation } from "../repository/IncludeNavigation";
+import {StoreItem} from "@/models/StoreItem";
+import {EntityManager} from "./EntityManager";
+import {SearchableEntity} from "./SerachableEntity";
+import {Constraint} from "../repository/Constraint";
+import {OperationResult} from "../utils/operation_result/OperationResult";
+import {SimpleError} from "../utils/operation_result/SimpleError";
+import {IncludeNavigation} from "../repository/IncludeNavigation";
 
 export class StoreItemManager extends EntityManager<StoreItem> implements SearchableEntity<StoreItem>
 {
@@ -26,27 +25,23 @@ export class StoreItemManager extends EntityManager<StoreItem> implements Search
         return this.add(stoItemToCreate);
     }
 
-    async search(query: string, page: number, pageSize: number): Promise<OperationResult<StoreItem[], SimpleError>> 
-    {   
-        return this.searchWithConstrains(query,[],page,pageSize);
-    }
-
-    async searchWithConstrains(query: string, constrains: Constrain[], page: number, pageSize: number): Promise<OperationResult<StoreItem[], SimpleError>> 
+    async searchWithConstraints(constraints: Constraint[], page: number, pageSize: number): Promise<OperationResult<StoreItem[], SimpleError>>
     {
-        const inNamesResult = await this.repository.getByCondition(
-            [new Constrain("name",Operator.LIKE,`%${query}%`),...constrains],
+        if(constraints.length <2)
+            throw new Error("FIX THIS Function searchWithConstraints in StoreItemManager");
+        
+        const inNamesResult = await this.repository.getByCondition([constraints[0]],
             (storeItem)=>[new IncludeNavigation(storeItem.image,0)],[],pageSize,page*pageSize);
 
-        const inDescriptionResult = await this.repository.getByCondition(
-            [new Constrain("description",Operator.LIKE,`%${query}%`),...constrains],
+        const inDescriptionResult = await this.repository.getByCondition([constraints[1]],
             (storeItem)=>[new IncludeNavigation(storeItem.image,0)],[],pageSize,page*pageSize);
-        
+
         inDescriptionResult.forEach( (value)=>inNamesResult.push(value) );
-        
+
         if(inNamesResult.length == 0)
             return new OperationResult( [] , [ new SimpleError("No items where found.") ]);
         else
             return new OperationResult( inNamesResult , []);
     }
-    
+
 }
