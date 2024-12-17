@@ -117,21 +117,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, toggleMenu ,userType}) => {
           </ul>
         </div>
 
-        <div className={styles.menuGroup}>
-          <ul>
-            {
-              (userType == UserRoleTypes.Donor) &&
-              <li>
-                <a href="/my_donations">
-                  <span className={styles.iconContainer}>
-                    <DollarSign size={20} />
-                  </span>
-                  My Donations
-                </a>
-              </li>
-            }
-            {
-              (userType == UserRoleTypes.CampaignManager) &&
+        {
+          (userType == UserRoleTypes.CampaignManager) &&
+          <div className={styles.menuGroup}>
+            <ul>
               <li>
                 <a href="/campaigns/my_campaigns">
                   <span className={styles.iconContainer}>
@@ -140,9 +129,13 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, toggleMenu ,userType}) => {
                   My Campaigns
                 </a>
               </li>
-            }
-            {
-              (userType == UserRoleTypes.Admin) &&
+            </ul>
+          </div>
+        }
+        {
+          (userType == UserRoleTypes.Admin) &&
+          <div className={styles.menuGroup}>
+            <ul>
               <li>
                 <a href="/admin">
                   <span className={styles.iconContainer}>
@@ -151,10 +144,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, toggleMenu ,userType}) => {
                   My Donations
                 </a>
               </li>
-            }
+            </ul>
+          </div>
+        }
             
-          </ul>
-        </div>
 
         <div className={styles.menuGroup}>
           <ul>
