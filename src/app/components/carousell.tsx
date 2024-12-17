@@ -15,14 +15,16 @@ const Carousel: React.FC<{ onActualIdChange:(index:number)=>void }> = ({onActual
   const nextItem = () => {
     if (tops.MainImagesArray.length > 0) {
       setCurrentIndex((prev) => (prev + 1) % tops.MainImagesArray.length);
-      onActualIdChange(tops.campaigns[0].id!);
+      if( typeof onActualIdChange === "function")
+        onActualIdChange(tops.campaigns[0].id!);
     }
   };
   
   const prevItem = () => {
     if (tops.MainImagesArray.length > 0) {
       setCurrentIndex((prev) => (prev - 1 + tops.MainImagesArray.length) % tops.MainImagesArray.length);
-      onActualIdChange(currentIndex);
+      if( typeof onActualIdChange === "function")
+        onActualIdChange(currentIndex);
     }
   };
 
@@ -95,10 +97,6 @@ const Carousel: React.FC<{ onActualIdChange:(index:number)=>void }> = ({onActual
         <h2 className={styles.title}>{tops.campaigns[currentIndex]?.title}</h2>
         <p className={styles.description}>{tops.campaigns[currentIndex]?.description}</p>
         <div className={styles.donationGoals}>
-          {/* <p> Current Progress {tops.campains[currentIndex]?.current_donation_value}</p> */}
-          {/* {tops.campains.map((campaign, index) => (
-            <p key={index}>{campaign.current_donation_value}</p>
-          ))} */}
         </div>
       </div>
     </div>

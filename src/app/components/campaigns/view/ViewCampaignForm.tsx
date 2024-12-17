@@ -228,10 +228,14 @@ const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[], donorId
         {files.map((file, index) => (
           <div key={index} className={styles.filePreview}>
             {
-              <object data={`/documents/${file.id}_${file.original_name}`} type="application/pdf" width="100%" height="200">
-                <p>Your browser does not support PDFs. <a href={`/documents/${file.id}_${file.original_name}`}>Download the PDF</a>.</p>
-              </object>
-              
+              <div className={styles.fileContainer}>
+                <object data={`/documents/${file.id}_${file.original_name}`} type="application/pdf" width="100%" height="200">
+                  <p>Your browser does not support PDFs. <a href={`/api/file/${file.id}`} >Download the PDF</a>.</p>
+                </object>
+                <div className={styles.fileContainerLink}>
+                  <a href={`/api/file/${file.id}`} ><span>Download</span> {file.original_name}</a>
+                </div>
+              </div>
             }
           </div>
         ))}

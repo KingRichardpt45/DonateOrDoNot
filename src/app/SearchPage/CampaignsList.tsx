@@ -20,7 +20,7 @@ const CampaignsList :React.FC<{campaigns:Campaign[]}> = ({campaigns}) =>{
 
     return(
       <div className={styles.container}>
-        <div><Carousel/></div>
+        <div><Carousel onActualIdChange={(v)=>{}}/></div>
               <div className={styles.campaignContainer}>
                 <h2 className={styles.heading}>Other Campaigns</h2>
                 {/* List of campaigns rendered dynamically from defaultCampaigns */}

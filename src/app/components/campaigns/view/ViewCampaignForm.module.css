@@ -307,3 +307,28 @@
     align-items: center;      /* Centers vertically */
     height: 5vh;            /* Full height of the viewport */
   }
+
+
+.fileContainer
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.fileContainerLink
+{
+    color: rgb(0, 204, 255);
+    padding: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.fileContainerLink span
+{
+    color:  rgb(0, 119, 255);;
+}
+
+.fileContainerLink:hover
+{
+    color: rgb(200, 255, 255);
+}
