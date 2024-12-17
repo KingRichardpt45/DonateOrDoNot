@@ -32,21 +32,17 @@ const DonationModal: React.FC<DonationModalProps> = ({
     setErrorMessage(null);
     setSuccessMessage(null);
 
+    
+    
     try {
+      const formData = new FormData();
+      formData.append("campaign_id", campaignId.toString() );
+      formData.append("donor_id", donorId.toString());
+      formData.append("comment", comment.trim());
+      formData.append("value", amount.toString());
+      formData.append("nameHidden", anonymous ? "true" : "false");
       // Send donation data to the API
-      const response = await fetch("/api/donations", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          campaign_id: campaignId,
-          donor_id: donorId,
-          comment: comment.trim(),
-          value: amount,
-          nameHidden: anonymous,
-        }),
-      });
+      const response = await fetch("/api/donations",  { method: "PUT", body: formData });
 
       if (response.ok) {
         const data = await response.json();
