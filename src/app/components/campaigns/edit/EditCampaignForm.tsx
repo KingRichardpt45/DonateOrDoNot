@@ -919,7 +919,7 @@ const EditCampaignForm :React.FC<{userType:number,userId:number,campaign:Campaig
           <div className={styles.ButtonFormContainer}>
             <div className={styles.line}>
               <div className={styles.ButtonForm} >
-                <button className={styles.submitButton} onClick={handleSubmit}>
+                <button className={styles.submitButton} onClick={() => continueToMy_Campaigns()}>
                     Cancel
                 </button>
               </div>
