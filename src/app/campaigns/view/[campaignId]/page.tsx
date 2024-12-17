@@ -16,7 +16,6 @@ import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
 import { CampaignBadge } from "@/models/CampaignBadge";
 import { Badge } from "@/models/Badge";
 import { Donor } from "@/models/Donor";
-import { User } from "@/models/User";
 
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const campaignsManager = new  DonationCampaignManager();
@@ -24,7 +23,7 @@ const filesManager = new  FileManager();
 const entityConverter = Services.getInstance().get<EntityConverter>("EntityConverter");
 
 
-const donationcampaignmanager= new DonationCampaignManager();
+const donationCampaignManager= new DonationCampaignManager();
 
 
 export default async function CampaignCreate({params}:{ params: { campaignId:string } }) 
@@ -33,53 +32,51 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
   const { campaignId } = await params;
   const parsedCampaignId: number = Number(campaignId);
   
-  if( Number.isNaN(parsedCampaignId) )
-    {
-      return (
-        <MainLayout passUser={user}>
-        <div className={styles.page}>Not Found 404</div>
-      </MainLayout>
+  let campaign = null;
+  let campaignAdPain = null;
+  const plainTopDonors:Donor[]  = []; 
+  
+  if( !Number.isNaN(parsedCampaignId) )
+  {
+    const campaign = await campaignsManager.getById( parsedCampaignId,
+      (campaign) => 
+        [ new IncludeNavigation(campaign.badges,0), 
+          new IncludeNavigation(campaign.bank_account,0), 
+          new IncludeNavigation( (new CampaignBadge()).badge,1), 
+          new IncludeNavigation((new Badge).image, 3),
+        ]  
     );
+    
+    if( campaign !== null )
+    {
+      campaign.files.value  = await filesManager.getByCondition([new Constraint("campaign_id",Operator.EQUALS,campaign.id)],(v)=>[],[],0,0);
+    
+      campaignAdPain = entityConverter.toPlainObject(campaign) as Campaign;
+      
+      const result = await donationCampaignManager.getTopDonors(campaign.id!,0,5);
+      const topDonors:Donor[] = result.value!;
+     
+      if(result.isOK){
+        topDonors.forEach((donor) => plainTopDonors.push(entityConverter.toPlainObject(donor)as Donor) );
+      }
+    }
+    
   }
 
-  const campaign = await campaignsManager.getById( parsedCampaignId,
-    (campaign) => 
-      [ new IncludeNavigation(campaign.badges,0), 
-        new IncludeNavigation(campaign.bank_account,0), 
-        new IncludeNavigation( (new CampaignBadge()).badge,1), 
-        new IncludeNavigation((new Badge).image, 3),
-      ]  
-    );
-    
-    
-    if( campaign === null )
-      {
-        return (
-          <MainLayout passUser={user}>
-        <div className={styles.page}>Not Found 404</div>
-      </MainLayout>
-    );
-  }
-  campaign.files.value  = await filesManager.getByCondition([new Constraint("campaign_id",Operator.EQUALS,campaign.id)],(v)=>[],[],0,0);
-  const authorized = user?.type == UserRoleTypes.Donor 
-  const campaignAdPain = entityConverter.toPlainObject(campaign) as Campaign;
-  
-  
-  const result = await donationcampaignmanager.getTopDonors(campaign.id!,0,5);
-  const topDonors:Donor[] = result.value!;
-  const plainTopDonors:Donor[]  = [];
-  if(result.isOK){
-    topDonors.forEach((donor) => plainTopDonors.push(entityConverter.toPlainObject(donor)as Donor) );
-  }
+  const authorized = user?.type == UserRoleTypes.Donor;
   
   return (
-    <MainLayout passUser={user}>
+    <MainLayout passUser={null}>
+      { Number.isNaN(parsedCampaignId) || !campaignAdPain &&
+
+        <div className={styles.page}>Not Found 404</div>
+      }
       {
         user === null &&
         <NotLoggedIn/>
       }
       {
-        !authorized &&
+        !authorized && user !== null &&
         <NotAuthorized/>
       }
       {

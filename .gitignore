@@ -56,3 +56,4 @@ next-env.d.ts
 
 # nyc test coverage
 .nyc_output
+src/**/*.js

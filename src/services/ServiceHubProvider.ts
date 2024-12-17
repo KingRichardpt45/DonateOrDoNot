@@ -1,4 +1,4 @@
-import "server-only"
+
 
 import { NotificationsHub } from "./hubs/notificationHub/NotificationsHub";
 import { IHubWithRooms } from "./hubs/IHubWithRooms";
@@ -13,17 +13,22 @@ export class ServicesHubProvider {
     private static instance: ServicesHubProvider | null = null;
     private static readonly services = new Map<string, unknown>();
 
+    static getConnectionLink()
+    {
+        return "http://localhost:3001";
+    }
+
     private constructor() 
     {
-        if( !process.env.SOCKET_IO_HOST || !process.env.SOCKET_IO_PORT )
-            throw new Error("missing .env variables SOCKET_IO_HOST or SOCKET_IO_PORT");
+        // if( !process.env.SOCKET_IO_HOST || !process.env.SOCKET_IO_PORT )
+        //     throw new Error("missing .env variables SOCKET_IO_HOST or SOCKET_IO_PORT");
 
         const socketIoServer = SocketIoServer.getInstance(
-            process.env.SOCKET_IO_HOST as string, 
-            process.env.SOCKET_IO_PORT as unknown as number
+            "localhost", 
+            3001
             ,{
                 cors: {
-                  origin: process.env.URL,
+                  origin: "http://localhost:3000",
                   methods: ["GET", "POST"],
                 //   credentials: true
                 },

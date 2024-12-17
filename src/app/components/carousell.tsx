@@ -7,22 +7,22 @@ import {File as ModelFile} from "@/models/File";
 import Image from 'next/image';
 
 
-const Carousel: React.FC<{}> = () => {
+const Carousel: React.FC<{ onActualIdChange:(index:number)=>void }> = ({onActualIdChange}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  //const [mainImageID,setMainImagesID] = useState<ModelFile[]>([]);
-
-  const [tops,setTopCampaign] = useState<{MainImagesArray:ModelFile[],campains:Campaign[]}>({MainImagesArray:[],campains:[]});
+  const [tops,setTopCampaign] = useState<{MainImagesArray:ModelFile[],campaigns:Campaign[]}>({MainImagesArray:[],campaigns:[]});
 
   const nextItem = () => {
     if (tops.MainImagesArray.length > 0) {
       setCurrentIndex((prev) => (prev + 1) % tops.MainImagesArray.length);
+      onActualIdChange(tops.campaigns[0].id!);
     }
   };
   
   const prevItem = () => {
     if (tops.MainImagesArray.length > 0) {
       setCurrentIndex((prev) => (prev - 1 + tops.MainImagesArray.length) % tops.MainImagesArray.length);
+      onActualIdChange(currentIndex);
     }
   };
 
@@ -41,15 +41,20 @@ const Carousel: React.FC<{}> = () => {
               }
             }
           }
-          setTopCampaign({MainImagesArray:mainImageID,campains:topCampaigns});
+          setTopCampaign({MainImagesArray:mainImageID,campaigns:topCampaigns});
         }
       }
     );
 
-    const interval = setInterval(nextItem, 3000);
-    return () => clearInterval(interval);
   }, []); 
-    
+
+  useEffect(() => {
+    if (tops.MainImagesArray.length > 0) {
+      const interval = setInterval(nextItem, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [tops.MainImagesArray]);
+
     return (
       <div className={styles.carousel}>
       {/* Indicators */}
@@ -87,8 +92,8 @@ const Carousel: React.FC<{}> = () => {
       </button>
       {/* Overlay content */}
       <div className={styles.overlay}>
-        <h2 className={styles.title}>{tops.campains[currentIndex]?.title}</h2>
-        <p className={styles.description}>{tops.campains[currentIndex]?.description}</p>
+        <h2 className={styles.title}>{tops.campaigns[currentIndex]?.title}</h2>
+        <p className={styles.description}>{tops.campaigns[currentIndex]?.description}</p>
         <div className={styles.donationGoals}>
           {/* <p> Current Progress {tops.campains[currentIndex]?.current_donation_value}</p> */}
           {/* {tops.campains.map((campaign, index) => (

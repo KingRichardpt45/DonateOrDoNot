@@ -1,11 +1,10 @@
 {
   "name": "donate_or_donot",
   "version": "0.0.1",
-  "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev2": "nodemon src/server.js",
+    "dev": "next dev ",
+    "dev2": "node ./src/SocketServer.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

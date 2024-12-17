@@ -1,6 +1,5 @@
 import { Notification } from "@/models/Notification";
 import { IHubEvent } from "../IHubEvent";
-import { NotificationHubRoomId } from "../notificationHub/NotificationHubRoomId";
 
 export class EventNotification implements IHubEvent<Notification>
 {

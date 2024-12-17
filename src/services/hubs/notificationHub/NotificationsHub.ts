@@ -11,8 +11,7 @@ import { IHubWithRooms } from "../IHubWithRooms";
 import { ListenerRegistry } from "./ListenerRegistry";
 import { JoinRoomEvent } from "../events/JoinRoomEvent";
 import { LeaveRoomEvent } from "../events/LeaveRoomEvent";
-import { VarSync } from "@/core/utils/VarSync";
-import { EventNotification } from "../events/EventNotification";
+import { VarSync } from "./../../../core/utils/VarSync";
 /**
  * Starting with socket.io@3.1.0, the underlying Adapter will emit the following events:
 
@@ -50,28 +49,28 @@ export class NotificationsHub implements IHubWithRooms
     async getConnections(): Promise<NotificationServerHubConnection[]> 
     {   
         //console.log("A:2")
-        return await this.connections.runExclusive((connections) => { return connections.values().toArray()} );
+        return await this.connections.runExclusive((connections) => { return Array.from(connections.values()) } );
     }
 
     async getConnectionIds(): Promise<NotificationHubConnectionId[]>
     {
         //console.log("A:3")
         const ids : NotificationHubConnectionId[] = [];
-        await this.connections.runExclusive((connections) => { connections.values().forEach( (value) => ids.push(value.id) ); } );
+        await this.connections.runExclusive((connections) => { Array.from(connections.values()).forEach( (value) => ids.push(value.id) ); } );
         return ids;
     }
     
     async getRooms(): Promise<NotificationHubRoom[]> 
     {
         //console.log("A:4")
-        return await this.rooms.runExclusive((rooms) => { return rooms.values().toArray() } );
+        return await this.rooms.runExclusive((rooms) => { return Array.from(rooms.values()) } );
     }
 
     async getRoomIds(): Promise<IHubRoomId<any>[]> 
     {
         //console.log("A:5")
         const ids : NotificationHubRoomId[] = [];
-        await this.rooms.runExclusive((rooms) => { rooms.values().forEach( (value) => ids.push(value.id)); } );
+        await this.rooms.runExclusive((rooms) => { Array.from(rooms.values()).forEach( (value) => ids.push(value.id)); } );
         return ids;
     }
 

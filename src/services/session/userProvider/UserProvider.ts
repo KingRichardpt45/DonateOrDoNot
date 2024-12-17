@@ -1,4 +1,4 @@
-import "server-only"
+
 
 import {User} from "@/models/User";
 import {IUserProvider} from "./IUserProvider";
