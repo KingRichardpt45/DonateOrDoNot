@@ -3,17 +3,23 @@ import {OperationResult} from "@/core/utils/operation_result/OperationResult";
 import {FormError} from "@/core/utils/operation_result/FormError";
 import {Donor} from "@/models/Donor";
 import {SimpleError} from "@/core/utils/operation_result/SimpleError";
-import {RepositoryAsync} from "../repository/RepositoryAsync";
-import {StoreItem} from "@/models/StoreItem";
-import {PrimaryKeyPart} from "../repository/PrimaryKeyPart";
-import {DonorBadge} from "@/models/DonorBadge";
-import {Badge} from "@/models/Badge";
-import {DonorStoreItem} from "@/models/DonorStoreItem";
-import {BadgeTypes} from "@/models/types/BadgeTypes";
+import { RepositoryAsync } from "../repository/RepositoryAsync";
+import { StoreItem } from "@/models/StoreItem";
+import { PrimaryKeyPart } from "../repository/PrimaryKeyPart";
+import { DonorBadge } from "@/models/DonorBadge";
+import { Badge } from "@/models/Badge";
+import { BadgeManager } from "./BadgeManager";
+import { DonorStoreItem } from "@/models/DonorStoreItem";
+import { BadgeTypes } from "@/models/types/BadgeTypes";
+import { IncludeNavigation } from "../repository/IncludeNavigation";
+
 
 
 export class DonorManager extends EntityManager<Donor>
 {
+    static getByCondition(arg0: any[], arg1: (campaign: any) => any[], arg2: never[], arg3: number, arg4: number): Donor[] | PromiseLike<Donor[]> {
+      throw new Error('Method not implemented.');
+    }
     private readonly storeItemRepo : RepositoryAsync<StoreItem>;
     private readonly donorBadgeRepo : RepositoryAsync<DonorBadge>;
     private readonly donorStoreItemRepo : RepositoryAsync<DonorStoreItem>;
@@ -52,7 +58,7 @@ export class DonorManager extends EntityManager<Donor>
     {
         const donors = await this.repository.getByCondition(
             [],
-            (d)=>[],
+            (d)=>[new IncludeNavigation(d.user,0)],
             [{ column: `${Donor.getTableName()}.${topAttribute}`, order: "desc" }],
             pageSize,
             page*pageSize,
