@@ -12,13 +12,15 @@ import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { CampaignStatus } from "@/models/types/CampaignStatus";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { FileTypes } from "@/models/types/FileTypes";
+import Carousel from "../components/carousell";
 
 
 const CampaignsList :React.FC<{campaigns:Campaign[]}> = ({campaigns}) =>{
     //console.log(campaigns);
 
     return(
-    <div className={styles.container}>
+      <div className={styles.container}>
+        <div><Carousel/></div>
               <div className={styles.campaignContainer}>
                 <h2 className={styles.heading}>Other Campaigns</h2>
                 {/* List of campaigns rendered dynamically from defaultCampaigns */}
@@ -44,7 +46,7 @@ const CampaignsList :React.FC<{campaigns:Campaign[]}> = ({campaigns}) =>{
                   ))}
                 </div>
               </div>
-            </div>
+            </div> 
             )
 }
 

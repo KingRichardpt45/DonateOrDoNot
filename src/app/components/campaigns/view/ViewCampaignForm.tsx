@@ -20,6 +20,7 @@ import { ActionResultNotificationError } from "../../actionsNotifications/Action
 import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
 import { CampaignStatus } from "@/models/types/CampaignStatus";
+import CarouselCampaign from "../../CampaignCarrousel/carouselCampaign";
 
 interface AddedFile
 { 
@@ -134,6 +135,7 @@ const ViewCampaignForm :React.FC<{campaign:Campaign}> = ({campaign}) =>{
   return (
         <div>
             {/*adicionar a chamada do carrousel*/}
+            <CarouselCampaign campaign={ campaign as Campaign} />
 
         <div className={styles.container}>
             <div className={styles.campaignContainer}>

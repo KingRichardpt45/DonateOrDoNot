@@ -955,7 +955,7 @@ const EditCampaignForm :React.FC<{userType:number,userId:number,campaign:Campaig
       <div className={styles.ButtonFormContainer}>
         <div className={styles.line}>
           <div className={styles.ButtonForm}>
-            <button className={styles.submitButton} onClick={() => sendUpdateStatus(campaign.id!,CampaignStatus.Approved.toString())}>Accept</button>
+            <button className={styles.submitButton} onClick={() => sendUpdateStatus(campaign.id!,CampaignStatus.Active.toString())}>Accept</button>
           </div>
           <div className={styles.ButtonForm}>
             <button className={styles.submitButtonUpdate} onClick={() => sendUpdateStatus(campaign.id!,CampaignStatus.Reproved.toString())}>Deny</button>

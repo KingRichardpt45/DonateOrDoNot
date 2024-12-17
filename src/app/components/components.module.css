@@ -553,10 +553,11 @@
 .carousel {
   display: flex;
   align-items: center;
-  width: 100%; /* Make carousel container stretch to full width */
-  height: 100%;
+  position: relative;
+  width: 100%; /* Ensures it fills the parent container */
+  height: 80vh; /* Adjust height as per design */
   margin: 0 auto;
-  overflow: hidden;
+  overflow: hidden; /* Prevent content overflow */
 }
 
 .imageTrain {
@@ -567,11 +568,10 @@
 }
 
 .imageTrain img {
-  display: flex;
-  height: 100vh;
-  width: 100%; /* Makes each image take up 100% of the carousel width */
-  object-fit: cover;
-  flex-shrink: 0; /* Prevents images from shrinking */
+  width: 100%; /* Stretch to fill carousel container */
+  height: 80vh; /* Match the carousel height */
+  object-fit: cover; /* Ensures no distortion */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .navButton {
