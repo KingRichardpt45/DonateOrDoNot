@@ -15,11 +15,15 @@ import { Operator } from "@/core/repository/Operator";
 import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
 import { CampaignBadge } from "@/models/CampaignBadge";
 import { Badge } from "@/models/Badge";
+import { Donor } from "@/models/Donor";
 
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const campaignsManager = new  DonationCampaignManager();
 const filesManager = new  FileManager();
 const entityConverter = Services.getInstance().get<EntityConverter>("EntityConverter");
+
+
+const donationcampaignmanager= new DonationCampaignManager();
 
 
 export default async function CampaignCreate({params}:{ params: { campaignId:string } }) 
@@ -29,9 +33,9 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
   const parsedCampaignId: number = Number(campaignId);
   
   if( Number.isNaN(parsedCampaignId) )
-  {
-    return (
-      <MainLayout passUser={user}>
+    {
+      return (
+        <MainLayout passUser={user}>
         <div className={styles.page}>Not Found 404</div>
       </MainLayout>
     );
@@ -44,13 +48,13 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
         new IncludeNavigation( (new CampaignBadge()).badge,1), 
         new IncludeNavigation((new Badge).image, 3),
       ]  
-  );
-
-  
-  if( campaign === null )
-    {
-      return (
-        <MainLayout passUser={user}>
+    );
+    
+    
+    if( campaign === null )
+      {
+        return (
+          <MainLayout passUser={user}>
         <div className={styles.page}>Not Found 404</div>
       </MainLayout>
     );
@@ -58,8 +62,9 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
   campaign.files.value  = await filesManager.getByCondition([new Constraint("campaign_id",Operator.EQUALS,campaign.id)],(v)=>[],[],0,0);
   const authorized = user?.type == UserRoleTypes.Donor 
   const campaignAdPain = entityConverter.toPlainObject(campaign) as Campaign;
-
-
+  
+  
+  const topDonors = await donationcampaignmanager.getTopDonors(campaign.id!,0,5);
   
   return (
     <MainLayout passUser={user}>
@@ -74,7 +79,7 @@ export default async function CampaignCreate({params}:{ params: { campaignId:str
       {
         authorized &&
         <div className={styles.page}>
-          <ViewCampaignForm campaign={ campaignAdPain as Campaign} />
+          <ViewCampaignForm campaign={ campaignAdPain as Campaign} topDonors= {topDonors.value as Donor[]} />
         </div>
       }
     </MainLayout>
