@@ -60,7 +60,7 @@ export class DonationCampaignManager extends EntityManager<Campaign> implements 
     }
 
     async getTopDonors(campaign_id: number, page: number, pageSize: number): Promise<OperationResult<Donor[] | null, SimpleError>> {
-        const totalValuesDonated = await this.totalValuesDonatedRepository.getByCondition([new Constraint("id", Operator.EQUALS, campaign_id)], (totalDonatedValue) => [new IncludeNavigation(totalDonatedValue.donor, 0)], [{
+        const totalValuesDonated = await this.totalValuesDonatedRepository.getByCondition([new Constraint("id", Operator.EQUALS, campaign_id)], (totalDonatedValue) => [new IncludeNavigation(totalDonatedValue.donor, 0), new IncludeNavigation((new Donor).user,1)], [{
             column: `${TotalDonatedValue.getTableName()}.total_value`,
             order: "desc"
         }], pageSize, page * pageSize,)
@@ -68,7 +68,7 @@ export class DonationCampaignManager extends EntityManager<Campaign> implements 
         const donors: Donor[] = [];
         totalValuesDonated.forEach((totalValueDonated) => donors.push(totalValueDonated.donor.value! as Donor))
 
-        if (donors.length == 0) return new OperationResult(null, [new SimpleError("No results where fount.")]); else return new OperationResult(donors, []);
+        if (donors.length == 0) return new OperationResult(null, [new SimpleError("No results where found.")]); else return new OperationResult(donors, []);
     }
 
     async searchWithConstraints(constraints: Constraint[], page: number, pageSize: number): Promise<OperationResult<Campaign[], SimpleError>> {

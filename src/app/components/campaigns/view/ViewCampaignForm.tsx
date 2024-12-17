@@ -23,6 +23,9 @@ import { CampaignStatus } from "@/models/types/CampaignStatus";
 import CarouselCampaign from "../../CampaignCarrousel/carouselCampaign";
 import TopDonors from "../../topDonors/topDonors";
 import { Donor } from "@/models/Donor";
+import DonationModal from "../../PopUpDonation/DonationPOP";
+import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
+import { Services } from "@/services/Services";
 
 interface AddedFile
 { 
@@ -48,7 +51,9 @@ interface FormsData
 
 
 
-const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[]}> = ({campaign, topDonors}) =>{
+const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[], donorId:number}> = ({campaign, topDonors,donorId}) =>{
+
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false); // State for modal visibility
 
     const [ firstRender, setFirstRender ] = useState<boolean>(true);
     const [ render,setRender] = useState<number>(0);
@@ -136,6 +141,8 @@ const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[]}> = ({ca
     setModalOpen(false);
   };
 
+  
+
   return (
         <div>
             {/*adicionar a chamada do carrousel*/}
@@ -161,6 +168,20 @@ const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[]}> = ({ca
           </div>
         </div>
         
+          <div className={styles.buttoncontainer}>
+          <button
+            className={styles.donateNowButton}
+            onClick={() => setIsDonationModalOpen(true)} // Open modal on click
+            >
+            Donate Now
+          </button>
+          </div>
+          <div><DonationModal
+            isOpen={isDonationModalOpen} // Modal visibility
+            onClose={() => setIsDonationModalOpen(false)} // Close handler
+            campaignId={campaign.id!} donorId={donorId}      />
+        </div>
+
         <div><TopDonors
             podiumDonors={topDonors}
           /></div>

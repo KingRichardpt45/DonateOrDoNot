@@ -18,7 +18,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
   campaignId,
   donorId,
 }) => {
-  const [amount, setAmount] = useState(18); // State for donation amount
+  const [amount, setAmount] = useState(0); // State for donation amount
   const [selectedMethod, setSelectedMethod] = useState<string>(""); // State for selected payment method
   const [anonymous, setAnonymous] = useState<boolean>(false); // State for anonymous donation
   const [comment, setComment] = useState<string>(""); // State for user comment
