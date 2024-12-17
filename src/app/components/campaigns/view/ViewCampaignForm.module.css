@@ -138,9 +138,8 @@
     background-color: rgba(26, 0, 37, 0.7);
     border-radius: 5px;
     min-height: 120px;
-    max-width: 100%;
-    min-width: 1500px;
-    overflow-x: scroll;
+    width: 100%; /* Make the container responsive */
+    overflow-x: auto; /* Keep horizontal scrolling if needed */
 }
 
 .fileForm {
@@ -241,9 +240,7 @@
 }
 
 /* Campaign Container */
-.campaignContainer {
-    margin-top: 30px;
-}
+
 
 .heading {
     font-size: 28px;
