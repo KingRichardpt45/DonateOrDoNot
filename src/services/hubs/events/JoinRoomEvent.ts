@@ -1,6 +1,5 @@
 import { IHubEvent } from "../IHubEvent";
 import { NotificationHubRoomId } from "../notificationHub/NotificationHubRoomId";
-import { Services } from "@/services/Services";
 
 export class JoinRoomEvent implements IHubEvent<NotificationHubRoomId>
 {

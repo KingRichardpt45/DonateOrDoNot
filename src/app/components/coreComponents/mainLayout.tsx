@@ -22,7 +22,7 @@ type PropType =
 }
 
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
-const hubWithRooms = ServicesHubProvider.getInstance().get<IHubWithRooms>("IHubWithRooms");
+const connectionLink = ServicesHubProvider.getConnectionLink();
 const entityConverter =  Services.getInstance().get<EntityConverter>("EntityConverter");
 const notificationManager = new NotificationManager();
 
@@ -39,8 +39,10 @@ export const MainLayout: React.FC<PropType> = async ({ children , passUser}) => 
         image =`${(user.profileImage.value as File).id}_${(user.profileImage.value as File).original_name}` 
     }
 
+    console.log("Called Mainlayout1")
+
     return (
-        <IoConnectionProvider connectionLink={hubWithRooms.getConnectionLink()}>
+        <IoConnectionProvider connectionLink={connectionLink}>
             <div className={styles.MainContainer} >
                 { user != null && <HeaderL userImage={image} userId={user.id!} userName={`${user.first_name} ${user.last_name}`} userType={user.type} notifications={notificationsPlain as Notification[]}/> }
                 { user == null && <Header/> }

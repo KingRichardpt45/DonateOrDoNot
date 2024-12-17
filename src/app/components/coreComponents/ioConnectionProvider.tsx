@@ -39,6 +39,7 @@ const IoConnectionProvider: React.FC<{children:React.ReactNode,connectionLink:st
 
       if(firstRender.isFirst)
       {
+        //console.log("ONclient---------------2");
         connection.current = new NotificationHubClientConnection(connectionLink);
         firstRender.isFirst= false;
       }

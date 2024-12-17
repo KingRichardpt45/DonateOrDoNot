@@ -31,7 +31,7 @@ export class NotificationHubRoom implements IHubRoom
 
     removeConnection(connectionId: NotificationHubConnectionId ): void 
     {
-        const connection = this.connections.values().find( ( connection ) => connection.id === connectionId);
+        const connection = Array.from(this.connections.values()).find( ( connection ) => connection.id === connectionId);
         if(connection)
         {
             connection.data.leave(this.id.value);
@@ -42,12 +42,12 @@ export class NotificationHubRoom implements IHubRoom
 
     getConnections(): NotificationServerHubConnection[] 
     {
-        return this.connections.values().toArray();
+        return Array.from(this.connections.values());
     }
 
     hasConnection( connectionId:NotificationHubConnectionId ): boolean 
     {
-        return this.connections.values().find( ( connection ) => connection.id === connectionId) != undefined;
+        return Array.from(this.connections.values()).find( ( connection ) => connection.id === connectionId) != undefined;
     } 
 
     close(): void
