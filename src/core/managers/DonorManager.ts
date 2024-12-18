@@ -10,10 +10,14 @@ import {DonorBadge} from "@/models/DonorBadge";
 import {Badge} from "@/models/Badge";
 import {DonorStoreItem} from "@/models/DonorStoreItem";
 import {BadgeTypes} from "@/models/types/BadgeTypes";
+import {IncludeNavigation} from "../repository/IncludeNavigation";
 
 
 export class DonorManager extends EntityManager<Donor>
 {
+    static getByCondition(arg0: any[], arg1: (campaign: any) => any[], arg2: never[], arg3: number, arg4: number): Donor[] | PromiseLike<Donor[]> {
+      throw new Error('Method not implemented.');
+    }
     private readonly storeItemRepo : RepositoryAsync<StoreItem>;
     private readonly donorBadgeRepo : RepositoryAsync<DonorBadge>;
     private readonly donorStoreItemRepo : RepositoryAsync<DonorStoreItem>;
@@ -52,7 +56,7 @@ export class DonorManager extends EntityManager<Donor>
     {
         const donors = await this.repository.getByCondition(
             [],
-            (d)=>[],
+            (d)=>[new IncludeNavigation(d.user,0)],
             [{ column: `${Donor.getTableName()}.${topAttribute}`, order: "desc" }],
             pageSize,
             page*pageSize,
@@ -78,12 +82,10 @@ export class DonorManager extends EntityManager<Donor>
 
         if(errors.length > 0)
             return new OperationResult(false,errors);
-
         if (donor!.donacoins! >= item!.cost!)
         {
             donor!.donacoins! -= item!.cost!;
             this.repository.updateFields(donor!,"donacoins");
-
             const donorStoreItemToCreate = new DonorStoreItem();
             donorStoreItemToCreate.store_item_id = storeItemId;
             donorStoreItemToCreate.donor_id = donorId;
@@ -91,6 +93,7 @@ export class DonorManager extends EntityManager<Donor>
 
             return new OperationResult(true,[]);
         }
+
         else
             return new OperationResult(false,[new FormError("donacoins",["Insufficient donacoins."] )]);
 

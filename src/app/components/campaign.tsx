@@ -1,73 +1,61 @@
 "use client";
-import { useState} from "react";
-import DonationModal from "./PopUpDonation/DonationPOP"; // Import DonationModal
+import {useRef, useState} from "react";
 import styles from "./components.module.css";
-import Carousel from "./carousell"; // Importa o novo componente
+import Carousel from "./carousell"; // Importa o novo component
 
-const campaigns = [
-  {
-    image: "/images/hunger.png",
-    title: "Fight Hunger",
-    description:
-      "Help us provide meals to those in need. Your donation can make a real difference in someone's life.",
-    donationGoals: [
-      "1€ = 2 meals",
-      "5€ = 10 meals",
-      "10€ = 20 meals and essential groceries",
-      "20€ = 40 meals, groceries, and cooking supplies",
-    ],
-  },
-  {
-    image: "/images/Elephant.png",
-    title: "Save the Elephants",
-    description:
-      "Join our efforts to protect elephants from poaching and preserve their natural habitats.",
-    donationGoals: [
-      "1€ = Protect 10 sq meters of habitat",
-      "5€ = Provide a day's food for an elephant",
-      "10€ = Support anti-poaching patrols for a day",
-      "20€ = Contribute to elephant rehabilitation efforts",
-    ],
-  },
-  {
-    image: "/images/Football.png",
-    title: "Football For All",
-    description:
-      "Join our efforts to protect elephants from poaching and preserve their natural habitats.",
-    donationGoals: [
-      "1€ = Protect 10 sq meters of habitat",
-      "5€ = Provide a day's food for an elephant",
-      "10€ = Support anti-poaching patrols for a day",
-      "20€ = Contribute to elephant rehabilitation efforts",
-    ],
-  },
-];
 
-export default function Campaign(){
+const  HomeContent:React.FC<{isAuthorized:boolean}> = ({isAuthorized}) => {
   
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false); // State for modal visibility
+  const actualId = useRef<number>(0);
+  
+  function onActualIdChange(index:number)
+  {
+    actualId.current = index;
+  }
 
+  function onClickDonate()
+  {
+    window.location.href = `/campaigns/view/${actualId.current}`; 
+  }
+
+  function onClickSignUp()
+  {
+    window.location.href = `/signup`; 
+  }
 
   return (
-    <>
+    <div style={{flexGrow:1,width:"100%"}}>
       <section className={styles.campaign}>
-      <Carousel items={campaigns} />
+      <Carousel onActualIdChange={onActualIdChange} />
         <div className={styles.bottomOverlay}>
-          <p>Be one of this campaign's top Donors!</p>
-          <button
-            className={styles.donateNowButton}
-            onClick={() => setIsDonationModalOpen(true)} // Open modal on click
-          >
-            Donate Now
-          </button>
+           { isAuthorized && 
+            <>
+              <p>Be one of this campaign's top Donors!</p>
+              <button
+                className={styles.donateNowButton}
+                onClick={() => onClickDonate() } 
+                >
+                Donate Now
+              </button>
+            </>
+           }
+           { !isAuthorized && 
+            <>
+              <p>Let your heart Grow, filing it with joy by Donating Now!</p>
+              <button
+                className={styles.donateNowButton}
+                onClick={() => onClickSignUp() } 
+                >
+                Sign Up 
+              </button>
+            </>
+           }
         </div>
       </section>
-
-      {/* Donation Modal */}
-      <DonationModal
-        isOpen={isDonationModalOpen} // Modal visibility
-        onClose={() => setIsDonationModalOpen(false)} // Close handler
-        campaignId={1} donorId={1}      />
-    </>
+    </div>
   );
 }
+
+
+export default HomeContent;

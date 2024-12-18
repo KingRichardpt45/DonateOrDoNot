@@ -13,12 +13,14 @@ import {IncludeNavigation} from "../repository/IncludeNavigation";
 import {CampaignStatus} from "@/models/types/CampaignStatus";
 import {BankAccountManager} from "./BankAccountManager";
 import {SearchableEntity} from "./SerachableEntity";
+import {FileManager} from "./FileManager";
 
 export class DonationCampaignManager extends EntityManager<Campaign> implements SearchableEntity<Campaign> {
 
     private readonly totalValuesDonatedRepository: RepositoryAsync<TotalDonatedValue>;
     private readonly userManager: UserManager;
     private readonly bankAccountManager: BankAccountManager;
+    private readonly fileManager : FileManager
 
 
     constructor() {
@@ -26,6 +28,7 @@ export class DonationCampaignManager extends EntityManager<Campaign> implements 
         this.totalValuesDonatedRepository = new RepositoryAsync(TotalDonatedValue);
         this.userManager = new UserManager();
         this.bankAccountManager = new BankAccountManager();
+        this.fileManager = new FileManager();
     }
 
     async create(title: string | null, description: string | null, objectiveValue: number | null, category: string | null, endDate: Date | null, contactEmail: string | null, contactPhoneNumber: string | null, intervalNotificationValue: number, campaignManagerId: number | null, bankAccountId: number | null): Promise<OperationResult<Campaign | null, FormError>> {
@@ -60,7 +63,7 @@ export class DonationCampaignManager extends EntityManager<Campaign> implements 
     }
 
     async getTopDonors(campaign_id: number, page: number, pageSize: number): Promise<OperationResult<Donor[] | null, SimpleError>> {
-        const totalValuesDonated = await this.totalValuesDonatedRepository.getByCondition([new Constraint("id", Operator.EQUALS, campaign_id)], (totalDonatedValue) => [new IncludeNavigation(totalDonatedValue.donor, 0)], [{
+        const totalValuesDonated = await this.totalValuesDonatedRepository.getByCondition([new Constraint("id", Operator.EQUALS, campaign_id)], (totalDonatedValue) => [new IncludeNavigation(totalDonatedValue.donor, 0), new IncludeNavigation((new Donor).user,1)], [{
             column: `${TotalDonatedValue.getTableName()}.total_value`,
             order: "desc"
         }], pageSize, page * pageSize,)
@@ -68,15 +71,16 @@ export class DonationCampaignManager extends EntityManager<Campaign> implements 
         const donors: Donor[] = [];
         totalValuesDonated.forEach((totalValueDonated) => donors.push(totalValueDonated.donor.value! as Donor))
 
-        if (donors.length == 0) return new OperationResult(null, [new SimpleError("No results where fount.")]); else return new OperationResult(donors, []);
+        if (donors.length == 0) return new OperationResult(null, [new SimpleError("No results where found.")]); else return new OperationResult(donors, []);
     }
 
-    async searchWithConstraints(constraints: Constraint[], page: number, pageSize: number): Promise<OperationResult<Campaign[], SimpleError>> {
-        const inNamesResult = await this.repository.getByCondition(constraints, (campaign) => [new IncludeNavigation(campaign.files, 0)], [], pageSize, page * pageSize);
+    async searchWithConstraints(constraints: Constraint[], page: number, pageSize: number): Promise<OperationResult<Campaign[], SimpleError>> 
+    {
+        const inNamesResult = await this.repository.getByCondition(constraints, (campaign) => [], [], pageSize , page * pageSize,true);
 
-        const inDescriptionResult = await this.repository.getByCondition(constraints, (campaign) => [new IncludeNavigation(campaign.files, 0)], [], pageSize, page * pageSize);
-
-        inDescriptionResult.forEach((value) => inNamesResult.push(value));
+        for (const campaign of inNamesResult) {
+            campaign.files.value = await this.fileManager.getByCondition([new Constraint("campaign_id",Operator.EQUALS,campaign.id)],(v)=>[],[],0,0)
+        }
 
         if (inNamesResult.length == 0) return new OperationResult([], [new SimpleError("No items where found.")]); else return new OperationResult(inNamesResult, []);
     }

@@ -65,8 +65,8 @@ export async function PUT(request: NextRequest) {
 
 const searchFormSchema = yup.object().shape(
     {
-        query: yup.string().trim().required().nonNullable().min(1),
-        page: yup.number().transform(YupUtils.convertToNumber).required().integer().positive().nonNullable(),
+        query: yup.string().lowercase().trim().notRequired().nonNullable().min(0),
+        page: yup.number().transform(YupUtils.convertToNumber).required().integer().nonNullable(),
         pageSize: yup.number().transform(YupUtils.convertToNumber).required().integer().positive().nonNullable(),
     }
 );
@@ -85,7 +85,6 @@ export async function GET(request: NextRequest) {
 
     if (formData.query) {
         constraints.push(new Constraint("name", Operator.LIKE, `%${formData.query}%`))
-        constraints.push(new Constraint("description", Operator.LIKE, `%${formData.query}%`))
     }
 
     const result = await storeItemManager.searchWithConstraints(constraints, formData.page, formData.pageSize);

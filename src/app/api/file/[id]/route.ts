@@ -19,10 +19,10 @@ const deleteFormSchema = yup.object().shape({
 
 const deleteFormValidator = new FormValidator(deleteFormSchema);
 
-export async function DELETE(request: NextRequest, context: any) {
-    const {params} = context;
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: number }>}) {
+    const {id} = await context.params;
 
-    if (!params?.id) {
+    if (!id) {
         return Responses.createNotFoundResponse();
     }
 
@@ -43,7 +43,7 @@ export async function DELETE(request: NextRequest, context: any) {
         return Responses.createBadRequestResponse();
     }
 
-    const resultFile = await fileManager.getById(params.id);
+    const resultFile = await fileManager.getById(id);
     if (!resultFile) {
         return Responses.createNotFoundResponse("No file was found with the provided id.");
     } else if (resultFile.user_id !== formData.user_id && await !authorizationService.hasRole(UserRoleTypes.Admin)) {
@@ -60,14 +60,15 @@ export async function DELETE(request: NextRequest, context: any) {
     }
 }
 
-export async function GET(request: Request, context: any) {
-    const {params} = context;
+export async function GET(request: Request, context: { params: Promise<{ id: number }>}) {
+   
+    const {id} = await context.params;
 
-    if (!params?.id) {
+    if (! id) {
         return Responses.createNotFoundResponse();
     }
 
-    const resultFileModel = await fileManager.getById(params.id);
+    const resultFileModel = await fileManager.getById(id);
 
     if (!resultFileModel) {
         return Responses.createNotFoundResponse("No file was found with the provided id.");

@@ -86,7 +86,7 @@ export default async function MyCampaigns()
           </div>
 
           <h1 className={styles.sectionTitle}>All campaigns created</h1>
-          <SearchCampaigns pageSize={25} managerId={user.id}/>
+          <SearchCampaigns route="edit" pageSize={25} managerId={user.id} exceptStatusList={null} mainSearch={false}/>
           <div className={styles.campaignsContainer}>
            
           </div>

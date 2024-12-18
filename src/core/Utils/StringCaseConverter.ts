@@ -38,4 +38,21 @@ export class StringCaseConverter {
         return str
             .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
     }
+
+    /**
+     * Converts a given string from snake_case to normal text.
+     *
+     * @param str - The input string in snake_case format.
+     * @returns The converted string in camelCase format.
+     *
+     * @example
+     * ```typescript
+     * const camelCase = StringCaseConverter.convertSnakeToCamel("my_variable_name");
+     * console.log(camelCase); // Output: "myVariableName"
+     * ```
+     */
+    static convertSnakeToNormal(str: string): string {
+        return str
+            .replaceAll("_"," ").replace(/\b\w/g, (char) => char.toUpperCase());
+    }
 }

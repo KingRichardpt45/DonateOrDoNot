@@ -12,80 +12,71 @@ import {Constraint} from "@/core/repository/Constraint";
 import {Operator} from "@/core/repository/Operator";
 import {DonorBadgeManager} from "@/core/managers/DonorBadgesManager";
 import {DonorStoreItemManager} from "@/core/managers/DonorStoreItemManager";
-import Link from "next/link";
 import ProfileSideBar from "@/app/profile/ProfileSideBar";
+import BadgesSection from "./badgeSection";
+import ItemsSection from "./itemSection";
+import CampaignsSection from "./campaignSection";
+import {FileManager} from "@/core/managers/FileManager";
+import {DonationCampaignManager} from "@/core/managers/DonationCampaignManager";
 
-// Define the type for searchParams
 type SearchParams = {
   [key: string]: string | string[] | undefined;
 };
 
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
-
 const donationManager = new DonationManager();
 const donorBadgeManager = new DonorBadgeManager();
 const donorStoreItemManager = new DonorStoreItemManager();
 const donorManager = new DonorManager();
+const filesManager = new FileManager();
+const campaignManager = new DonationCampaignManager();
 
+const ProfilePage = async ({ searchParams }: { searchParams: SearchParams }) => {
+  // Paginação
+  const badgesPage = parseInt(searchParams.badgesPage?.toString() || "1");
+  const itemsPage = parseInt(searchParams.itemsPage?.toString() || "1");
+  const campaignsPage = parseInt(searchParams.campaignsPage?.toString() || "1");
 
+    const badgesPerPage = 10;
+  const itemsPerPage = 10;
+  const campaignsPerPage = 5; // Alterado para 5 campanhas por página
 
-const ProfilePage = async ({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) => {
-
-  const params = await searchParams;
-
-  const page = parseInt(
-    (Array.isArray(params?.page)
-      ? params.page[0]
-      : params.page) || "1"
-  );
-  const badgesPerPage = 5;
-  const itemsPerPage = 5;
-
-  // Fetch user from session provider
   const user = await userProvider.getUser();
 
-  if (user === null) {
-    return <NotLoggedIn />;
-  }
+  if (!user) return <NotLoggedIn />;
+  if (user.type !== UserRoleTypes.Donor) return <NotAuthorized />;
 
-  if (user.type !== UserRoleTypes.Donor) {
-    return <NotAuthorized />;
-  }
-
-  // Fetch all necessary data
-   const donations = await donationManager.getDonationsOfDonor(user.id!, 0, 10);
+  const donations = await donationManager.getDonationsOfDonor(user.id!, 0, 10);
   const badges = await donorBadgeManager.getBadgeOfDonor(user.id!, 0, 100);
   const items = await donorStoreItemManager.getItemsOfDonor(user.id!, 0, 100);
 
   const Donor = await donorManager.getByCondition([
     new Constraint("id", Operator.EQUALS, user?.id),
   ]);
-
-  // Extract donor data
   const donorData = Donor?.find((donor) => donor.id === user.id);
   const totalDonated = donorData?.total_donated_value || 0;
   const freqDon = donorData?.frequency_of_donation || 0;
 
+  // Buscar campanhas associadas às doações
+  const campaigns = await Promise.all(
+    donations.value!.map(async (donation) => {
+      const [campaignImage] = await filesManager.getByCondition([
+        new Constraint("campaign_id", Operator.EQUALS, donation.campaign_id),
+      ]);
 
+      const [donatedCampaign] = await campaignManager.getByCondition([
+        new Constraint("id", Operator.EQUALS, donation.campaign_id),
+      ]);
 
-  // Pagination logic
-  const indexOfLastBadge = page * badgesPerPage;
-  const indexOfFirstBadge = indexOfLastBadge - badgesPerPage;
-  const currentBadges = badges.value?.slice(
-    indexOfFirstBadge,
-    indexOfLastBadge
+      return {
+        name: donatedCampaign?.title || "Unknown Campaign",
+        description: donatedCampaign?.description || "No description available",
+        imagePath: campaignImage?.original_name
+          ? `/documents/${campaignImage.id}_${campaignImage.original_name}`
+          : "/default_campaign.jpg",
+      };
+    })
   );
-
-  const indexOfLastItem = page * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = items.value?.slice(indexOfFirstItem, indexOfLastItem);
-
-  const totalBadgesPages = Math.ceil(badges.value?.length / badgesPerPage);
-  const totalItemsPages = Math.ceil(items.value?.length / itemsPerPage);
 
   const profileImage = Array.isArray(user.profileImage?.value)
       ? user.profileImage?.value[0]?.file_path ?? null
@@ -140,55 +131,35 @@ const ProfilePage = async ({
             </div>
           </div>
 
-          {/* My Badges Section */}
-          <div className={styles.MyBadges}>
-            <h2>My Badges</h2>
-            <div className={styles.BadgesGrid}>
-              {currentBadges && currentBadges.length > 0 ? (
-                currentBadges.map((badge, index) => (
-                  <div key={index}>{badge.name}</div>
-                ))
-              ) : (
-                <p>No badges earned yet</p>
-              )}
-            </div>
-            <div className={styles.Pagination}>
-              {[...Array(totalBadgesPages)].map((_, i) => (
-                <Link
-                  key={i}
-                  href={`/profile?page=${i + 1}`}
-                  className={page === i + 1 ? styles.Active : ""}
-                >
-                  {i + 1}
-                </Link>
-              ))}
-            </div>
-          </div>
+          <BadgesSection
+            badges={badges.value?.slice(
+              (badgesPage - 1) * badgesPerPage,
+              badgesPage * badgesPerPage
+            )}
+            currentPage={badgesPage}
+            itemsPerPage={badgesPerPage}
+            totalPages={Math.ceil(badges.value?.length / badgesPerPage)}
+          />
 
-          {/* Last Bought Items Section */}
-          <div className={styles.LastBought}>
-            <h2>Last Bought</h2>
-            <div className={styles.ItemsGrid}>
-              {currentItems && currentItems.length > 0 ? (
-                currentItems.map((item, index) => (
-                  <div key={index}>{item.name}</div>
-                ))
-              ) : (
-                <p>No items bought yet</p>
-              )}
-            </div>
-            <div className={styles.Pagination}>
-              {[...Array(totalItemsPages)].map((_, i) => (
-                <Link
-                  key={i}
-                  href={`/profile?page=${i + 1}`}
-                  className={page === i + 1 ? styles.Active : ""}
-                >
-                  {i + 1}
-                </Link>
-              ))}
-            </div>
-          </div>
+          <ItemsSection
+            items={items.value?.slice(
+              (itemsPage - 1) * itemsPerPage,
+              itemsPage * itemsPerPage
+            )}
+            currentPage={itemsPage}
+            itemsPerPage={itemsPerPage}
+            totalPages={Math.ceil(items.value?.length / itemsPerPage)}
+          />
+
+
+          {/* Seção de Campanhas */}
+<CampaignsSection
+  campaigns={campaigns}
+  currentPage={campaignsPage}
+  itemsPerPage={campaignsPerPage}
+  totalPages={Math.ceil(campaigns.length / campaignsPerPage)}
+/>
+
         </div>
       </div>
     </MainLayout>

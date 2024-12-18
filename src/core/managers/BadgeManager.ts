@@ -25,12 +25,11 @@ export class BadgeManager extends EntityManager<Badge> implements SearchableEnti
     }
 
     async searchWithConstraints(constraints: Constraint[], page: number, pageSize: number): Promise<OperationResult<Badge[], SimpleError>> {
-        const inNamesResult = await this.repository.getByCondition(constraints, (badge) => [new IncludeNavigation(badge.image, 0)], [], pageSize, page * pageSize);
+        
+        
+        const result = await this.repository.getByCondition(constraints, (badge) => [new IncludeNavigation(badge.image, 0)], [], pageSize, page * pageSize);
 
-        const inDescriptionResult = await this.repository.getByCondition(constraints, (badge) => [new IncludeNavigation(badge.image, 0)], [], pageSize, page * pageSize);
 
-        inDescriptionResult.forEach((value) => inNamesResult.push(value));
-
-        if (inNamesResult.length == 0) return new OperationResult([], [new SimpleError("No items where found.")]); else return new OperationResult(inNamesResult, []);
+        if (result.length == 0) return new OperationResult([], [new SimpleError("No items where found.")]); else return new OperationResult(result, []);
     }
 }

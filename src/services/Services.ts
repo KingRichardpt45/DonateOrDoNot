@@ -1,5 +1,3 @@
-import "server-only"
-
 import {DBConnectionService} from "@/services/DBConnectionService";
 import {SessionService} from "@/services/session/SessionService";
 import {LocalSessionUserCacheService} from "@/services/session/sessionCachingService/LocalSessionUserCacheService";
@@ -10,9 +8,14 @@ import {RepositoryAsync} from "@/core/repository/RepositoryAsync";
 import {User} from "@/models/User";
 import {AuthorizationService} from "@/services/session/authorizationService/AuthorizationService";
 import {PasswordValidation} from "@/services/PasswordVaidation";
-import { FileService } from "./FIleService";
-import { EntityConverter } from "@/core/repository/EntityConverter";
-import { getModelFactory } from "@/core/utils/factory/ModelsFactory";
+import {FileService} from "./FIleService";
+import {EntityConverter} from "@/core/repository/EntityConverter";
+import {getModelFactory} from "@/core/utils/factory/ModelsFactory";
+
+declare global 
+{
+    var _servicesInstance: Services | undefined;
+}
 
 export class Services {
     private static instance: Services | null = null;
@@ -20,6 +23,9 @@ export class Services {
 
     private constructor() 
     {
+        if( !process.env.SOCKET_IO_HOST || !process.env.SOCKET_IO_PORT )
+            throw new Error("missing .env variables SOCKET_IO_HOST or SOCKET_IO_PORT");
+
         const encryption = new JWTEncryption();
         const dbConnection = new DBConnectionService("development");
         const userCachingService = new LocalSessionUserCacheService(3600 * 1000, 2, new RepositoryAsync(User, dbConnection.dbConnection));
@@ -39,7 +45,7 @@ export class Services {
             "IPasswordValidation": new PasswordValidation(),
             "IAuthorizationService": authorizationService,
             "FileService": fileService,
-            "EntityConverter": entityConverter
+            "EntityConverter": entityConverter,
         });
     }
 
@@ -60,8 +66,15 @@ export class Services {
         return service as T;
     }
 
-    static getInstance(): Services {
-        if (!Services.instance) Services.instance = new Services();
-        return Services.instance;
+    static getInstance(): Services
+    {
+        if (!global._servicesInstance)
+        {
+            Services.instance = new Services();
+            global._servicesInstance = Services.instance;
+            return Services.instance;
+        }
+        
+        return global._servicesInstance
     }
 }

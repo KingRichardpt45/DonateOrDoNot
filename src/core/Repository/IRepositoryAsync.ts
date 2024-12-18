@@ -23,7 +23,7 @@ export interface IRepositoryAsync<Entity extends IEntity> {
      * const users = await userRepo.getAll(["Addresse"], [{ column: "Users.id", order: "desc" }], 2);
      * ```
      */
-    getAll(includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity[]>
+    getAll(includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number, applyPaginationAfter?:boolean): Promise<Entity[]>
 
     /**
      * Retrieves a single entity based on its primary key.
@@ -53,7 +53,7 @@ export interface IRepositoryAsync<Entity extends IEntity> {
      * const users = await userRepo.getByCondition([{ key: "Users.id", op: ">", value: 20 }], ["Addresse"], [{ column: "Users.id", order: "desc" }], 2);
      * ```
      */
-    getByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity[]>
+    getByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number , applyPaginationAfter?:boolean): Promise<Entity[]>
 
     /**
      * Retrieves the first entity that matches specific conditions.
@@ -69,7 +69,7 @@ export interface IRepositoryAsync<Entity extends IEntity> {
      * const user = await userRepo.getFirstByCondition([{ key: "Users.id", op: ">", value: 20 }], ["Addresse"], [{ column: "Users.id", order: "desc" }], 2);
      * ```
      */
-    getFirstByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number): Promise<Entity | null>
+    getFirstByCondition(constraints: Constraint[], includeFunction: (entity: Entity) => IncludeNavigation[], orderBy: any[], limit: number, offset: number , applyPaginationAfter?:boolean): Promise<Entity | null>
 
 
     /**

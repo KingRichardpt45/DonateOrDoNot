@@ -74,9 +74,10 @@ export async function PUT(request: NextRequest) {
 }
 
 const getFormSchema = yup.object().shape({
+    user_id:yup.number().transform(YupUtils.convertToNumber).notRequired().nonNullable().integer().min(0),
     query: yup.string().trim().required().nullable().min(1),
-    page: yup.number().transform(YupUtils.convertToNumber).required().nullable().positive().integer().min(0),
-    pageSize: yup.number().transform(YupUtils.convertToNumber).required().nullable().positive().integer().min(0),
+    page: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer().min(0),
+    pageSize: yup.number().transform(YupUtils.convertToNumber).required().nonNullable().positive().integer().min(0),
     type: yup.number().transform(YupUtils.convertToNumber).integer().positive().min(0).max(Object.keys(BadgeTypes).length / 2 - 1).nullable(),
 });
 const getFormValidator = new FormValidator(getFormSchema);
@@ -95,27 +96,14 @@ export async function GET(request: NextRequest) {
         return Responses.createServerErrorResponse();
     }
 
-    formData.pageSize = formData.pageSize ? formData.pageSize : 10;
-    formData.page = formData.page ? formData.page : 0;
-
-    const constraints = [];
-    if (!formData.query) {
-        const offset = formData.page * formData.pageSize
-        const result = badgeManager.getAll(() => [], [], formData.pageSize, offset)
-
-        if (!result) {
-            return Responses.createNotFoundResponse();
-        }
-
-        return Responses.createSuccessResponse(result);
+    const constraints: Constraint[]=[];
+    if (formData.user_id){
+        constraints.push(new Constraint("user_id",Operator.EQUALS,formData.user_id))
+    }else{
+        constraints.push(new Constraint("name",Operator.LIKE,`%${formData.query}%`))
     }
-
-    if (formData.type) {
-        constraints.push(new Constraint("type", Operator.EQUALS, formData.type));
-    }
-    if (formData.query) {
-        constraints.push(new Constraint("name", Operator.LIKE, `%${formData.query}%`))
-        constraints.push(new Constraint("description", Operator.LIKE, `%${formData.query}%`))
+    if (formData.type){
+        constraints.push(new Constraint("type",Operator.EQUALS,formData.type))
     }
 
     const result = await badgeManager.searchWithConstraints(constraints, formData.page, formData.pageSize);

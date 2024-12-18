@@ -1,28 +1,28 @@
 "use client"
 
-import { Search } from "lucide-react";
+import {Search} from "lucide-react";
 import styles from "./searchCampaigns.module.css"
-import { CampaignStatus } from "@/models/types/CampaignStatus";
-import { useEffect, useState } from "react";
-import { Campaign } from "@/models/Campaign";
-import { ActionDisplay } from "../../actionsNotifications/actionDisplay/ActionDisplay";
-import { IActionResultNotification } from "../../actionsNotifications/IActionResultNotification";
-import { ActionResultNotificationError } from "../../actionsNotifications/ActionResultNotificationError";
-import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
+import {CampaignStatus} from "@/models/types/CampaignStatus";
+import {useEffect, useRef, useState} from "react";
+import {Campaign} from "@/models/Campaign";
+import {ActionDisplay} from "../../actionsNotifications/actionDisplay/ActionDisplay";
+import {IActionResultNotification} from "../../actionsNotifications/IActionResultNotification";
+import {ActionResultNotificationError} from "../../actionsNotifications/ActionResultNotificationError";
+import {ActionResultNotificationSuccess} from "../../actionsNotifications/ActionResultNotificationSuccess";
 import DropdownInput from "../selectWithInput/selectWithInput";
 import CampaignItem from "../../campaigns/CampaignsItem";
 
-const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( { pageSize,managerId }) => {
+const SearchCampaigns : React.FC<{ route:string, pageSize:number, managerId:number|null ,mainSearch:boolean, exceptStatusList:CampaignStatus[] | null }>= ( {route, pageSize,managerId,exceptStatusList,mainSearch }) => {
     
     const campaignStatusEntries = Object.entries(CampaignStatus)
     const campaignStatusEntriesSize = campaignStatusEntries.length/2 -1;
-    const campaignStatusEntriesSizeString = campaignStatusEntriesSize.toString();
+    const defaultStatus = "none";
 
     const [firstRender, setFirstRender] = useState<boolean>(true);
-    const [selectedStatus, setSelectedStatus] = useState<string>(campaignStatusEntriesSizeString);
+    const [selectedStatus, setSelectedStatus] = useState<string>(defaultStatus);
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-    const [lastFetchedPage, setLastFetchedPage] = useState<number>(0);
-    const [query,setQuery] = useState<string>("Search...");
+    const lastFetchedPage = useRef<number>(0);
+    const [query,setQuery] = useState<string>("");
     const [actions,setActions] = useState<IActionResultNotification[]>([]);
     const [category, setCategory] = useState<string>("");
 
@@ -33,6 +33,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
   
     function onDroopDownChange (event: React.ChangeEvent<HTMLSelectElement>)
     {
+
         setSelectedStatus(event.target.value); 
     }
 
@@ -43,25 +44,33 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
 
     async function onSearch()
     {
+        lastFetchedPage.current = 0;
         await search(0);
-        setLastFetchedPage(0);
     }
 
     async function onSearchMore()
     {
-        let page = lastFetchedPage+1;
-        await search(page);
-        setLastFetchedPage(page);
+        let page = lastFetchedPage.current+1;
+        await search(page,true);
+        lastFetchedPage.current = page;
     }
+
+    const bottomRef = useRef< HTMLDivElement | null>(null); // Reference to the bottom element
+
+    useEffect(() => {
+      // Scroll to the bottom whenever data changes
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [campaigns]);
     
-    async function search(page:number)
+    async function search(page:number,viewMore:boolean=false)
     {
         setActions([]);
 
-        let url = `/api/campaign?query=${query}&page=${page}&pageSize=${pageSize}`;
+        let url = `/api/campaign?query=${query == "" ? "" : query}&page=${page}&pageSize=${pageSize}`;
         url = managerId ? `${url}&managerId=${managerId}`: url;
-        url = selectedStatus !== campaignStatusEntriesSizeString ? `${url}&status=${selectedStatus}`: url;
+        url = selectedStatus !== defaultStatus ? `${url}&status=${selectedStatus}`: url;
         url = category !== "" ? `${url}&category=${category}` : url
+        url = mainSearch? `${url}&mainSearch=${mainSearch}` : url
         const response = await fetch(url, { method: "Get"});
         let responseBody ;
 
@@ -69,7 +78,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
         {
         case 200:
             responseBody =  await response.json()
-            const fetchedCampaigns = lastFetchedPage==0 ? [] : [...campaigns];
+            const fetchedCampaigns = lastFetchedPage.current==0 && !viewMore ? [] : [...campaigns];
             const actionsNotificationsResult = [];
             for (const campaign of responseBody.data) 
             {
@@ -92,6 +101,10 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
             break;
         case 404:
             const notFount = [new ActionResultNotificationError("No Results found",[],2000)];
+            if(!viewMore)
+            {
+                setCampaigns([]);
+            }
             setActions(notFount);
             break;
         default:
@@ -109,9 +122,9 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
     }, [firstRender] ); 
     
     return (
-        <div>
+        <div style={{minHeight:"300px"}}>
             <div className={styles.searchContainer}>
-                <DropdownInput width={200} heigh={30} color="#3b3b3b" options={["Startup","Health","School","Debt"]} onChange={onDroopCategoryChange}/>
+                <DropdownInput width={200} heigh={30} color="#3b3b3b" options={["Startup", "Health", "School", "Debt"]} onChange={onDroopCategoryChange} customContainerStyle={""} value={""}/>
                 <select 
                     name="type"
                     id="type"
@@ -119,12 +132,15 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
                     onChange={onDroopDownChange}
                     value={selectedStatus}
                 >
-                    <option value={campaignStatusEntriesSize}>-- Select Status --</option>
+                    <option value={defaultStatus}>-- Select Status --</option>
                     {
                         campaignStatusEntries.map( ( [key, value] , index) => 
                             {
-                                if(index < campaignStatusEntriesSize )
-                                return <option key={`optionSearch_${index}`} value={key}>{value}</option>
+                                if(index < campaignStatusEntries.length/2 && !exceptStatusList?.includes(Number(key)))
+                                {        
+                                    console.log(key,value)
+                                    return <option key={`optionSearch_${index}`} value={key}>{value}</option>
+                                }
                             }
                         )
                     }
@@ -141,10 +157,10 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
             <div  className={styles.resultsContainer}>
                 <div className={styles.results}>
                     {
-                        campaigns.map( (campaign:Campaign) => 
+                        campaigns.map( (campaign:Campaign,index) => 
                         (
-                            <a href={`/campaigns/edit/${campaign.id}`}>
-                                <CampaignItem campaign={campaign} customStyle={{width:350, height:250}}></CampaignItem>
+                            <a href={`/campaigns/${route}/${campaign.id}`} key={`searchLink_${index}_${lastFetchedPage}`}>
+                                <CampaignItem key={`search_${index}_${lastFetchedPage}`} campaign={campaign} customStyle={{width:350, height:250}}></CampaignItem>
                             </a>
                         )
                         )
@@ -152,7 +168,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
                     {
                         campaigns.length == 0 &&
                         <div>
-                            There are no created campaigns.
+                            There are no campaigns to show.
                         </div>
                     }
                 </div>
@@ -164,6 +180,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
                     <ActionDisplay actions={actions} />
                 )
             }
+            <div ref={bottomRef}></div>
         </div>
     );
 

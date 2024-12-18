@@ -3,14 +3,8 @@
 
 import React from "react";
 import styles from "./components.module.css";
-import { 
-  Home,
-  User,
-  LogOut,
-  LogIn,
-  Search
-} from "lucide-react";
-import { usePathname  } from "next/navigation";
+import {Home, LogIn, Search} from "lucide-react";
+import {usePathname} from "next/navigation";
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -44,7 +38,7 @@ const SideMenuNL: React.FC<SideMenuProps> = ({ isOpen, toggleMenu }) => {
               </a>
             </li>
             <li>
-              <a href="/search">
+              <a href="/searchpage">
                 <span className={styles.iconContainer}>
                   <Search size={20} />
                 </span>

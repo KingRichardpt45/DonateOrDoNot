@@ -1,7 +1,7 @@
 "use client"
-import React, { useState } from "react"; // Import React and hooks
+import React, {useState} from "react"; // Import React and hooks
 import styles from "./Modal.module.css"; // Import CSS module for styling
-import { TextArea } from "../textArea"; // Import the TextArea component
+import {TextArea} from "../textArea"; // Import the TextArea component
 
 // Props type for the modal, defining whether it's open and the function to close it
 type DonationModalProps = {
@@ -18,7 +18,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
   campaignId,
   donorId,
 }) => {
-  const [amount, setAmount] = useState(18); // State for donation amount
+  const [amount, setAmount] = useState(0); // State for donation amount
   const [selectedMethod, setSelectedMethod] = useState<string>(""); // State for selected payment method
   const [anonymous, setAnonymous] = useState<boolean>(false); // State for anonymous donation
   const [comment, setComment] = useState<string>(""); // State for user comment
@@ -32,21 +32,17 @@ const DonationModal: React.FC<DonationModalProps> = ({
     setErrorMessage(null);
     setSuccessMessage(null);
 
+    
+    
     try {
+      const formData = new FormData();
+      formData.append("campaign_id", campaignId.toString() );
+      formData.append("donor_id", donorId.toString());
+      formData.append("comment", comment.trim());
+      formData.append("value", amount.toString());
+      formData.append("nameHidden", anonymous ? "true" : "false");
       // Send donation data to the API
-      const response = await fetch("/api/donations", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          campaign_id: campaignId,
-          donor_id: donorId,
-          comment: comment.trim(),
-          value: amount,
-          nameHidden: anonymous,
-        }),
-      });
+      const response = await fetch("/api/donations",  { method: "PUT", body: formData });
 
       if (response.ok) {
         const data = await response.json();
@@ -110,7 +106,8 @@ const DonationModal: React.FC<DonationModalProps> = ({
             ))}
           </div>
           <p className={styles.modalText}>
-            With this donation you will receive <strong>{amount * 100}</strong> 🪙
+            With this donation you will receive <strong>{amount * 100} </strong> 
+            <img src="/images/donacoin.png" alt="Dona Coin" width={15} height={15}/>
           </p>
           <TextArea
             placeholder="Write a comment on your donation"

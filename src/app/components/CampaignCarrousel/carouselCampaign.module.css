@@ -1,0 +1,221 @@
+.campaign {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  margin: 0 auto;
+  overflow: hidden;
+  text-align: center;
+}
+
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh; /* Match the full viewport height */
+  overflow: hidden;
+  position: relative; /* Set the carousel as the reference point */
+}
+
+  
+  .imageTrain {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%; /* Ensures the images stretch across the entire carousel */
+    height: 100%;
+  }
+  
+  .imageTrain img {
+    height: 98vh; /* Full height of the viewport */
+    width: 98vw; /* Full width of the viewport */
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+    flex-shrink: 0;
+}
+
+  
+  .navButton {
+    position: absolute;
+    top: 50%;
+    background: none;
+    color: #ad48dc;
+    border: #F4E1FF;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 3rem;
+    transform: translateY(-50%);
+    z-index: 1;
+    stroke: #F4E1FF;
+  }
+  
+  .navButton:first-of-type {
+    left: 10px;
+  }
+  
+  .navButton:last-of-type {
+    right: 10px;
+  }
+  
+  .overlay {
+    position: absolute; /* Keep it relative to the carousel container */
+    top: 0;
+    left: 0;
+    height: 100%; /* Matches carousel height */
+    width: 100%; /* Matches carousel width */
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.9) 40%, rgba(0, 0, 0, 0) 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    z-index: 10; /* Ensures the overlay appears above the image */
+}
+
+
+  
+.title {
+  font-size: 2rem;
+  margin: 0 1rem 0.5rem 1.5rem;
+}
+
+.description {
+  width: 60%; /* Adjust for smaller screens */
+  font-size: 1rem;
+  margin: 0 1rem 1rem 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .title {
+      font-size: 1.5rem;
+      margin: 0 1rem 0.5rem 1rem;
+  }
+
+  .description {
+      width: 80%;
+      font-size: 0.9rem;
+      margin: 0 1rem 1rem 1rem;
+  }
+}
+
+  
+  .donationGoals {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    margin-left: 3em;
+  }
+  
+  
+  .donateButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    background-color: rgba(183, 0, 255, 1);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-left: 3em;
+  }
+  .indicators {
+    position: absolute;
+    top: 10px; /* Controls the vertical position on top of the image */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2; /* Ensure dots appear above the image */
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  
+  .activeDot {
+    background: #00bcd4; /* Active dot highlight color */
+  }
+  /* Bottom Overlay */
+  .bottomOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100px; /* Adjust the height to control the arc */
+    background: linear-gradient(180deg, #4b007d, var(--MainColor)); /* Gradient colors */
+    border-radius: 50% 50% 0 0; /* Semi-circle shape */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.4); /* Subtle shadow effect */
+    padding-top: 5px; /* Adjust spacing */
+  }
+  
+  .bottomOverlay p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  
+  .donateNowButton {
+    margin-top: 5px;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    background: linear-gradient(45deg, #af02af, #c902c5); /* Gradient button colors */
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.4); /* Button shadow */
+  }
+  
+  .donateNowButton:hover {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+  
+  
+  .notificationMarkSeen
+  {
+    background-color: #00bcd4;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .notificationMarkSeen:hover{
+    background-color: #068899;
+  }
+  
+  .notificationContainer
+  {
+    display: flex;
+    flex-direction: column;
+    background-color: #2f024d;
+  }
+  
+  .notificationTitle
+  {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #ffffff;
+   
+  }
+  
+  .notificationMessage
+  {
+    margin-bottom: 5px;
+  }

@@ -83,34 +83,111 @@
     margin-bottom: 20px;
   }
   
-  .BadgesGrid, .CampaignsGrid, .ItemsGrid {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  .BadgesGrid img, .CampaignsGrid img, .ItemsGrid img {
-    width: 60px;
-    height: 60px;
-    border-radius: 5px;
-  }
-  
-  /* Campaign Cards */
-  .CampaignsGrid img {
-    width: 150px;
-    height: 200px;
-    object-fit: cover;
-  }
-  
-  /* Items */
-  .ItemsGrid img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-  }
-  
+/* Grid Containers */
+.MyBadges .BadgesGrid,
+.LastBought .ItemsGrid {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Badge Items */
+.MyBadges .BadgesGrid .BadgeItem,
+.LastBought .ItemsGrid .BadgeItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 80px;
+  height: 100px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 5px;
+}
+.BadgesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.TotalBadges {
+  font-size: 1.5rem;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+
+.MyBadges .BadgesGrid .BadgeItem img,
+.LastBought .ItemsGrid .BadgeItem img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 5px;
+}
+
+.MyBadges .BadgesGrid .BadgeItem p,
+.LastBought .ItemsGrid .BadgeItem p {
+  margin: 0;
+  color: #fff;
+  font-size: 0.9rem;
+}
+/* Campaigns Grid */
+.MyCampaigns .CampaignsGrid {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Campaign Card Style */
+.MyCampaigns .CampaignsGrid .CampaignItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 120px; /* Maior que os Badges */
+  height: 150px; /* Ajustado para dar destaque */
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease-in-out;
+}
+
+.MyCampaigns .CampaignsGrid .CampaignItem:hover {
+  transform: scale(1.05); /* Efeito Hover */
+}
+
+/* Campaign Image */
+.MyCampaigns .CampaignsGrid .CampaignItem img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+/* Campaign Name */
+.MyCampaigns .CampaignsGrid .CampaignItem p {
+  margin: 0;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+
+/* Item Cards Specific */
+.LastBought .ItemsGrid .BadgeItem {
+  border: 2px solid #fff;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
   /* Statistics Info Boxes */
   .StatisticsInfo {
     display: flex;
@@ -147,38 +224,35 @@
     opacity: 0.9;
   }
 /* profile.module.css */
-
-.Pagination {
+ /* Paginação */
+ .Pagination {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
   gap: 10px;
+  margin-top: 20px;
 }
 
-.Pagination a, .Pagination span {
-  text-decoration: none;
-  color: #333;
-  transition: color 0.2s ease;
-}
-
-.Pagination a:hover, .Pagination span:hover {
-  color: #007bff;
-}
-
-.Pagination .Active {
-  color: #007bff;
+.Pagination a {
+  font-size: 16px;
   font-weight: bold;
+  padding: 5px 10px;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
 }
 
-.Pagination a, .Pagination span {
-  padding: 8px 12px;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+.Pagination a:hover {
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .Pagination .Active {
-  background-color: #007bff;
-  color: #ffffff;
-  border: 1px solid #007bff;
+  background-color: #ff7f50; /* Cor de destaque para a página ativa */
+  color: #fff;
 }
+
+.Pagination a:active {
+  transform: scale(0.95);
+}
+

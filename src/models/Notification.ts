@@ -9,7 +9,7 @@ export class Notification extends Entity {
 
     id: number | null = null;
     message: string | null = null;
-    type: NotificationTypes = NotificationTypes.NewDonation;
+    type: NotificationTypes = NotificationTypes.campaign_new_donation_level;
 
     user_id: number | null = null;
     campaign_id: number | null = null;

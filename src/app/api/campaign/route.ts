@@ -55,13 +55,14 @@ export async function PUT(request: NextRequest) {
 }
 
 const searchFormSchema = yup.object().shape({
-    query: yup.string().lowercase().trim().required().nonNullable().min(1),
+    query: yup.string().lowercase().trim().notRequired().nonNullable().min(0),
     pageSize: yup.number().transform(YupUtils.convertToNumber).required().integer().min(0),
     page: yup.number().transform(YupUtils.convertToNumber).required().integer().min(0),
     category: yup.string().trim().nonNullable().min(1),
     value: yup.number().transform(YupUtils.convertToNumber).positive().nonNullable(),
     managerId: yup.number().transform(YupUtils.convertToNumber).min(0).nonNullable(),
     status: yup.number().transform(YupUtils.convertToNumber).nonNullable(),
+    mainSearch: yup.boolean().notRequired().nonNullable()
 });
 
 const searchFormValidator = new FormValidator(searchFormSchema);
@@ -77,12 +78,17 @@ export async function GET(request: NextRequest) {
     const formData = validatorResult.value!;
     const constraints: Constraint[] = [];
 
+    if(Boolean(formData.mainSearch) && !formData.status){
+        constraints.push(new Constraint("status", Operator.NOT_EQUALS, CampaignStatus.Reproved));
+        constraints.push(new Constraint("status", Operator.NOT_EQUALS, CampaignStatus.InAnalysis));
+    }
+
     if (formData.value) {
         constraints.push(new Constraint("objective_value", Operator.GREATER_EQUALS, formData.value));
     }
 
     if (formData.category) {
-        constraints.push(new Constraint("category", Operator.EQUALS, formData.category));
+        constraints.push(new Constraint("category", Operator.LIKE, `%${formData.category}%`));
     }
 
     if (formData.managerId) {
@@ -90,7 +96,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (formData.status) {
-        constraints.push(new Constraint("status", Operator.EQUALS, formData.status));
+        constraints.push(new Constraint("status", Operator.EQUALS, Number(formData.status)));
     }
     if (formData.query) {
         constraints.push(new Constraint("title", Operator.LIKE, `%${formData.query}%`));

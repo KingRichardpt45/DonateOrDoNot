@@ -1,0 +1,69 @@
+.TopDonorComponent{
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+.TopDonorContainer{
+    margin-top: 15px;
+    display: flex;
+    flex-direction: row;  
+    align-items: flex-end;
+}
+
+.FourthTop{
+    min-width: 100px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: linear-gradient(rgba(0, 0, 128, 0.001), rgb(0, 34, 128));
+    padding: 10px;
+}
+
+.ThreeTop{
+    min-width: 120px;
+    height: 240px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: linear-gradient(rgba(141,92,0 ,0.001), rgb(141, 92, 0));
+    padding: 10px;
+}
+
+.FirstTop{
+    min-width: 150px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: linear-gradient(rgba(126,128,0,0.001), rgb(126, 128, 0));
+    padding: 10px;
+}
+
+.SecondTop{
+    min-width: 120px;
+    height: 260px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: linear-gradient(rgba(125,125,125,0.001), rgb(125, 125, 125));
+    padding: 10px;
+}
+
+.FifthTop{
+    min-width: 100px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: linear-gradient(rgba(0, 34, 128, 0.001), rgb(0, 34, 128));
+    padding: 10px;
+}

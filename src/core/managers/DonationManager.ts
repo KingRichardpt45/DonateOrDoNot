@@ -87,6 +87,7 @@ export class DonationManager extends EntityManager<Donation>
         const donor = await this.donorRepo.getByPrimaryKey([new PrimaryKeyPart("id",donor_id)]) as Donor;
         donor.total_donated_value! += donatedValue;
         donor.total_donations! += 1;
+        donor.donacoins! += donatedValue*100;
    
         let endDate = new Date(donor.frequency_of_donation_datetime!);
         endDate.setHours(endDate.getHours() + 168);
@@ -107,6 +108,7 @@ export class DonationManager extends EntityManager<Donation>
         }
 
         this.donorRepo.updateFields(donor,
+            "donacoins",
             "total_donated_value",
             "total_donations",
             "frequency_of_donation",
