@@ -24,12 +24,12 @@
     margin: 0;
     color: #f0f0f0;
   }
-  
-  .TotalCampaigns {
-    font-size: 16px;
-    font-weight: normal;
-    color: #ccc;
-  }
+
+.TotalCampaigns {
+  font-size: 1.5rem;
+  color: #ffffff;
+  font-weight: bold;
+}
   
   /* Grid das campanhas */
   .CampaignsGrid {
