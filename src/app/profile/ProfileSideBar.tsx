@@ -3,7 +3,6 @@ import styles from "./sideProfile.module.css";
 import React, {useState} from "react";
 import {ActionDisplay} from "@/app/components/actionsNotifications/actionDisplay/ActionDisplay";
 import {IActionResultNotification} from "@/app/components/actionsNotifications/IActionResultNotification";
-import {ActionResultNotificationSuccess} from "@/app/components/actionsNotifications/ActionResultNotificationSuccess";
 import {ActionResultNotificationError} from "@/app/components/actionsNotifications/ActionResultNotificationError";
 
 type EditProfileParams = {
@@ -16,6 +15,7 @@ type EditProfileParams = {
     city: string | null;
     postalCode: string | null;
     fullAddress: string | null;
+    onSuccessfulUpdate: () => void;
 };
 
 const ProfileSideBar = (params: EditProfileParams) => {
@@ -31,8 +31,7 @@ const ProfileSideBar = (params: EditProfileParams) => {
             method: "PATCH", body: formData,
         }).then((response) => {
             if (response.ok) {
-                const actionsNotificationsSuccess = [new ActionResultNotificationSuccess("Profile updated.",2000)];
-                setActionResults(actionsNotificationsSuccess);
+                location.reload();
             } else {
                 const actionsNotificationsError = [new ActionResultNotificationError("Profile not updated.", [],2000)];
                 setActionResults(actionsNotificationsError);
