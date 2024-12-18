@@ -106,7 +106,8 @@ const DonationModal: React.FC<DonationModalProps> = ({
             ))}
           </div>
           <p className={styles.modalText}>
-            With this donation you will receive <strong>{amount * 100}</strong> 🪙
+            With this donation you will receive <strong>{amount * 100} </strong> 
+            <img src="/images/donacoin.png" alt="Dona Coin" width={15} height={15}/>
           </p>
           <TextArea
             placeholder="Write a comment on your donation"

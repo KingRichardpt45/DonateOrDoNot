@@ -84,12 +84,10 @@ export class DonorManager extends EntityManager<Donor>
 
         if(errors.length > 0)
             return new OperationResult(false,errors);
-
         if (donor!.donacoins! >= item!.cost!)
         {
             donor!.donacoins! -= item!.cost!;
             this.repository.updateFields(donor!,"donacoins");
-
             const donorStoreItemToCreate = new DonorStoreItem();
             donorStoreItemToCreate.store_item_id = storeItemId;
             donorStoreItemToCreate.donor_id = donorId;
@@ -97,6 +95,7 @@ export class DonorManager extends EntityManager<Donor>
 
             return new OperationResult(true,[]);
         }
+
         else
             return new OperationResult(false,[new FormError("donacoins",["Insufficient donacoins."] )]);
 

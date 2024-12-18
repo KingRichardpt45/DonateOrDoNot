@@ -19,13 +19,13 @@ export class DonorStoreItem extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "user_id", "badge_id"];
+        return ["id", "store_item_id", "donor_id"];
     }
 
     getNavigationKeys(): string[] {
         return ["donor", "store_item"];
     }
-
+    
     getTableName(): string {
         return DonorStoreItem.getTableName();
     }
