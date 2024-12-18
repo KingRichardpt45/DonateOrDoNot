@@ -21,7 +21,7 @@ export interface ISessionUserCacheService {
      */
     retrieve(session: Session): Promise<User | null>;
 
-    update(session: Session, user: User): Promise<void>;
+    update(session: Session): Promise<void>;
 
     /**
      * Removes the user associated with the given session from the cache.

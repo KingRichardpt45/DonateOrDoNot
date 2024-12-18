@@ -179,7 +179,7 @@ export async function PATCH(request: NextRequest, context: any) {
     if (!result)
         return Responses.createServerErrorResponse();
     else {
-        await userProvider.updateUser(user)
+        await userProvider.updateUser()
         return Responses.createSuccessResponse({}, "Account Updated.");
     }
 }

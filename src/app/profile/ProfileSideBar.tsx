@@ -1,6 +1,10 @@
 'use client'
 import styles from "./sideProfile.module.css";
-import React from "react";
+import React, {useState} from "react";
+import {ActionDisplay} from "@/app/components/actionsNotifications/actionDisplay/ActionDisplay";
+import {IActionResultNotification} from "@/app/components/actionsNotifications/IActionResultNotification";
+import {ActionResultNotificationSuccess} from "@/app/components/actionsNotifications/ActionResultNotificationSuccess";
+import {ActionResultNotificationError} from "@/app/components/actionsNotifications/ActionResultNotificationError";
 
 type EditProfileParams = {
     userId: number | null;
@@ -16,22 +20,34 @@ type EditProfileParams = {
 
 const ProfileSideBar = (params: EditProfileParams) => {
 
+    const [actionResults, setActionResults] = useState<IActionResultNotification[] >([]);
+
     const handleProfileChange = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setActionResults([]);
         const form = event.currentTarget;
         const formData = new FormData(form);
         fetch(`/api/account/${params.userId}`, {
             method: "PATCH", body: formData,
         }).then((response) => {
             if (response.ok) {
-                alert("Profile updated successfully");
+                const actionsNotificationsSuccess = [new ActionResultNotificationSuccess("Profile updated.",2000)];
+                setActionResults(actionsNotificationsSuccess);
             } else {
-                alert("Failed to update profile");
+                const actionsNotificationsError = [new ActionResultNotificationError("Profile not updated.", [],2000)];
+                setActionResults(actionsNotificationsError);
             }
         });
     }
 
-    return (<div className={styles.Sidebar}>
+    return (
+        <div className={styles.Sidebar}>
+            {
+                actionResults.length > 0 &&
+                (
+                    <ActionDisplay actions={actionResults} />
+                )
+            }
         <img
             src={params.profileImage ?? "/images/ProfileImageDefault.png"}
             alt={`${params.firstName ?? "User"} ${params.lastName ?? ""}`}
@@ -90,11 +106,11 @@ const ProfileSideBar = (params: EditProfileParams) => {
                 className={styles.InputField}
             />
 
-            <label htmlFor="postal_code" className={styles.Label}>Postal Code</label>
+            <label htmlFor="postalCode" className={styles.Label}>Postal Code</label>
             <input
-                id="postal_code"
+                id="postalCode"
                 type="text"
-                name="postal_code"
+                name="postalCode"
                 defaultValue={params.postalCode ?? ""}
                 className={styles.InputField}
             />

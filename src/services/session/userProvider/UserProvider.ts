@@ -36,13 +36,13 @@ export class UserProvider implements IUserProvider {
         return await this.sessionCacheService.retrieve(session);
     }
 
-    async updateUser(user: User): Promise<void>
+    async updateUser(): Promise<void>
     {
         const session = await this.sessionService.verify();
 
         if (!session)
             return;
 
-        await this.sessionCacheService.update(session, user);
+        await this.sessionCacheService.update(session);
     }
 }

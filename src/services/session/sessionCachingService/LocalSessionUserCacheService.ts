@@ -66,10 +66,9 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
      * @param session - The session object containing user ID and expiration details.
      * @param user - The user object to be updated in the cache.
      */
-    async update(session: Session, user: User): Promise<void> {
-        await this.mutex.runExclusive(() => {
-            this.cache.set(session.userId, { user, session });
-        });
+    async update(session: Session): Promise<void> {
+        await this.remove(session);
+        await this.store(session);
     }
 
     /**
