@@ -8,6 +8,12 @@
     font-weight: bold;/* You can adjust the color as needed */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Adds subtle shadow */
 }
+
+.MainContainer{
+  display: flex;
+  height: 100%;
+}
+
 .container {
     display: flex;
     flex-direction: column;
