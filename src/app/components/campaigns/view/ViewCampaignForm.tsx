@@ -161,10 +161,15 @@ const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[], donorId
             Donate Now
           </button>
           </div>
-          <div><DonationModal
-            isOpen={isDonationModalOpen} // Modal visibility
-            onClose={() => setIsDonationModalOpen(false)} // Close handler
-            campaignId={campaign.id!} donorId={donorId}      />
+          <div>
+            {
+              isDonationModalOpen &&
+              <DonationModal
+                isOpen={isDonationModalOpen} // Modal visibility
+                onClose={() => setIsDonationModalOpen(false)} // Close handler
+                campaignId={campaign.id!} donorId={donorId}      
+              />
+            }
         </div>
 
         <div><TopDonors

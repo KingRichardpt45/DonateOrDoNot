@@ -58,7 +58,6 @@ const SearchCampaigns : React.FC<{ route:string, pageSize:number, managerId:numb
     const bottomRef = useRef< HTMLDivElement | null>(null); // Reference to the bottom element
 
     useEffect(() => {
-      // Scroll to the bottom whenever data changes
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [campaigns]);
     

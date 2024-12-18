@@ -1,7 +1,11 @@
 "use client"
-import React, {useState} from "react"; // Import React and hooks
+import React, { useRef, useState } from "react"; // Import React and hooks
 import styles from "./Modal.module.css"; // Import CSS module for styling
-import {TextArea} from "../textArea"; // Import the TextArea component
+import { TextArea } from "../textArea"; // Import the TextArea component
+import { ActionDisplay } from "../actionsNotifications/actionDisplay/ActionDisplay";
+import { IActionResultNotification } from "../actionsNotifications/IActionResultNotification";
+import { ActionResultErrorComponent } from "../actionsNotifications/actionResultError/ActionResultError";
+import { ActionResultNotificationError } from "../actionsNotifications/ActionResultNotificationError";
 
 // Props type for the modal, defining whether it's open and the function to close it
 type DonationModalProps = {
@@ -18,43 +22,60 @@ const DonationModal: React.FC<DonationModalProps> = ({
   campaignId,
   donorId,
 }) => {
-  const [amount, setAmount] = useState(0); // State for donation amount
-  const [selectedMethod, setSelectedMethod] = useState<string>(""); // State for selected payment method
-  const [anonymous, setAnonymous] = useState<boolean>(false); // State for anonymous donation
-  const [comment, setComment] = useState<string>(""); // State for user comment
-  const [isLoading, setIsLoading] = useState(false); // State for loading status
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error messages
-  const [successMessage, setSuccessMessage] = useState<string | null>(null); // State for success message
+  const [render,setRender] = useState(0);
+  const amount = useRef(0); // State for donation amount
+  const selectedMethod  = useRef<string>(""); // State for selected payment method
+  const anonymous  = useRef<boolean>(false); // State for anonymous donation
+  const comment  = useRef<string>(""); // State for user comment
+ // const [isLoading, setIsLoading] = useState(false); // State for loading status
+  const errorMessage  = useRef<string | null>(null); // State for error messages
+  const successMessage  = useRef<string | null>(null); // State for success message
+  const [actions,setActions] = useState<IActionResultNotification[]>([]);
 
   // Function to handle donation submission
   const handleDonate = async () => {
-    setIsLoading(true);
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    
+   
     
     try {
+      setActions([]);
       const formData = new FormData();
       formData.append("campaign_id", campaignId.toString() );
       formData.append("donor_id", donorId.toString());
-      formData.append("comment", comment.trim());
-      formData.append("value", amount.toString());
-      formData.append("nameHidden", anonymous ? "true" : "false");
-      // Send donation data to the API
-      const response = await fetch("/api/donations",  { method: "PUT", body: formData });
+      formData.append("comment", comment.current.trim());
+      formData.append("value", amount.current.toString());
+      formData.append("nameHidden", anonymous.current ? "true" : "false");
+      
+      errorMessage.current = null;
+      successMessage.current= "";
 
-      if (response.ok) {
-        const data = await response.json();
-        setSuccessMessage("Thank you for your donation!");
-      } else {
-        const error = await response.json();
-        setErrorMessage(error.errors?.[0] || "Failed to process your donation.");
-      }
+      fetch("/api/donations",  { method: "PUT", body: formData })
+        .then(
+          async (response)=>{
+
+            if (response.ok) {
+              const data = await response.json();
+              selectedMethod.current= "";
+              comment.current = ""
+              amount.current = 0
+              onClose();
+            } else {
+              const resultsErrors = await response.json();
+              let time = 1000;
+              const actions = [];
+              for (const item of resultsErrors.errors) {
+                actions.push(new ActionResultNotificationError(item.field,item.errors,time+=1000))
+              }
+              setActions(actions);
+            }
+
+          }
+        )
+
     } catch (error) {
-      setErrorMessage("An error occurred. Please try again.");
+      errorMessage.current="An error occurred. Please try again.";
+
     } finally {
-      setIsLoading(false);
+      
     }
   };
 
@@ -65,15 +86,24 @@ const DonationModal: React.FC<DonationModalProps> = ({
     <>
       <div className={styles.modalWrapper}>
         <div className={styles.modalContent}>
-          <button className={styles.modalClose} onClick={onClose}>
+          
+          <button className={styles.modalClose} onClick={ () => { onClose()}}>
             &times;
           </button>
           <h2 className={styles.modalTitle}>How much do you want to donate?</h2>
           <div className={styles.inputContainer}>
+          
+          { 
+            actions.length > 0 &&
+            (
+                <ActionDisplay actions={actions} />
+            )
+          }
+          
             <input
               type="number"
-              value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
+              value={amount.current}
+              onChange={(e) => {amount.current =Number(e.target.value); setRender(render+1); }}
               className={styles.input}
             />
             <span className={styles.currencySymbol}>$</span>
@@ -82,9 +112,9 @@ const DonationModal: React.FC<DonationModalProps> = ({
             {[5, 10, 20, 50, 100].map((amt) => (
               <button
                 key={amt}
-                onClick={() => setAmount(amt)}
+                onClick={() => {amount.current=amt; setRender(render+1);} }
                 className={`${styles.donationButton} ${
-                  amt === amount ? styles.donationButtonSelected : ""
+                  amt === amount.current ? styles.donationButtonSelected : ""
                 }`}
               >
                 {amt}$
@@ -96,9 +126,9 @@ const DonationModal: React.FC<DonationModalProps> = ({
             {["MB WAY", "PayPal", "MasterCard"].map((method) => (
               <button
                 key={method}
-                onClick={() => setSelectedMethod(method)}
+                onClick={() => {selectedMethod.current = method; setRender(render-1)} }
                 className={`${styles.paymentMethodButton} ${
-                  selectedMethod === method ? styles.paymentMethodSelected : ""
+                  selectedMethod.current === method ? styles.paymentMethodSelected : ""
                 }`}
               >
                 {method}
@@ -106,13 +136,13 @@ const DonationModal: React.FC<DonationModalProps> = ({
             ))}
           </div>
           <p className={styles.modalText}>
-            With this donation you will receive <strong>{amount * 100} </strong> 
+            With this donation you will receive <strong>{amount.current * 100} </strong> 
             <img src="/images/donacoin.png" alt="Dona Coin" width={15} height={15}/>
           </p>
           <TextArea
             placeholder="Write a comment on your donation"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            value={comment.current}
+            onChange={(e) => {comment.current=e.target.value; setRender(render-1)}}
             className={styles.textarea}
           />
           <span>Do you want it to be an anonymous donation?</span>
@@ -121,8 +151,8 @@ const DonationModal: React.FC<DonationModalProps> = ({
               <input
                 type="radio"
                 name="anonymous"
-                checked={anonymous}
-                onChange={() => setAnonymous(true)}
+                checked={anonymous.current}
+                onChange={() => { anonymous.current=true; setRender(render+1)}}
               />
               YES
             </label>
@@ -131,19 +161,19 @@ const DonationModal: React.FC<DonationModalProps> = ({
                 type="radio"
                 name="anonymous"
                 checked={!anonymous}
-                onChange={() => setAnonymous(false)}
+                onChange={() => { anonymous.current=false; setRender(render+1)} }
               />
               NO
             </label>
           </div>
-          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
-          {successMessage && <p className={styles.success}>{successMessage}</p>}
+          {errorMessage && <p className={styles.error}>{errorMessage.current}</p>}
+          {successMessage && <p className={styles.success}>{successMessage.current}</p>}
           <button
             onClick={handleDonate}
             className={styles.modalSubmit}
-            disabled={isLoading || !selectedMethod}
+           // disabled={isLoading || !selectedMethod}
           >
-            {isLoading ? "Processing..." : "Donate"}
+            "Donate"
           </button>
         </div>
       </div>

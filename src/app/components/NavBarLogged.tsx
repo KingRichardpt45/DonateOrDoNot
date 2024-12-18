@@ -22,6 +22,12 @@ export const HeaderL: React.FC<{ userName:string, userImage:string | null, userT
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [activeNotifications, setActiveNotifications] = useState<Notification[] >(notifications);
   const [isAnimating, setIsAnimating] = useState(false);
+  const bottomRef = useRef< HTMLDivElement | null>(null); // Reference to the bottom element
+
+  useEffect(() => {
+    // Scroll to the bottom whenever data changes
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [activeNotifications]);
 
   const hubConnection = useRef<IRoomHubClientConnection | null>(null)
   
@@ -69,6 +75,7 @@ export const HeaderL: React.FC<{ userName:string, userImage:string | null, userT
       })
   }
 
+  
   const toggleSideMenu = () => {
     setIsSideMenuOpen(!isSideMenuOpen);
   };
@@ -142,10 +149,12 @@ export const HeaderL: React.FC<{ userName:string, userImage:string | null, userT
                       {notificationToHtml(notification)}
                     </li>
                   ))}
+                  
                 </ul>
               ) : (
                 <p>No notifications</p>
               )}
+              <div ref={bottomRef}></div>
             </div>
           )}
         </div>
