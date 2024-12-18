@@ -105,7 +105,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, toggleMenu ,userType}) => {
             } 
             {(userType == UserRoleTypes.Donor || userType == UserRoleTypes.CampaignManager) &&
               <li>
-              <a href="#">
+              <a href="/mostfrequent">
                 <span className={styles.iconContainer}>
                   <Clock size={20} />
                 </span>
@@ -115,7 +115,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, toggleMenu ,userType}) => {
             } 
             {(userType == UserRoleTypes.Donor || userType == UserRoleTypes.CampaignManager) &&
               <li>
-              <a href="#">
+              <a href="/mostdonated">
                 <span className={styles.iconContainer}>
                   <BarChart2 size={20} />
                 </span>

@@ -14,7 +14,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ campaigns, campaignManagers}) =
   // Example: Pre-filter campaigns by status
 
   return (
-    <div>
+    <div className={styles.MainContainer}>
       <header className={styles.header}>
       </header>
       <CampaignsAdmin campaigns={campaigns} campaignManagers={campaignManagers} />
