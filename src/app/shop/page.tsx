@@ -16,7 +16,7 @@ const authorizationService = Services.getInstance().get<IAuthorizationService>("
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 
 
-export default async function Shop() 
+export default async function shop() 
 {
   
     const user = await userProvider.getUser();

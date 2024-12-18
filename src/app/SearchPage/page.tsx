@@ -35,7 +35,7 @@ const entityConverter = Services.getInstance().get<EntityConverter>("EntityConve
 
 const filesManager = new  FileManager();
 
-export default async function Search() {
+export default async function search() {
   const user = await userProvider.getUser();
   const authorized = user !== null && (user as User).type == UserRoleTypes.Donor;
   // Default campaigns array used for testing or displaying sample data
@@ -59,7 +59,7 @@ export default async function Search() {
   return (
     <MainLayout passUser={user}>
         {
-          !authorized &&
+          !authorized && user!==null &&
           <NotAuthorized/>
         }
         {
