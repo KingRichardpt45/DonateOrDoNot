@@ -750,3 +750,48 @@
 
 
 /*---------------------------------------------*/
+
+
+/* Keyframes for the bell animation */
+@keyframes bellShake {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.bell{
+  color: white;
+}
+
+/* Applying the animation to the bell */
+.bellAnimating {
+  animation: bellShake 0.5s ease-in-out 10;
+  color: red;
+}
+
+.notificationBellContainer
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap:5px
+}
+
+.numberNotifications
+{
+  color: white;
+  font-size: 2;
+}

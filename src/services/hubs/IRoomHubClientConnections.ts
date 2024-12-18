@@ -4,9 +4,19 @@ import {IHubRoomId} from "./IHubRoomId";
 
 export interface IRoomHubClientConnection extends IHubClientConnection
 {
-    addEventListenerToRoom( roomId:IHubRoomId<unknown>, event:string, handler:EvenHandler ) : EventListener
-        
-    removeEventListenerFromRoom(roomId:IHubRoomId<unknown>,  event:string, listener:EventListener ) : void
+    isInRoom(roomId: IHubRoomId<unknown> ): Promise<boolean>;
 
-    clearEventListenersOfRoom(roomId:IHubRoomId<unknown>, event:string ) : void
+    getRooms(): Promise<Set<IHubRoomId<unknown>>>;
+
+    joinRoom(roomId: IHubRoomId<unknown>): void;
+
+    leaveRoom(roomId: IHubRoomId<unknown>): void;
+
+    // emitEventToRoom( event:IHubEvent<unknown>, roomId: IHubRoomId<unknown> ) : void;
+
+    // emitEventToRooms( event:IHubEvent<unknown>, roomIds: IHubRoomId<unknown>[], ) : void;
+
+    // emitEventToAllRooms( event:IHubEvent<unknown>, roomIds: IHubRoomId<unknown>[], ) : void;
+
+    // emitEventToAllExceptRooms( event:IHubEvent<unknown>, roomIds: IHubRoomId<unknown>[], ) : void;
 }

@@ -23,6 +23,11 @@ export class DonationManager extends EntityManager<Donation>
         this.donorRepo = new RepositoryAsync(Donor);
     }
 
+    getDonacoinsPerDonationFactor() : number
+    {
+        return 100;
+    }
+
     async create(campaignId:number, donorId:number, comment:string, value:number, isNameHidden:boolean): Promise<OperationResult<Donation | null, FormError>> 
     {
         const donation = new Donation();

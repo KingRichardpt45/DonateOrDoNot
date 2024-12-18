@@ -1,26 +1,19 @@
-import {Server} from "socket.io";
-import {EvenHandler, EventListener} from "../IHub";
-import {IHubEvent} from "../IHubEvent";
-import {IHubRoomId} from "../IHubRoomId";
-import {IHubServerConnection} from "../IHubServerConnection";
-import {NotificationServerHubConnection} from "./NotificationHubServerConnection";
-import {NotificationHubConnectionId} from "./NotificationHutConnectionId";
-import {NotificationHubRoom} from "./NotificationHubRoom";
-import {NotificationHubRoomId} from "./NotificationHubRoomId";
-import {IHubWithRooms} from "../IHubWithRooms";
-import {ListenerRegistry} from "./ListenerRegistry";
-import {JoinRoomEvent} from "../events/JoinRoomEvent";
-import {LeaveRoomEvent} from "../events/LeaveRoomEvent";
-import {VarSync} from "./../../../core/utils/VarSync";
+import { Server , Socket} from "socket.io";
+import { EvenHandler, EventListener, IHub } from "../IHub";
+import { IHubEvent } from "../IHubEvent";
+import { IHubRoomId } from "../IHubRoomId";
+import { IHubServerConnection } from "../IHubServerConnection";
+import { NotificationServerHubConnection } from "./NotificationHubServerConnection";
+import { NotificationHubConnectionId } from "./NotificationHutConnectionId";
+import { NotificationHubRoom } from "./NotificationHubRoom";
+import { NotificationHubRoomId } from "./NotificationHubRoomId";
+import { IHubWithRooms } from "../IHubWithRooms";
+import { ListenerRegistry } from "./ListenerRegistry";
+import { JoinRoomEvent } from "../events/JoinRoomEvent";
+import { LeaveRoomEvent } from "../events/LeaveRoomEvent";
+import { VarSync } from "./../../../core/utils/VarSync";
+import { RetransmissionEvent } from "../events/RetransmissionEvent";
 
-/**
- * Starting with socket.io@3.1.0, the underlying Adapter will emit the following events:
-
-create-room (argument: room)
-delete-room (argument: room)
-join-room (argument: room, id)
-leave-room (argument: room, id)
- */
 export class NotificationsHub implements IHubWithRooms
 {
     private readonly server : Server;
@@ -151,7 +144,6 @@ export class NotificationsHub implements IHubWithRooms
 
     async emitEventToRoom(event: IHubEvent<unknown>, roomId: NotificationHubRoomId): Promise<void> 
     {
-        //console.log("A:13");
         await this.rooms.runExclusive((rooms)=>{
             const room = rooms.get(roomId.value) 
             room?.emitEvent(event);
@@ -364,7 +356,7 @@ export class NotificationsHub implements IHubWithRooms
 
         connection.data.on(LeaveRoomEvent.name,(event:LeaveRoomEvent)=>{ this.handleLeaveRoomEvent(event.data,connection) });
 
-        //connection.data.on(EventNotification.name,(event:EventNotification)=>{ console.log("receive notifications.") });
+        connection.data.on(RetransmissionEvent.name,(event:RetransmissionEvent)=>{ this.handleRetransmissionEvent(event,connection)})
 
         connection.data.on("disconnect", () => this.onDisconnect(connection) );
     }
@@ -377,7 +369,7 @@ export class NotificationsHub implements IHubWithRooms
             this.rooms.runExclusive( (rooms)=>
             {
                 rooms.get(roomId.value)?.addConnection(connection)
-                console.log("room created");
+                console.log("added to room");
             })
         }
         else
@@ -385,6 +377,7 @@ export class NotificationsHub implements IHubWithRooms
             const room = await this.openRoom(roomId);
             this.rooms.runExclusive( (rooms)=>
             {
+                console.log("room created");
                 rooms.get(room.id.value)?.addConnection(connection)
             })
         }
@@ -417,6 +410,22 @@ export class NotificationsHub implements IHubWithRooms
         {
             connections.get(connection.id.value)?.data.emit(LeaveRoomEvent.name,new LeaveRoomEvent(roomId));
         })
+    }
+
+    private handleRetransmissionEvent(event:RetransmissionEvent,connection:NotificationServerHubConnection)
+    {
+
+        if(event.data.toConnection)
+        {
+            console.log(`Retransmitting ${event.name} from ${connection.id.value} to ${event.data.toConnection.value}`);
+            this.emitEventToConnection(event.data.originalEvent,event.data.toConnection)
+        }
+        
+        else if(event.data.toRom)
+        {
+            console.log(`Retransmitting ${event.name} from ${connection.id.value} to room ${event.data.toRom.value}`);
+            this.emitEventToRoom(event.data.originalEvent,event.data.toRom);
+        }
     }
 
     private addSocketEventHandler(eventName: string, handler: EvenHandler)
