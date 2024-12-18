@@ -37,11 +37,15 @@ export const MainLayout: React.FC<PropType> = async ({ children , passUser}) => 
     {
         image =`${(user.profileImage.value as File).id}_${(user.profileImage.value as File).original_name}` 
     }
+    const userName = user 
+    ? `${user.first_name} ${user.last_name || ""}`.trim() 
+    : "";
+
 
     return (
         <IoConnectionProvider connectionLink={connectionLink}>
             <div className={styles.MainContainer} >
-                { user != null && <HeaderL userImage={image} userId={user.id!} userName={`${user.first_name} ${user.last_name}`} userType={user.type} notifications={notificationsPlain as Notification[]}/> }
+                { user != null && <HeaderL userImage={image} userId={user.id!} userName={userName} userType={user.type} notifications={notificationsPlain as Notification[]}/> }
                 { user == null && <Header/> }
                 <div className={styles.PageContentContainer} >
                     {children}
