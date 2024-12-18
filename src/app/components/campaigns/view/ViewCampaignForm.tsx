@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./ViewCampaignForm.module.css";
 import {Campaign} from "@/models/Campaign";
@@ -11,6 +11,15 @@ import CarouselCampaign from "../../CampaignCarrousel/carouselCampaign";
 import TopDonors from "../../topDonors/topDonors";
 import {Donor} from "@/models/Donor";
 import DonationModal from "../../PopUpDonation/DonationPOP";
+import { IRoomHubClientConnection } from "@/services/hubs/IRoomHubClientConnections";
+import { useConnectionContext } from "../../coreComponents/ioConnectionProvider";
+import { RoomIdGenerator } from "@/services/hubs/notificationHub/RoomIdGenerator";
+import { CampaignNewDonation } from "@/services/hubs/events/CampaignNewDonation";
+import { IHubEvent } from "@/services/hubs/IHubEvent";
+import { IActionResultNotification } from "../../actionsNotifications/IActionResultNotification";
+import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
+import { ActionDisplay } from "../../actionsNotifications/actionDisplay/ActionDisplay";
+
 
 interface AddedFile
 { 
@@ -40,7 +49,8 @@ const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[], donorId
 
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false); // State for modal visibility
 
-    const [ firstRender, setFirstRender ] = useState<boolean>(true);
+    const firstRender = useRef<boolean>(true);
+    const firstRender2 = useRef<boolean>(true);
     const [ render,setRender] = useState<number>(0);
     const [submitted, setSubmitted] =  useState<boolean>(false);
 
@@ -57,49 +67,45 @@ const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[], donorId
     const [videosAdded, setVideosAdded] = useState<Map<string,File>>(new Map<string,File>());
     const [filesAdded, setFilesAdded] = useState<Map<string,File>>(new Map<string,File>());
     const [mainImageAdded, setMainImageAdded] = useState<File | null>();
+    const [actions,setActions] = useState<IActionResultNotification[]>([]);
 
+    const hubConnection = useRef<IRoomHubClientConnection | null>(null);
+    const test = useRef("data")
 
-    if(firstRender)
+    if(firstRender2.current)
+    {
+      for (const key of (new Campaign).getKeys()) 
+      { 
+        if( key === "end_date")
+          fieldsValue.set(key,new Date(campaign[key]!).toISOString().split('T')[0] );
+        else
+          fieldsValue.set(key,campaign[key] as string);
+      }
+    
+      for (const modelFile of campaign.files.value as ModelFIle[] ) 
+      {
+        switch (modelFile.file_type) 
         {
-          for (const key of (new Campaign).getKeys()) 
-          { 
-            if( key === "end_date")
-              fieldsValue.set(key,new Date(campaign[key]!).toISOString().split('T')[0] );
-            else
-              fieldsValue.set(key,campaign[key] as string);
-          }
-      
-          //adicionar se for preciso badges
-          /*for (const campaignBadge of campaign.badges.value as CampaignBadge[]) 
-          {  
-              const type = (campaignBadge.badge.value as Badge).type
-              fieldsValue.set(`${type}_name`,((campaignBadge.badge.value as Badge).name!));
-              fieldsValue.set(`${type}_description`,((campaignBadge.badge.value as Badge).description!));
-          }*/
-      
-          for (const modelFile of campaign.files.value as ModelFIle[] ) 
-          {
-            switch (modelFile.file_type) 
-           {
-              case FileTypes.Document:
-                files.push(modelFile);
-                break;
-              case FileTypes.Image:
-                images.push(modelFile);
-                break;
-              case FileTypes.MainImage:
-                mainImage.push(modelFile);
-                break;
-              case FileTypes.Video:
-                videos.push(modelFile);
-                break;
-      
-            }
-          }
-      
-          setFirstRender(false);
+          case FileTypes.Document:
+            files.push(modelFile);
+            break;
+          case FileTypes.Image:
+            images.push(modelFile);
+            break;
+          case FileTypes.MainImage:
+            mainImage.push(modelFile);
+            break;
+          case FileTypes.Video:
+            videos.push(modelFile);
+            break;
+  
         }
-
+      }
+      
+     
+      firstRender2.current = false;
+    }
+    
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ type: "", src: "", alt: "" });
@@ -126,10 +132,30 @@ const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[], donorId
     setModalOpen(false);
   };
 
-  
+  if (typeof window !== "undefined" && firstRender.current) 
+  {
+    console.log("new Donations hub");
+    hubConnection.current = useConnectionContext();
+    hubConnection.current!.addAfterConnectionHandler(() => {
+      
+      hubConnection.current!.joinRoom(RoomIdGenerator.generateCampaignRoom(campaign.id!));
+
+      hubConnection.current!.addEventListener(CampaignNewDonation.name, (event: IHubEvent<unknown>) => {
+        console.log("new Donations",event);
+        const beforeTotalAmount = campaign.current_donation_value;
+        campaign.current_donation_value = (event.data as Campaign).current_donation_value;
+        test.current = "data" + campaign.current_donation_value!.toString();
+        setCurrentAmount((event.data as Campaign).current_donation_value)
+        setActions([new ActionResultNotificationSuccess(`Someone donated ${campaign.current_donation_value!-beforeTotalAmount!}€`,5000)]);
+        setTimeout(()=> {setActions([])}, 5050);
+      });            
+    });
+
+    firstRender.current = false;
+  }
 
   return (
-        <div>
+        <div key={test.current}>
             {/*adicionar a chamada do carrousel*/}
             <CarouselCampaign campaign={ campaign as Campaign} />
 
@@ -250,6 +276,12 @@ const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[], donorId
             </div>
           </div>
         )}
+        { 
+            actions.length > 0 &&
+            (
+                <ActionDisplay actions={actions} />
+            )
+          }
         </div>
   );
 }

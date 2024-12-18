@@ -8,7 +8,7 @@ import { RoomIdGenerator } from "@/services/hubs/notificationHub/RoomIdGenerator
 
 export class NotificationManager extends EntityManager<Notification> 
 {
-    private readonly hubConnection;
+    readonly hubConnection;
     constructor()
     {
         super(Notification);
@@ -21,7 +21,7 @@ export class NotificationManager extends EntityManager<Notification>
             return;
 
         const createdNotification = await this.add(notification);
-        await this.hubConnection.addAfterConnectionHandler( ()=>{
+       // await this.hubConnection.addAfterConnectionHandler( ()=>{
 
             this.hubConnection.emitEvent(
                 new RetransmissionEvent( { 
@@ -31,8 +31,8 @@ export class NotificationManager extends EntityManager<Notification>
                 }) 
             )
 
-        } )
-
-        this.hubConnection.disconnect();
+       // } )
     }
+
+    
 }

@@ -40,11 +40,13 @@ export class NotificationHubClientConnection implements IRoomHubClientConnection
         return new Promise((resolve,reject) => {
             if (this.socket.connected) 
             {
+                console.log("test1")
                 handler()
                 //setTimeout(handler,1000);
                 resolve();
             } else 
             {
+                console.log("test12")
                 this.socket.once("connect", () => {
                     //setTimeout(handler,1000);
                     handler();
@@ -104,10 +106,10 @@ export class NotificationHubClientConnection implements IRoomHubClientConnection
         this.emitEvent(new LeaveRoomEvent( roomId ));
     }
 
-    emitEvent(event: IHubEvent<unknown>): void 
+    async emitEvent(event: IHubEvent<unknown>): Promise<void> 
     {
         this.throwIfNotConnect("emit Events");
-        this.socket.emit(event.name,event);
+        await this.socket.emitWithAck(event.name,event);
     }
 
     addEventListener(event: string, handler: EvenHandler): EventListener 

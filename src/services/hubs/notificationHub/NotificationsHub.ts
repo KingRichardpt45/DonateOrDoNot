@@ -426,6 +426,8 @@ export class NotificationsHub implements IHubWithRooms
             console.log(`Retransmitting ${event.name} from ${connection.id.value} to room ${event.data.toRom.value}`);
             this.emitEventToRoom(event.data.originalEvent,event.data.toRom);
         }
+        else
+            console.log(`Event not retransmitted ${event.name} from ${connection.id.value}, no destinations.`);
     }
 
     private addSocketEventHandler(eventName: string, handler: EvenHandler)
