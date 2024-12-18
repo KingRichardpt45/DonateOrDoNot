@@ -18,11 +18,23 @@ import SearchCampaigns from "../components/search/searchCampaigns/searchCampaign
 
 const CampaignsList :React.FC<{campaigns:Campaign[]}> = ({campaigns}) =>{
     //console.log(campaigns);
+    const campaigns_Ids = campaigns.map((c) => c.id);
+
+    // Generate a random index
+    const randomIndex = Math.floor(Math.random() * campaigns_Ids.length);
+  
+    // Use the random index for any logic as needed
+    const randomCampaignId = campaigns_Ids[randomIndex];
 
     return(
       <div className={styles.container}>
         <div><Carousel onActualIdChange={(v)=>{}}/></div>
               <div className={styles.campaignContainer}>
+                <div className={styles.buttoncontainer}>
+                  <a href={`/campaigns/view/${randomCampaignId}`}>
+                <button className={styles.donateNowButton}> Random Donate</button>
+                  </a>
+                </div>
                 <h2 className={styles.heading}>Other Campaigns</h2>
                 {/* List of campaigns rendered dynamically from defaultCampaigns */}
                 <SearchCampaigns route="view" pageSize={5} managerId={null} exceptStatusList={[CampaignStatus.InAnalysis,CampaignStatus.Reproved] }mainSearch={true}></SearchCampaigns>
