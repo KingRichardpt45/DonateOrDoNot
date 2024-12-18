@@ -13,6 +13,7 @@ import { CampaignStatus } from "@/models/types/CampaignStatus";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { FileTypes } from "@/models/types/FileTypes";
 import Carousel from "../components/carousell";
+import SearchCampaigns from "../components/search/searchCampaigns/searchCampaigns";
 
 
 const CampaignsList :React.FC<{campaigns:Campaign[]}> = ({campaigns}) =>{
@@ -24,7 +25,8 @@ const CampaignsList :React.FC<{campaigns:Campaign[]}> = ({campaigns}) =>{
               <div className={styles.campaignContainer}>
                 <h2 className={styles.heading}>Other Campaigns</h2>
                 {/* List of campaigns rendered dynamically from defaultCampaigns */}
-                <div className={styles.campaignList}>
+                <SearchCampaigns route="view" pageSize={5} managerId={null} exceptStatusList={[CampaignStatus.InAnalysis,CampaignStatus.Reproved] }mainSearch={true}></SearchCampaigns>
+                {/* <div className={styles.campaignList}>
                   {campaigns.map((camp, index) => (
                     <div key={index} className={styles.campaignCard}>
                       <a href={`/campaigns/view/${camp.id}`}>
@@ -44,7 +46,7 @@ const CampaignsList :React.FC<{campaigns:Campaign[]}> = ({campaigns}) =>{
                       <h3 className={styles.title}>{camp.title}</h3>
                     </div>
                   ))}
-                </div>
+                </div> */}
               </div>
             </div> 
             )

@@ -39,8 +39,6 @@ export const MainLayout: React.FC<PropType> = async ({ children , passUser}) => 
         image =`${(user.profileImage.value as File).id}_${(user.profileImage.value as File).original_name}` 
     }
 
-    console.log("Called Mainlayout1")
-
     return (
         <IoConnectionProvider connectionLink={connectionLink}>
             <div className={styles.MainContainer} >

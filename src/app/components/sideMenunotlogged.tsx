@@ -44,7 +44,7 @@ const SideMenuNL: React.FC<SideMenuProps> = ({ isOpen, toggleMenu }) => {
               </a>
             </li>
             <li>
-              <a href="/search">
+              <a href="/searchpage">
                 <span className={styles.iconContainer}>
                   <Search size={20} />
                 </span>

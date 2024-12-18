@@ -57,21 +57,17 @@ export default async function Search() {
   });
 
   return (
-        <MainLayout passUser={user}>
-      {
-        user === null &&
-        <NotLoggedIn/>
-      }
-      {
-        !authorized &&
-        <NotAuthorized/>
-      }
-      {
-        authorized &&
-        <div className={styles.page}>
-        <CampaignsList campaigns={campaignsArray as Campaign[]} />
-      </div>
+    <MainLayout passUser={user}>
+        {
+          !authorized &&
+          <NotAuthorized/>
         }
-        </MainLayout>
+        {
+          (authorized || user === null) &&
+          <div className={styles.page}>
+            <CampaignsList campaigns={campaignsArray as Campaign[]} />
+          </div>
+        }
+    </MainLayout>
   );
 }
