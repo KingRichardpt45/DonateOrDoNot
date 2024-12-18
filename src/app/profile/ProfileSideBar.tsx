@@ -15,7 +15,6 @@ type EditProfileParams = {
     city: string | null;
     postalCode: string | null;
     fullAddress: string | null;
-    onSuccessfulUpdate: () => void;
 };
 
 const ProfileSideBar = (params: EditProfileParams) => {
