@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import styles from "./searchCampaigns.module.css"
 import { CampaignStatus } from "@/models/types/CampaignStatus";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Campaign } from "@/models/Campaign";
 import { ActionDisplay } from "../../actionsNotifications/actionDisplay/ActionDisplay";
 import { IActionResultNotification } from "../../actionsNotifications/IActionResultNotification";
@@ -21,7 +21,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
     const [firstRender, setFirstRender] = useState<boolean>(true);
     const [selectedStatus, setSelectedStatus] = useState<string>(campaignStatusEntriesSizeString);
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-    const [lastFetchedPage, setLastFetchedPage] = useState<number>(0);
+    const lastFetchedPage = useRef<number>(0);
     const [query,setQuery] = useState<string>("Search...");
     const [actions,setActions] = useState<IActionResultNotification[]>([]);
     const [category, setCategory] = useState<string>("");
@@ -43,22 +43,22 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
 
     async function onSearch()
     {
+        lastFetchedPage.current = 0;
         await search(0);
-        setLastFetchedPage(0);
     }
 
     async function onSearchMore()
     {
-        let page = lastFetchedPage+1;
-        await search(page);
-        setLastFetchedPage(page);
+        let page = lastFetchedPage.current+1;
+        await search(page,true);
+        lastFetchedPage.current = page;
     }
     
-    async function search(page:number)
+    async function search(page:number,viewMore:boolean=false)
     {
         setActions([]);
 
-        let url = `/api/campaign?query=${query}&page=${page}&pageSize=${pageSize}`;
+        let url = `/api/campaign?query=${query == "Search..." ? "" : query}&page=${page}&pageSize=${pageSize}`;
         url = managerId ? `${url}&managerId=${managerId}`: url;
         url = selectedStatus !== campaignStatusEntriesSizeString ? `${url}&status=${selectedStatus}`: url;
         url = category !== "" ? `${url}&category=${category}` : url
@@ -69,7 +69,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
         {
         case 200:
             responseBody =  await response.json()
-            const fetchedCampaigns = lastFetchedPage==0 ? [] : [...campaigns];
+            const fetchedCampaigns = lastFetchedPage.current==0 ? [] : [...campaigns];
             const actionsNotificationsResult = [];
             for (const campaign of responseBody.data) 
             {
@@ -92,6 +92,10 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
             break;
         case 404:
             const notFount = [new ActionResultNotificationError("No Results found",[],2000)];
+            if(!viewMore)
+            {
+                setCampaigns([]);
+            }
             setActions(notFount);
             break;
         default:
@@ -141,10 +145,10 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
             <div  className={styles.resultsContainer}>
                 <div className={styles.results}>
                     {
-                        campaigns.map( (campaign:Campaign) => 
+                        campaigns.map( (campaign:Campaign,index) => 
                         (
                             <a href={`/campaigns/edit/${campaign.id}`}>
-                                <CampaignItem campaign={campaign} customStyle={{width:350, height:250}}></CampaignItem>
+                                <CampaignItem key={`search_${index}_${lastFetchedPage}`} campaign={campaign} customStyle={{width:350, height:250}}></CampaignItem>
                             </a>
                         )
                         )
@@ -152,7 +156,7 @@ const SearchCampaigns : React.FC<{ pageSize:number, managerId:number|null }>= ( 
                     {
                         campaigns.length == 0 &&
                         <div>
-                            There are no created campaigns.
+                            There are no campaigns to show.
                         </div>
                     }
                 </div>

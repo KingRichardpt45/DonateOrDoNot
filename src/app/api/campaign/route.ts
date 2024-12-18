@@ -55,7 +55,7 @@ export async function PUT(request: NextRequest) {
 }
 
 const searchFormSchema = yup.object().shape({
-    query: yup.string().lowercase().trim().required().nonNullable().min(1),
+    query: yup.string().lowercase().trim().notRequired().nonNullable().min(0),
     pageSize: yup.number().transform(YupUtils.convertToNumber).required().integer().min(0),
     page: yup.number().transform(YupUtils.convertToNumber).required().integer().min(0),
     category: yup.string().trim().nonNullable().min(1),

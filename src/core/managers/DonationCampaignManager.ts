@@ -71,12 +71,9 @@ export class DonationCampaignManager extends EntityManager<Campaign> implements 
         if (donors.length == 0) return new OperationResult(null, [new SimpleError("No results where found.")]); else return new OperationResult(donors, []);
     }
 
-    async searchWithConstraints(constraints: Constraint[], page: number, pageSize: number): Promise<OperationResult<Campaign[], SimpleError>> {
-        const inNamesResult = await this.repository.getByCondition(constraints, (campaign) => [new IncludeNavigation(campaign.files, 0)], [], pageSize, page * pageSize);
-
-        const inDescriptionResult = await this.repository.getByCondition(constraints, (campaign) => [new IncludeNavigation(campaign.files, 0)], [], pageSize, page * pageSize);
-
-        inDescriptionResult.forEach((value) => inNamesResult.push(value));
+    async searchWithConstraints(constraints: Constraint[], page: number, pageSize: number): Promise<OperationResult<Campaign[], SimpleError>> 
+    {
+        const inNamesResult = await this.repository.getByCondition(constraints, (campaign) => [new IncludeNavigation(campaign.files, 0)], [], pageSize , page * pageSize);
 
         if (inNamesResult.length == 0) return new OperationResult([], [new SimpleError("No items where found.")]); else return new OperationResult(inNamesResult, []);
     }
