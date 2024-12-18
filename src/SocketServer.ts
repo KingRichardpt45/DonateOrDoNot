@@ -1,5 +1,5 @@
 console.log("beginning ...")
 
-import { ServicesHubProvider } from "./services/ServiceHubProvider";
+import {ServicesHubProvider} from "./services/ServiceHubProvider";
 
 ServicesHubProvider.getInstance();

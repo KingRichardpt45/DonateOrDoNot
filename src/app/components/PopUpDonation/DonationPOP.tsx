@@ -1,7 +1,7 @@
 "use client"
-import React, { useState } from "react"; // Import React and hooks
+import React, {useState} from "react"; // Import React and hooks
 import styles from "./Modal.module.css"; // Import CSS module for styling
-import { TextArea } from "../textArea"; // Import the TextArea component
+import {TextArea} from "../textArea"; // Import the TextArea component
 
 // Props type for the modal, defining whether it's open and the function to close it
 type DonationModalProps = {

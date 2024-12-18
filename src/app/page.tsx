@@ -1,6 +1,6 @@
-import { Services } from "@/services/Services";
-import { IAuthorizationService } from "@/services/session/authorizationService/IAuthorizationService";
-import { MainLayout } from "./components/coreComponents/mainLayout";
+import {Services} from "@/services/Services";
+import {IAuthorizationService} from "@/services/session/authorizationService/IAuthorizationService";
+import {MainLayout} from "./components/coreComponents/mainLayout";
 import HomeContent from "./components/campaign";
 
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");

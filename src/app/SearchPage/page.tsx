@@ -1,30 +1,22 @@
-
-
-import Image from "next/image"; // Used for optimized image rendering in Next.js
-import { ExpandableSearchBar } from "../components/searchBar"; // Importing the search bar component
 import styles from "./search.module.css"; // CSS module for styling
-
-import { MainLayout } from "../components/coreComponents/mainLayout";
-import { Services } from "@/services/Services";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
+import {MainLayout} from "../components/coreComponents/mainLayout";
+import {Services} from "@/services/Services";
+import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
 import NotAuthorized from "../components/authorization/notAuthorized";
-import NotLoggedIn from "../components/authorization/notLogged";
-import { User } from "@/models/User";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { DonationCampaignManager } from "@/core/managers/DonationCampaignManager";
-import { EntityConverter } from "@/core/repository/EntityConverter";
-import { CampaignStatus } from "@/models/types/CampaignStatus";
-import { Constraint } from "@/core/repository/Constraint";
-import { Operator } from "@/core/repository/Operator";
-import { IncludeNavigation } from "@/core/repository/IncludeNavigation";
-
+import {User} from "@/models/User";
+import {UserRoleTypes} from "@/models/types/UserRoleTypes";
+import {DonationCampaignManager} from "@/core/managers/DonationCampaignManager";
+import {EntityConverter} from "@/core/repository/EntityConverter";
+import {CampaignStatus} from "@/models/types/CampaignStatus";
+import {Constraint} from "@/core/repository/Constraint";
+import {Operator} from "@/core/repository/Operator";
+import {IncludeNavigation} from "@/core/repository/IncludeNavigation";
 
 
 import CampaignsList from "./CampaignsList";
 
-import { Campaign } from "@/models/Campaign";
-import { FileManager } from "@/core/managers/FileManager";
-
+import {Campaign} from "@/models/Campaign";
+import {FileManager} from "@/core/managers/FileManager";
 
 
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");

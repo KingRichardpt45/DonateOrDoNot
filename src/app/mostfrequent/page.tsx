@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Donor } from "@/models/Donor";
-import { DonorManager } from "@/core/managers/DonorManager";
-import { MainLayout } from "../components/coreComponents/mainLayout";
+import React from 'react';
+import {Donor} from "@/models/Donor";
+import {DonorManager} from "@/core/managers/DonorManager";
+import {MainLayout} from "../components/coreComponents/mainLayout";
 import styles from "./mostDonated.module.css";
 import TopFrequent from '../components/topFrequent/topFrequent';
 import TopFrequentList from '../components/topFrequent/topFrequentList';

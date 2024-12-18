@@ -1,5 +1,5 @@
-import { IHubEvent } from "../IHubEvent";
-import { NotificationHubRoomId } from "../notificationHub/NotificationHubRoomId";
+import {IHubEvent} from "../IHubEvent";
+import {NotificationHubRoomId} from "../notificationHub/NotificationHubRoomId";
 
 export class LeaveRoomEvent implements IHubEvent<NotificationHubRoomId>
 {

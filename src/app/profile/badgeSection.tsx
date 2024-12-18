@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./profile.module.css";
-import { File as ModelFile } from "@/models/File";
+import {File as ModelFile} from "@/models/File";
 
 interface BadgeProps {
   badges: any[];

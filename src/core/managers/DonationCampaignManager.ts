@@ -13,7 +13,7 @@ import {IncludeNavigation} from "../repository/IncludeNavigation";
 import {CampaignStatus} from "@/models/types/CampaignStatus";
 import {BankAccountManager} from "./BankAccountManager";
 import {SearchableEntity} from "./SerachableEntity";
-import { FileManager } from "./FileManager";
+import {FileManager} from "./FileManager";
 
 export class DonationCampaignManager extends EntityManager<Campaign> implements SearchableEntity<Campaign> {
 

@@ -1,5 +1,4 @@
-import { Notification } from "../Notification";
-import { NotificationTypes } from "../types/NotificationTypes";
+import {Notification} from "../Notification";
 
 export class CampaignStatusNotification extends Notification
 {

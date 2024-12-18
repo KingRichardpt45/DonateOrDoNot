@@ -1,5 +1,3 @@
-
-
 import {User} from "@/models/User";
 import {IUserProvider} from "./IUserProvider";
 import {ISessionUserCacheService} from "../sessionCachingService/ISessionCacheService";
@@ -34,5 +32,15 @@ export class UserProvider implements IUserProvider {
             return null;
 
         return await this.sessionCacheService.retrieve(session);
+    }
+
+    async updateUser(): Promise<void>
+    {
+        const session = await this.sessionService.verify();
+
+        if (!session)
+            return;
+
+        await this.sessionCacheService.update(session);
     }
 }

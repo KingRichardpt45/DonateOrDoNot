@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState} from "react";
+import {useRef, useState} from "react";
 import styles from "./components.module.css";
 import Carousel from "./carousell"; // Importa o novo component
 

@@ -1,7 +1,6 @@
-import { DefaultEventsMap, Socket } from "socket.io";
-import { IHubServerConnection } from "../IHubServerConnection";
-import { IHubConnectionId } from "../IHubConnectionId";
-import { NotificationHubConnectionId } from "./NotificationHutConnectionId";
+import {DefaultEventsMap, Socket} from "socket.io";
+import {IHubServerConnection} from "../IHubServerConnection";
+import {NotificationHubConnectionId} from "./NotificationHutConnectionId";
 
 export class NotificationServerHubConnection implements IHubServerConnection<Socket>
 {

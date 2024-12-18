@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, {useEffect, useState} from "react";
 import styles from "./components.module.css"; // Crie um arquivo CSS para o carrossel, ou ajuste a importação de estilos existente
-import { Campaign } from "@/models/Campaign";
-import { FileTypes } from "@/models/types/FileTypes";
+import {Campaign} from "@/models/Campaign";
+import {FileTypes} from "@/models/types/FileTypes";
 import {File as ModelFile} from "@/models/File";
 import Image from 'next/image';
 

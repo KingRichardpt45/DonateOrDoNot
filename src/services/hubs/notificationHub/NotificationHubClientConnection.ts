@@ -1,15 +1,15 @@
-import { VarSync } from "@/core/utils/VarSync";
-import { JoinRoomEvent } from "../events/JoinRoomEvent";
-import { LeaveRoomEvent } from "../events/LeaveRoomEvent";
-import { EvenHandler, EventListener } from "../IHub";
-import { IHubEvent } from "../IHubEvent";
-import { IHubRoomId } from "../IHubRoomId";
-import { IRoomHubClientConnection } from "../IRoomHubClientConnections";
-import { ListenerRegistry } from "./ListenerRegistry";
-import { NotificationHubRoom } from "./NotificationHubRoom";
-import { NotificationHubRoomId } from "./NotificationHubRoomId";
-import { NotificationHubConnectionId } from "./NotificationHutConnectionId";
-import { io as ClientIo, Socket } from "socket.io-client";
+import {VarSync} from "@/core/utils/VarSync";
+import {JoinRoomEvent} from "../events/JoinRoomEvent";
+import {LeaveRoomEvent} from "../events/LeaveRoomEvent";
+import {EvenHandler, EventListener} from "../IHub";
+import {IHubEvent} from "../IHubEvent";
+import {IHubRoomId} from "../IHubRoomId";
+import {IRoomHubClientConnection} from "../IRoomHubClientConnections";
+import {ListenerRegistry} from "./ListenerRegistry";
+import {NotificationHubRoom} from "./NotificationHubRoom";
+import {NotificationHubRoomId} from "./NotificationHubRoomId";
+import {NotificationHubConnectionId} from "./NotificationHutConnectionId";
+import {io as ClientIo, Socket} from "socket.io-client";
 
 export class NotificationHubClientConnection implements IRoomHubClientConnection
 {

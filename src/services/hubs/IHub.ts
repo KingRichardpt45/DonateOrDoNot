@@ -1,8 +1,6 @@
-import { IHubServerConnection } from "./IHubServerConnection"
-import { IHubClientConnection } from "./IHubClientConnection"
-import { IHubConnectionId } from "./IHubConnectionId"
-import { IHubEvent } from "./IHubEvent"
-import { IHubRoomId } from "./IHubRoomId"
+import {IHubServerConnection} from "./IHubServerConnection"
+import {IHubConnectionId} from "./IHubConnectionId"
+import {IHubEvent} from "./IHubEvent"
 
 export interface IHub
 {   

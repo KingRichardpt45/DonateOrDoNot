@@ -1,17 +1,18 @@
-import { Server , Socket} from "socket.io";
-import { EvenHandler, EventListener, IHub } from "../IHub";
-import { IHubEvent } from "../IHubEvent";
-import { IHubRoomId } from "../IHubRoomId";
-import { IHubServerConnection } from "../IHubServerConnection";
-import { NotificationServerHubConnection } from "./NotificationHubServerConnection";
-import { NotificationHubConnectionId } from "./NotificationHutConnectionId";
-import { NotificationHubRoom } from "./NotificationHubRoom";
-import { NotificationHubRoomId } from "./NotificationHubRoomId";
-import { IHubWithRooms } from "../IHubWithRooms";
-import { ListenerRegistry } from "./ListenerRegistry";
-import { JoinRoomEvent } from "../events/JoinRoomEvent";
-import { LeaveRoomEvent } from "../events/LeaveRoomEvent";
-import { VarSync } from "./../../../core/utils/VarSync";
+import {Server} from "socket.io";
+import {EvenHandler, EventListener} from "../IHub";
+import {IHubEvent} from "../IHubEvent";
+import {IHubRoomId} from "../IHubRoomId";
+import {IHubServerConnection} from "../IHubServerConnection";
+import {NotificationServerHubConnection} from "./NotificationHubServerConnection";
+import {NotificationHubConnectionId} from "./NotificationHutConnectionId";
+import {NotificationHubRoom} from "./NotificationHubRoom";
+import {NotificationHubRoomId} from "./NotificationHubRoomId";
+import {IHubWithRooms} from "../IHubWithRooms";
+import {ListenerRegistry} from "./ListenerRegistry";
+import {JoinRoomEvent} from "../events/JoinRoomEvent";
+import {LeaveRoomEvent} from "../events/LeaveRoomEvent";
+import {VarSync} from "./../../../core/utils/VarSync";
+
 /**
  * Starting with socket.io@3.1.0, the underlying Adapter will emit the following events:
 

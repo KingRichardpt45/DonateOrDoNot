@@ -1,4 +1,4 @@
-import { NotificationHubRoomId } from "./NotificationHubRoomId";
+import {NotificationHubRoomId} from "./NotificationHubRoomId";
 
 export class RoomIdGenerator
 {

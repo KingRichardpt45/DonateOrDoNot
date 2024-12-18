@@ -1,17 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import React from "react";
 import styles from "./search.module.css";
-import { Campaign } from "@/models/Campaign";
-
-
-import { File as ModelFile} from "@/models/File";
-
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { CampaignStatus } from "@/models/types/CampaignStatus";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import { FileTypes } from "@/models/types/FileTypes";
+import {Campaign} from "@/models/Campaign";
+import {CampaignStatus} from "@/models/types/CampaignStatus";
 import Carousel from "../components/carousell";
 import SearchCampaigns from "../components/search/searchCampaigns/searchCampaigns";
 

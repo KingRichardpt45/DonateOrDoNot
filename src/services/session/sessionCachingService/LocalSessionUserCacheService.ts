@@ -61,6 +61,17 @@ export class LocalSessionUserCacheService implements ISessionUserCacheService {
     }
 
     /**
+     * Updates the user and session in the cache.
+     *
+     * @param session - The session object containing user ID and expiration details.
+     * @param user - The user object to be updated in the cache.
+     */
+    async update(session: Session): Promise<void> {
+        await this.remove(session);
+        await this.store(session);
+    }
+
+    /**
      * Retrieves the user associated with the given session from the cache.
      *
      * @param session - The session object to look up in the cache.

@@ -1,31 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Image from "next/image";
 import styles from "./ViewCampaignForm.module.css";
-import { Campaign } from "@/models/Campaign";
-
-import DropdownInput from "../../search/selectWithInput/selectWithInput";
-import { BadgeTypes } from "@/models/types/BadgeTypes";
-import { FileTypes } from "@/models/types/FileTypes";
-import { IActionResultNotification } from "../../actionsNotifications/IActionResultNotification";
-import { ActionDisplay } from "../../actionsNotifications/actionDisplay/ActionDisplay";
-import { File as ModelFIle} from "@/models/File";
-import { Badge } from "@/models/Badge";
-import { CampaignBadge } from "@/models/CampaignBadge";
-import { BankAccount } from "@/models/BankAccount";
-import { array } from "yup";
-import { StringUtils } from "@/core/utils/StringUtils";
-import { ActionResultNotificationError } from "../../actionsNotifications/ActionResultNotificationError";
-import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { CampaignStatus } from "@/models/types/CampaignStatus";
+import {Campaign} from "@/models/Campaign";
+import {BadgeTypes} from "@/models/types/BadgeTypes";
+import {FileTypes} from "@/models/types/FileTypes";
+import {File as ModelFIle} from "@/models/File";
 import CarouselCampaign from "../../CampaignCarrousel/carouselCampaign";
 import TopDonors from "../../topDonors/topDonors";
-import { Donor } from "@/models/Donor";
+import {Donor} from "@/models/Donor";
 import DonationModal from "../../PopUpDonation/DonationPOP";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
-import { Services } from "@/services/Services";
 
 interface AddedFile
 { 

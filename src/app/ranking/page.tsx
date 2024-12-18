@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Donor } from "@/models/Donor";
-import { DonorManager } from "@/core/managers/DonorManager";
-import { MainLayout } from "../components/coreComponents/mainLayout";
+import React from 'react';
+import {Donor} from "@/models/Donor";
+import {DonorManager} from "@/core/managers/DonorManager";
+import {MainLayout} from "../components/coreComponents/mainLayout";
 import TopDonorsList from "../components/topDonors/TopDonorsList";
 import styles from "./rankingPage.module.css";
 import TopDonors from '../components/topDonors/topDonors';

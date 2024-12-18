@@ -1,4 +1,4 @@
-import { EvenHandler, EventListener } from "../IHub";
+import {EvenHandler, EventListener} from "../IHub";
 
 export class ListenerRegistry<EventId> 
 {

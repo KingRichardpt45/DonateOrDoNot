@@ -1,5 +1,4 @@
-import { Mutex } from "async-mutex";
-import { promises } from "dns";
+import {Mutex} from "async-mutex";
 
 export class VarSync<T>
 {

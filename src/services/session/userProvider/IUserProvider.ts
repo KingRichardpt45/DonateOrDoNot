@@ -11,4 +11,6 @@ export interface IUserProvider {
      */
     getUser(): Promise<User | null>
 
+    updateUser(): Promise<void>
+
 }

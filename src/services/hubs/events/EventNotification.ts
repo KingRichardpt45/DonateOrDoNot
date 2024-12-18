@@ -1,5 +1,5 @@
-import { Notification } from "@/models/Notification";
-import { IHubEvent } from "../IHubEvent";
+import {Notification} from "@/models/Notification";
+import {IHubEvent} from "../IHubEvent";
 
 export class EventNotification implements IHubEvent<Notification>
 {

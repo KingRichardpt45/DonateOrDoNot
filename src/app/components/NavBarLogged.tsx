@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useRef, useState} from 'react';
 import Link from 'next/link';
-import { Menu, Bell } from 'lucide-react';
+import {Bell, Menu} from 'lucide-react';
 import styles from './components.module.css';
 import Image from 'next/image';
 import SideMenu from './SideMenu';
-import { Notification } from '@/models/Notification';
-import { StringCaseConverter } from '@/core/Utils/StringCaseConverter';
-import { NotificationTypes } from '@/models/types/NotificationTypes';
-import { useConnectionContext } from './coreComponents/ioConnectionProvider';
-import { EventNotification } from '@/services/hubs/events/EventNotification';
-import { IHubEvent } from '@/services/hubs/IHubEvent';
-import { RoomIdGenerator } from '@/services/hubs/notificationHub/RoomIdGenerator';
-import { IRoomHubClientConnection } from '@/services/hubs/IRoomHubClientConnections';
+import {Notification} from '@/models/Notification';
+import {StringCaseConverter} from '@/core/Utils/StringCaseConverter';
+import {NotificationTypes} from '@/models/types/NotificationTypes';
+import {useConnectionContext} from './coreComponents/ioConnectionProvider';
+import {EventNotification} from '@/services/hubs/events/EventNotification';
+import {IHubEvent} from '@/services/hubs/IHubEvent';
+import {RoomIdGenerator} from '@/services/hubs/notificationHub/RoomIdGenerator';
+import {IRoomHubClientConnection} from '@/services/hubs/IRoomHubClientConnections';
 
 export const HeaderL: React.FC<{ userName:string, userImage:string | null, userType:number,userId:number ,  notifications:Notification[] }> = ( {userId,userName,userImage,userType,notifications} )  => 
 {

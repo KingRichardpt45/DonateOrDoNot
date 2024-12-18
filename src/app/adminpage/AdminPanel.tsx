@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./admin.module.css";
 import CampaignsAdmin from "./campaignsAdmin";
-import { Campaign } from "@/models/Campaign";
-import { CampaignManager } from "@/models/CampaignManager";
+import {Campaign} from "@/models/Campaign";
+import {CampaignManager} from "@/models/CampaignManager";
 
 
 interface AdminPanelProps {

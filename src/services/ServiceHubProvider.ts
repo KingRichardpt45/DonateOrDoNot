@@ -1,8 +1,6 @@
-
-
-import { NotificationsHub } from "./hubs/notificationHub/NotificationsHub";
-import { IHubWithRooms } from "./hubs/IHubWithRooms";
-import { SocketIoServer } from "./SocketIoServer";
+import {NotificationsHub} from "./hubs/notificationHub/NotificationsHub";
+import {IHubWithRooms} from "./hubs/IHubWithRooms";
+import {SocketIoServer} from "./SocketIoServer";
 
 declare global 
 {

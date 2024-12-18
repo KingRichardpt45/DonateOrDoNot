@@ -1,4 +1,4 @@
-import { IHubRoomId } from "../IHubRoomId";
+import {IHubRoomId} from "../IHubRoomId";
 
 export class NotificationHubRoomId implements IHubRoomId<string>
 {

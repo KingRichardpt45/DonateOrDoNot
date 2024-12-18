@@ -3,14 +3,8 @@
 
 import React from "react";
 import styles from "./components.module.css";
-import { 
-  Home,
-  User,
-  LogOut,
-  LogIn,
-  Search
-} from "lucide-react";
-import { usePathname  } from "next/navigation";
+import {Home, LogIn, Search} from "lucide-react";
+import {usePathname} from "next/navigation";
 
 interface SideMenuProps {
   isOpen: boolean;

@@ -2,19 +2,9 @@
 
 import React from "react";
 import styles from "./components.module.css";
-import {
-  Home,
-  Search,
-  Store,
-  Trophy,
-  Clock,
-  BarChart2,
-  DollarSign,
-  User,
-  LogOut,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
+import {BarChart2, Clock, Home, LogOut, Search, Store, Trophy, User,} from "lucide-react";
+import {useRouter} from "next/navigation";
+import {UserRoleTypes} from "@/models/types/UserRoleTypes";
 
 interface SideMenuProps {
   isOpen: boolean;

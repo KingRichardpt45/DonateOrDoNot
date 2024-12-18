@@ -1,7 +1,7 @@
 "use client"
 import React from 'react';
 import styles from './shopItem.module.css';
-import { StoreItem } from '@/models/StoreItem';
+import {StoreItem} from '@/models/StoreItem';
 import {File as ModelFile} from "@/models/File";
 
 export const ShopItem: React.FC<{item:StoreItem, userID:number}> = ({item, userID})=>{

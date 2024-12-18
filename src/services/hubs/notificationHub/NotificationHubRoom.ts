@@ -1,11 +1,11 @@
-import { EvenHandler, EventListener } from "../IHub";
-import { IHubEvent } from "../IHubEvent";
-import { IHubRoom } from "../IHubRoom";
-import { ListenerRegistry } from "./ListenerRegistry";
-import { NotificationHubRoomId } from "./NotificationHubRoomId" ;
-import { NotificationServerHubConnection } from "./NotificationHubServerConnection";
-import { NotificationHubConnectionId } from "./NotificationHutConnectionId";
-import { Server } from "socket.io";
+import {EvenHandler, EventListener} from "../IHub";
+import {IHubEvent} from "../IHubEvent";
+import {IHubRoom} from "../IHubRoom";
+import {ListenerRegistry} from "./ListenerRegistry";
+import {NotificationHubRoomId} from "./NotificationHubRoomId";
+import {NotificationServerHubConnection} from "./NotificationHubServerConnection";
+import {NotificationHubConnectionId} from "./NotificationHutConnectionId";
+import {Server} from "socket.io";
 
 export class NotificationHubRoom implements IHubRoom
 {

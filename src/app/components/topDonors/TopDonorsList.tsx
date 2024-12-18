@@ -1,6 +1,6 @@
-import { Donor } from "@/models/Donor";
+import {Donor} from "@/models/Donor";
 import styles from "./TopDonorsList.module.css";
-import { User } from "@/models/User";
+import {User} from "@/models/User";
 
 type TopDonorsListProps = {
   index: number;

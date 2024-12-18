@@ -1,6 +1,6 @@
-import { User } from "@/models/User";
+import {User} from "@/models/User";
 import styles from "./topDonors.module.css";
-import { Donor } from "@/models/Donor";
+import {Donor} from "@/models/Donor";
 
 type TopDonorsListProps = {
   podiumDonors: Donor[];

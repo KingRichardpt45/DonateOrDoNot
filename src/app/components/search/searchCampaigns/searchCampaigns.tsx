@@ -1,14 +1,14 @@
 "use client"
 
-import { Search } from "lucide-react";
+import {Search} from "lucide-react";
 import styles from "./searchCampaigns.module.css"
-import { CampaignStatus } from "@/models/types/CampaignStatus";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { Campaign } from "@/models/Campaign";
-import { ActionDisplay } from "../../actionsNotifications/actionDisplay/ActionDisplay";
-import { IActionResultNotification } from "../../actionsNotifications/IActionResultNotification";
-import { ActionResultNotificationError } from "../../actionsNotifications/ActionResultNotificationError";
-import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
+import {CampaignStatus} from "@/models/types/CampaignStatus";
+import {useEffect, useRef, useState} from "react";
+import {Campaign} from "@/models/Campaign";
+import {ActionDisplay} from "../../actionsNotifications/actionDisplay/ActionDisplay";
+import {IActionResultNotification} from "../../actionsNotifications/IActionResultNotification";
+import {ActionResultNotificationError} from "../../actionsNotifications/ActionResultNotificationError";
+import {ActionResultNotificationSuccess} from "../../actionsNotifications/ActionResultNotificationSuccess";
 import DropdownInput from "../selectWithInput/selectWithInput";
 import CampaignItem from "../../campaigns/CampaignsItem";
 

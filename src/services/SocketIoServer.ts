@@ -1,5 +1,5 @@
-import { createServer, Server as HttpServer } from "http";
-import { Server as IOServer, ServerOptions } from "socket.io";
+import {createServer, Server as HttpServer} from "http";
+import {Server as IOServer, ServerOptions} from "socket.io";
 
 declare global 
 {

@@ -1,8 +1,8 @@
 "use client"
-import { useEffect, useRef, useState } from "react";
-import { ShopItem } from "./shopItem";
+import {useEffect, useState} from "react";
+import {ShopItem} from "./shopItem";
 import styles from "./StorePage.module.css"; // CSS module for styling
-import { StoreItem } from "@/models/StoreItem";
+import {StoreItem} from "@/models/StoreItem";
 
 export const StorePage: React.FC<{userID:number}> = ({userID})=>
 {

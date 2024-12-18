@@ -1,11 +1,10 @@
-
 import {FormValidator} from "@/core/utils/FormValidator";
 import {Responses} from "@/core/utils/Responses";
 import {Services} from "@/services/Services";
 import {NextRequest} from "next/server";
 import * as yup from 'yup';
 import {IAuthorizationService} from "@/services/session/authorizationService/IAuthorizationService";
-import { NotificationManager } from "@/core/managers/NotificationManager";
+import {NotificationManager} from "@/core/managers/NotificationManager";
 
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
 const notificationManager = new NotificationManager();

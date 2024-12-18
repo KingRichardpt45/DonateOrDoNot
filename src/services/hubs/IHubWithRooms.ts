@@ -1,9 +1,9 @@
-import { EvenHandler, EventListener, IHub } from "./IHub";
-import { IHubConnectionId } from "./IHubConnectionId";
-import { IHubEvent } from "./IHubEvent";
-import { IHubRoom } from "./IHubRoom";
-import { IHubRoomId } from "./IHubRoomId";
-import { IHubServerConnection } from "./IHubServerConnection";
+import {EvenHandler, EventListener, IHub} from "./IHub";
+import {IHubConnectionId} from "./IHubConnectionId";
+import {IHubEvent} from "./IHubEvent";
+import {IHubRoom} from "./IHubRoom";
+import {IHubRoomId} from "./IHubRoomId";
+import {IHubServerConnection} from "./IHubServerConnection";
 
 export interface IHubWithRooms extends IHub
 {

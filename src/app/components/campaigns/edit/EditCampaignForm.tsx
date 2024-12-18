@@ -1,23 +1,22 @@
 "use client";
 
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import {Dispatch, SetStateAction, useRef, useState} from "react";
 import styles from "./EditCampaignForm.module.css";
 import DropdownInput from "../../search/selectWithInput/selectWithInput";
-import { BadgeTypes } from "@/models/types/BadgeTypes";
-import { FileTypes } from "@/models/types/FileTypes";
-import { IActionResultNotification } from "../../actionsNotifications/IActionResultNotification";
-import { ActionDisplay } from "../../actionsNotifications/actionDisplay/ActionDisplay";
-import { File as ModelFIle} from "@/models/File";
-import { Campaign } from "@/models/Campaign";
-import { Badge } from "@/models/Badge";
-import { CampaignBadge } from "@/models/CampaignBadge";
-import { BankAccount } from "@/models/BankAccount";
-import { array } from "yup";
-import { StringUtils } from "@/core/utils/StringUtils";
-import { ActionResultNotificationError } from "../../actionsNotifications/ActionResultNotificationError";
-import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { CampaignStatus } from "@/models/types/CampaignStatus";
+import {BadgeTypes} from "@/models/types/BadgeTypes";
+import {FileTypes} from "@/models/types/FileTypes";
+import {IActionResultNotification} from "../../actionsNotifications/IActionResultNotification";
+import {ActionDisplay} from "../../actionsNotifications/actionDisplay/ActionDisplay";
+import {File as ModelFIle} from "@/models/File";
+import {Campaign} from "@/models/Campaign";
+import {Badge} from "@/models/Badge";
+import {CampaignBadge} from "@/models/CampaignBadge";
+import {BankAccount} from "@/models/BankAccount";
+import {StringUtils} from "@/core/utils/StringUtils";
+import {ActionResultNotificationError} from "../../actionsNotifications/ActionResultNotificationError";
+import {ActionResultNotificationSuccess} from "../../actionsNotifications/ActionResultNotificationSuccess";
+import {UserRoleTypes} from "@/models/types/UserRoleTypes";
+import {CampaignStatus} from "@/models/types/CampaignStatus";
 
 interface AddedFile
 { 
