@@ -1,19 +1,19 @@
 import React from "react";
-import { MainLayout } from "@/app/components/coreComponents/mainLayout";
-import SideProfile from "./sideProfile";
+import {MainLayout} from "@/app/components/coreComponents/mainLayout";
 import styles from "./profile.module.css";
 import NotAuthorized from "@/app/components/authorization/notAuthorized";
 import NotLoggedIn from "@/app/components/authorization/notLogged";
-import { UserRoleTypes } from "@/models/types/UserRoleTypes";
-import { Services } from "@/services/Services";
-import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
-import { DonationManager } from "@/core/managers/DonationManager";
-import { DonorManager } from "@/core/managers/DonorManager";
-import { Constraint } from "@/core/repository/Constraint";
-import { Operator } from "@/core/repository/Operator";
-import { DonorBadgeManager } from "@/core/managers/DonorBadgesManager";
-import { DonorStoreItemManager } from "@/core/managers/DonorStoreItemManager";
+import {UserRoleTypes} from "@/models/types/UserRoleTypes";
+import {Services} from "@/services/Services";
+import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
+import {DonationManager} from "@/core/managers/DonationManager";
+import {DonorManager} from "@/core/managers/DonorManager";
+import {Constraint} from "@/core/repository/Constraint";
+import {Operator} from "@/core/repository/Operator";
+import {DonorBadgeManager} from "@/core/managers/DonorBadgesManager";
+import {DonorStoreItemManager} from "@/core/managers/DonorStoreItemManager";
 import Link from "next/link";
+import ProfileSideBar from "@/app/profile/ProfileSideBar";
 
 // Define the type for searchParams
 type SearchParams = {
@@ -34,10 +34,13 @@ const ProfilePage = async ({
 }: {
   searchParams: SearchParams;
 }) => {
+
+  const params = await searchParams;
+
   const page = parseInt(
-    (Array.isArray(searchParams.page)
-      ? searchParams.page[0]
-      : searchParams.page) || "1"
+    (Array.isArray(params?.page)
+      ? params.page[0]
+      : params.page) || "1"
   );
   const badgesPerPage = 5;
   const itemsPerPage = 5;
@@ -84,11 +87,37 @@ const ProfilePage = async ({
   const totalBadgesPages = Math.ceil(badges.value?.length / badgesPerPage);
   const totalItemsPages = Math.ceil(items.value?.length / itemsPerPage);
 
+  const profileImage = Array.isArray(user.profileImage?.value)
+      ? user.profileImage?.value[0]?.file_path ?? null
+      : user.profileImage?.value?.file_path ?? null
+
+  const address: string | null = Array.isArray(user.address?.value)
+      ? user.address.value[0]?.address ?? null
+      : user.address?.value?.address ?? null;
+
+  const city: string | null = Array.isArray(user.address?.value)
+      ? user.address.value[0]?.city ?? null
+      : user.address?.value?.city ?? null;
+
+  const postalCode: string | null = Array.isArray(user.address?.value)
+      ? user.address.value[0]?.postal_code ?? null
+      : user.address?.value?.postal_code ?? null;
+
+  const fullAddress = [address, city, postalCode].filter(Boolean).join(", ") || null;
+
   return (
     <MainLayout passUser={user}>
       <div className={styles.ProfileContainer}>
         {/* Sidebar */}
-        <SideProfile />
+        <ProfileSideBar userId={user.id}
+                        profileImage={profileImage}
+                        email={user.email}
+                        firstName={user.first_name}
+                        lastName={user.last_name}
+                        address={address}
+                        city={city}
+                        postalCode={postalCode}
+                        fullAddress={fullAddress}/>
 
         {/* Main Content */}
         <div className={styles.MainContent}>
@@ -98,7 +127,7 @@ const ProfilePage = async ({
             <div className={styles.StatisticsInfo}>
               <div>
                 <h3>Number of Donations</h3>
-                <p>{donations.isOK && donations.value!.length}</p>
+                <p>{donations.isOK ? donations.value?.length : 0}</p>
               </div>
               <div>
                 <h3>Frequency of Donation</h3>

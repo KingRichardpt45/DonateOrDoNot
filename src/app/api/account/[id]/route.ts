@@ -13,8 +13,10 @@ import {Address} from "@/models/Address";
 import {FileTypes} from "@/models/types/FileTypes";
 import {FileManager} from "@/core/managers/FileManager";
 import {CampaignManagerManager} from "@/core/managers/CampaignManagerManager";
+import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
 
 const userManager = new UserManager();
+const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const managersManager = new CampaignManagerManager();
 const addressManager = new EntityManager<Address>(Address);
 
@@ -45,13 +47,15 @@ const managerFormSchema = yup.object().shape({
 const managerFormValidator = new FormValidator(managerFormSchema);
 
 export async function PATCH(request: NextRequest, context: any) {
-    const {params} = await context;
+    const params = await context.params;
 
     if (!params?.id) {
         return Responses.createNotFoundResponse();
     }
 
-    if (!await authorizationService.hasRoles(UserRoleTypes.Admin, UserRoleTypes.CampaignManager)) {
+    const userId = await authorizationService.getId();
+
+    if (!await authorizationService.hasRole(UserRoleTypes.Admin) && userId != params.id) {
         return Responses.createForbiddenResponse();
     }
 
@@ -82,12 +86,16 @@ export async function PATCH(request: NextRequest, context: any) {
             user.address_id = newAddressId;
             updatedFields.push("address_id");
         } else {
+            console.log("Updating with new address")
             const address = await addressManager.getById(user.address_id)
+            console.log(address)
             if (address != null) {
                 address.address = formData.address ?? address.address;
                 address.specification = formData.addressSpecification ?? address.specification;
                 address.city = formData.city ?? address.city;
                 address.postal_code = formData.postalCode ?? address.postal_code;
+                console.log("new fields:")
+                console.log(address)
                 await addressManager.update(address)
             } else {
                 console.log("Creating new address")
@@ -103,6 +111,7 @@ export async function PATCH(request: NextRequest, context: any) {
                 updatedFields.push("address_id");
             }
         }
+
     }
 
     if (user.type == UserRoleTypes.CampaignManager) {
@@ -145,7 +154,6 @@ export async function PATCH(request: NextRequest, context: any) {
                 user[key] = formDataManager[key as keyof typeof formDataManager];
                 updateManagerFields.push(key);
             }
-
         }
 
         if (!await managersManager.updateField(manager, updateManagerFields))
@@ -153,13 +161,14 @@ export async function PATCH(request: NextRequest, context: any) {
     }
 
     for (const key in formData) {
-        if (user[key] === undefined) continue;
+        if (user[key] === undefined || key === "address") continue;
+
 
         user[key] = formData[key as keyof typeof formData];
         updatedFields.push(key);
     }
 
-    if (updatedFields.length === 0) {
+    if (updatedFields.length === 0 && formData.address == null) {
         return Responses.createValidationErrorResponse(["Id cannot be updated.", "No other fields to update."], "No fields for update.");
     }
 
@@ -169,8 +178,10 @@ export async function PATCH(request: NextRequest, context: any) {
 
     if (!result)
         return Responses.createServerErrorResponse();
-    else
+    else {
+        await userProvider.updateUser(user)
         return Responses.createSuccessResponse({}, "Account Updated.");
+    }
 }
 
 export async function DELETE(request: Request, context: any) {

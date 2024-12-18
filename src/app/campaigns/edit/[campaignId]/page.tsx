@@ -21,7 +21,6 @@ const campaignsManager = new  DonationCampaignManager();
 const filesManager = new  FileManager();
 const entityConverter = Services.getInstance().get<EntityConverter>("EntityConverter");
 
-
 export default async function CampaignCreate({params}:{ params: { campaignId:string } }) 
 {
   const user = await userProvider.getUser();
