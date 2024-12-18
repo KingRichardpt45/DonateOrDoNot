@@ -6,14 +6,14 @@ import {Bell, Menu} from 'lucide-react';
 import styles from './components.module.css';
 import Image from 'next/image';
 import SideMenu from './SideMenu';
-import {Notification} from '@/models/Notification';
-import {StringCaseConverter} from '@/core/Utils/StringCaseConverter';
-import {NotificationTypes} from '@/models/types/NotificationTypes';
-import {useConnectionContext} from './coreComponents/ioConnectionProvider';
-import {EventNotification} from '@/services/hubs/events/EventNotification';
-import {IHubEvent} from '@/services/hubs/IHubEvent';
-import {RoomIdGenerator} from '@/services/hubs/notificationHub/RoomIdGenerator';
-import {IRoomHubClientConnection} from '@/services/hubs/IRoomHubClientConnections';
+import { Notification } from '@/models/Notification';
+import { StringCaseConverter } from '@/core/utils/StringCaseConverter';
+import { NotificationTypes } from '@/models/types/NotificationTypes';
+import { useConnectionContext } from './coreComponents/ioConnectionProvider';
+import { EventNotification } from '@/services/hubs/events/EventNotification';
+import { IHubEvent } from '@/services/hubs/IHubEvent';
+import { RoomIdGenerator } from '@/services/hubs/notificationHub/RoomIdGenerator';
+import { IRoomHubClientConnection } from '@/services/hubs/IRoomHubClientConnections';
 
 export const HeaderL: React.FC<{ userName:string, userImage:string | null, userType:number,userId:number ,  notifications:Notification[] }> = ( {userId,userName,userImage,userType,notifications} )  => 
 {
@@ -21,6 +21,13 @@ export const HeaderL: React.FC<{ userName:string, userImage:string | null, userT
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [activeNotifications, setActiveNotifications] = useState<Notification[] >(notifications);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const bottomRef = useRef< HTMLDivElement | null>(null); // Reference to the bottom element
+
+  useEffect(() => {
+    // Scroll to the bottom whenever data changes
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [activeNotifications]);
 
   const hubConnection = useRef<IRoomHubClientConnection | null>(null)
   
@@ -28,18 +35,16 @@ export const HeaderL: React.FC<{ userName:string, userImage:string | null, userT
 
   if (typeof window !== "undefined" && render.isFirst) {
     
-    //console.log("getHubConnection")
+ //   console.log("getHubConnection")
     hubConnection.current = useConnectionContext();
     hubConnection.current!.addAfterConnectionHandler(() => {
-      const roomId = RoomIdGenerator.generateUserRoom(userId);
-      
-      //console.log("executed addAfterConnectionHandler", hubConnection.current!.getId());
+     
+      hubConnection.current!.joinRoom(RoomIdGenerator.generateUserRoom(userId));
 
-     //hubConnection.current!.emitEvent(new EventNotification(null!));
-      hubConnection.current!.joinRoom(roomId);
-
-      hubConnection.current!.addEventListenerToRoom(roomId, EventNotification.name, (event: IHubEvent<unknown>) => {
-         setActiveNotifications((prev) => [...prev, event.data as Notification]);
+      hubConnection.current!.addEventListener(EventNotification.name, (event: IHubEvent<unknown>) => {
+        setActiveNotifications((prev) => [...prev, event.data as Notification]);
+        setIsAnimating(true);
+        setTimeout(() => setIsAnimating(false), 2000); 
       });            
     });
     
@@ -70,6 +75,7 @@ export const HeaderL: React.FC<{ userName:string, userImage:string | null, userT
       })
   }
 
+  
   const toggleSideMenu = () => {
     setIsSideMenuOpen(!isSideMenuOpen);
   };
@@ -122,13 +128,18 @@ export const HeaderL: React.FC<{ userName:string, userImage:string | null, userT
         }
         <span className={styles.header__user_name}>{userName}</span>
         <div className={styles.notificationBell}>
-          <button
-            className={styles.bellButton}
-            onClick={toggleNotifications}
-            aria-label="Notifications"
-          >
-            <Bell size={24} />
-          </button>
+          <div className={styles.notificationBellContainer}>
+            <button
+              className={styles.bellButton}
+              onClick={toggleNotifications}
+              aria-label="Notifications"
+            >
+              <Bell size={24} className={isAnimating? styles.bellAnimating :styles.bell}/>
+            </button>
+            { activeNotifications.length > 0 &&
+              <div className={styles.numberNotifications}>{activeNotifications.length}</div>
+            }
+          </div>
           {isNotificationOpen && (
             <div className={styles.notificationDropdown}>
               {activeNotifications.length > 0 ? (
@@ -138,10 +149,12 @@ export const HeaderL: React.FC<{ userName:string, userImage:string | null, userT
                       {notificationToHtml(notification)}
                     </li>
                   ))}
+                  
                 </ul>
               ) : (
                 <p>No notifications</p>
               )}
+              <div ref={bottomRef}></div>
             </div>
           )}
         </div>

@@ -14,15 +14,6 @@ export interface IHubClientConnection
     disconnect(): void;
 
     
-    isInRoom(roomId: IHubRoomId<unknown> ): Promise<boolean>;
-
-    getRooms(): Promise<Set<IHubRoomId<unknown>>>;
-
-    joinRoom(roomId: IHubRoomId<unknown>): void;
-
-    leaveRoom(roomId: IHubRoomId<unknown>): void;
-
-
     emitEvent(event: IHubEvent<unknown>): void;
 
 

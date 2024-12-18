@@ -7,9 +7,20 @@ import {FormValidator} from "@/core/utils/FormValidator";
 import * as yup from 'yup';
 import {Responses} from "@/core/utils/Responses";
 import {YupUtils} from "@/core/utils/YupUtils";
+import { NotificationManager } from "@/core/managers/NotificationManager";
+import { ReceivedDonacoins } from "@/models/notifications/ReceivedDonacoins";
+import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
+import { DonationCampaignManager } from "@/core/managers/DonationCampaignManager";
+import { NewDonationTargetReachedNotification } from "@/models/notifications/NewDonationTargetReachedNotification";
+import { RetransmissionEvent } from "@/services/hubs/events/RetransmissionEvent";
+import { RoomIdGenerator } from "@/services/hubs/notificationHub/RoomIdGenerator";
+import { CampaignNewDonation } from "@/services/hubs/events/CampaignNewDonation";
 
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
+const iUserProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
 const donationManager = new DonationManager();
+
+const donationCampaignManager = new DonationCampaignManager();
 
 const putFormSchema = yup.object().shape({
     campaign_id: yup.number().required().nonNullable().positive().integer(),
@@ -21,10 +32,16 @@ const putFormSchema = yup.object().shape({
 
 const putFormValidator = new FormValidator(putFormSchema);
 
-export async function PUT(request: NextRequest) {
-    if (!await authorizationService.hasRoles(UserRoleTypes.Donor)) {
+export async function PUT(request: NextRequest) 
+{
+    const notificationManager = new NotificationManager();
+
+    const user = await iUserProvider.getUser()
+    if (!user) 
         return Responses.createForbiddenResponse();
-    }
+
+    if(user.type != UserRoleTypes.Donor)
+        return Responses.createUnauthorizedResponse();
 
     const formBody = await request.formData();
     const validatorResult = await putFormValidator.validate(Object.fromEntries(formBody.entries()));
@@ -33,11 +50,52 @@ export async function PUT(request: NextRequest) {
     }
 
     const formData = validatorResult.value!;
-    const result = await donationManager.create(formData.campaign_id, formData.donor_id, formData.comment, formData.value, formData.nameHidden);
 
-    if (!result.isOK) {
+    const campaign = await donationCampaignManager.getById(formData.campaign_id);
+    if(!campaign)
+        return Responses.createNotFoundResponse("No campaign found with id" + formData.campaign_id.toString() )
+
+    const result = await donationManager.create(formData.campaign_id, formData.donor_id, formData.comment, formData.value, formData.nameHidden);
+    campaign.current_donation_value! += formData.value;
+
+    if (!result.isOK) 
         return Responses.createValidationErrorResponse(result.errors);
-    }
+
+    
+    
+    await notificationManager.hubConnection.addAfterConnectionHandler(  async ()=> {
+
+        await notificationManager.sendNotification(
+            new ReceivedDonacoins( 
+                user.id!,
+                result.value!.value! * donationManager.getDonacoinsPerDonationFactor(),
+                "donating") 
+        )
+        
+        if( campaign.last_notified_value! - campaign.current_donation_value! >= campaign.interval_notification_value! )
+        {
+            console.log("test");
+            await notificationManager.sendNotification(
+                new NewDonationTargetReachedNotification( 
+                    campaign.campaign_manager_id!,
+                    campaign.id!,
+                    campaign.current_donation_value! / campaign.objective_value!, 
+                    campaign.title!) 
+            )
+        }
+        
+        console.log("sended");
+            await notificationManager.hubConnection.emitEvent(
+                new RetransmissionEvent( { 
+                    toConnection:null,
+                    toRom:RoomIdGenerator.generateCampaignRoom(campaign.id!),
+                    originalEvent:new CampaignNewDonation(campaign)
+                })
+            )
+
+        notificationManager.hubConnection.disconnect();
+    } 
+    )
 
     return Responses.createSuccessResponse(result.value);
 }

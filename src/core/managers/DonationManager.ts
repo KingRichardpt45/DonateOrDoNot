@@ -10,17 +10,25 @@ import {Operator} from "../repository/Operator";
 import {TotalDonatedValue} from "@/models/TotalDonatedValue";
 import {RepositoryAsync} from "../repository/RepositoryAsync";
 import {PrimaryKeyPart} from "../repository/PrimaryKeyPart";
+import { DonationCampaignManager } from "./DonationCampaignManager";
 
 export class DonationManager extends EntityManager<Donation> 
 {
     private readonly totalDonatedValueRepo : RepositoryAsync<TotalDonatedValue>;
     private readonly donorRepo : RepositoryAsync<Donor>;
+    private readonly campaignManager : DonationCampaignManager;
 
     constructor() 
     {
         super(Donation);
         this.totalDonatedValueRepo = new RepositoryAsync(TotalDonatedValue);
         this.donorRepo = new RepositoryAsync(Donor);
+        this.campaignManager = new DonationCampaignManager();
+    }
+
+    getDonacoinsPerDonationFactor() : number
+    {
+        return 100;
     }
 
     async create(campaignId:number, donorId:number, comment:string, value:number, isNameHidden:boolean): Promise<OperationResult<Donation | null, FormError>> 
@@ -42,10 +50,11 @@ export class DonationManager extends EntityManager<Donation>
             }
         }
 
+        let campaign:Campaign | null;
         if (donation.campaign_id) {
-            const campaignManager = new EntityManager(Campaign);
-            const campaignExists = await campaignManager.exists(donation.campaign_id);
-            if (!campaignExists) {
+            
+            campaign = await this.campaignManager.getById(donation.campaign_id);
+            if (!campaign) {
                 errors.push(new FormError("campaign_id", ["Campaign does not exist"]));
             }
         }
@@ -56,6 +65,8 @@ export class DonationManager extends EntityManager<Donation>
         const createdDonation = await this.add(donation);
         this.updateTotalDonatedValue(createdDonation.donor_id!,createdDonation.campaign_id!,createdDonation.value!);
         this.updateDonorTotalDonatedValue(createdDonation.donor_id!,createdDonation.value!);
+        campaign!.current_donation_value! += createdDonation.value!;
+        this.campaignManager.updateField(campaign!,["current_donation_value"]);
 
         return new OperationResult(createdDonation, errors);
     }
@@ -70,7 +81,8 @@ export class DonationManager extends EntityManager<Donation>
 
         if( totalDonatedValue != null)
         {
-            totalDonatedValue.total_value = totalDonatedValue.total_value ? totalDonatedValue.total_value + donatedValue : donatedValue;
+            totalDonatedValue.total_value! += donatedValue;
+            await this.totalDonatedValueRepo.updateFields(totalDonatedValue,"total_value");
         }
         else
         {

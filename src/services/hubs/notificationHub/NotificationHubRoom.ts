@@ -60,22 +60,22 @@ export class NotificationHubRoom implements IHubRoom
 
     emitEvent(event: IHubEvent<unknown>): void 
     {
-        this.server.to(this.id.value).emit( this.getRoomEventName(event.name) ,event);
+        this.server.to(this.id.value).emit( event.name ,event);
     }
 
     addEventListener(event: string, handler: EvenHandler): EventListener 
     {
-        return this.listenerRegistry.addListener(this.getRoomEventName(event),handler,this.addSocketEventHandler);
+        return this.listenerRegistry.addListener(event,handler,this.addSocketEventHandler);
     }
 
     removeEventListener(event:string, listener: EventListener): void 
     {
-       this.listenerRegistry.removeListener(this.getRoomEventName(event),listener,this.removeSocketEventHandler);
+       this.listenerRegistry.removeListener(event,listener,this.removeSocketEventHandler);
     }
 
     clearEventListeners(event:string): void 
     {
-        this.listenerRegistry.clearListeners(this.getRoomEventName(event),this.removeSocketEventHandler);
+        this.listenerRegistry.clearListeners(event,this.removeSocketEventHandler);
     }
 
     clearAllEventListeners()
@@ -98,15 +98,4 @@ export class NotificationHubRoom implements IHubRoom
             connection.data.off(eventName,handler);
         }
     }
-
-    private getRoomEventName(event:string)
-    {
-        return `${this.id.value}_${event}`;
-    }
-
-    static getRoomEventName(roomId:NotificationHubRoomId,event: string)
-    {
-        return `${roomId}_${event}`;
-    }
-
 }

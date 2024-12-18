@@ -15,7 +15,9 @@ export class ListenerRegistry<EventId>
         const newlistener :EventListener = { id:this.listenerRegistry.size + 1 ,handler };
 
         if(listeners)
+        {
             listeners.set(newlistener.id,newlistener);
+        }
         else
         {
             const set = new Map<number,EventListener>();

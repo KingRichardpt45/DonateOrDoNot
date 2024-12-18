@@ -26,7 +26,7 @@ export class NotificationHubClientConnection implements IRoomHubClientConnection
         this.listenerRegistry = new ListenerRegistry<string>();
         this.setListenerForRouteEvent();
     }
-    
+ 
     getId()
     {
         if(this.id)
@@ -40,11 +40,13 @@ export class NotificationHubClientConnection implements IRoomHubClientConnection
         return new Promise((resolve,reject) => {
             if (this.socket.connected) 
             {
+                console.log("test1")
                 handler()
                 //setTimeout(handler,1000);
                 resolve();
             } else 
             {
+                console.log("test12")
                 this.socket.once("connect", () => {
                     //setTimeout(handler,1000);
                     handler();
@@ -104,45 +106,30 @@ export class NotificationHubClientConnection implements IRoomHubClientConnection
         this.emitEvent(new LeaveRoomEvent( roomId ));
     }
 
-    emitEvent(event: IHubEvent<unknown>): void 
+    async emitEvent(event: IHubEvent<unknown>): Promise<void> 
     {
         this.throwIfNotConnect("emit Events");
-        this.socket.emit(event.name,event);
+        await this.socket.emitWithAck(event.name,event);
     }
 
     addEventListener(event: string, handler: EvenHandler): EventListener 
     {
-        return this.listenerRegistry.addListener(event,handler,this.socket.on.bind(this));
+        return this.listenerRegistry.addListener(event, handler, (eventName, handler) => { this.socket.on(eventName, handler); });
     }
 
     removeEventListener(event: string, listener: EventListener): void 
     {
-        this.listenerRegistry.removeListener(event,listener);
+        this.listenerRegistry.removeListener(event,listener, (eventName, handler) => { this.socket.off(eventName, handler); });
     }
 
     clearEventListeners(event: string): void 
     {
-        this.listenerRegistry.clearListeners(event,this.socket.off.bind(this));
+        this.listenerRegistry.clearListeners(event, (eventName, handler) => { this.socket.off(eventName, handler); });
     }
 
     clearAllEventListeners(): void 
     {
-        this.listenerRegistry.clearAllListeners(this.socket.off.bind(this));
-    }
-
-    addEventListenerToRoom(roomId: NotificationHubRoomId, event: string, handler: EvenHandler): EventListener 
-    {
-        return this.listenerRegistry.addListener(NotificationHubRoom.getRoomEventName(roomId,event),handler,this.socket.on.bind(this)); 
-    }
-
-    removeEventListenerFromRoom(roomId: NotificationHubRoomId, event: string, listener: EventListener): void 
-    {
-        this.listenerRegistry.removeListener(NotificationHubRoom.getRoomEventName(roomId,event),listener,this.socket.off.bind(this)); 
-    }
-
-    clearEventListenersOfRoom(roomId: NotificationHubRoomId, event: string): void 
-    {
-        this.listenerRegistry.clearListeners(NotificationHubRoom.getRoomEventName(roomId,event),this.socket.off.bind(this)); 
+        this.listenerRegistry.clearAllListeners( (eventName, handler) => { this.socket.off(eventName, handler); });
     }
 
     private setListenerForRouteEvent()
