@@ -9,7 +9,8 @@
   .leftContainer,
   .rightContainer {
     width: 45%;
-    height: 500px; /* Set fixed height for scrollable behavior */
+    flex-grow: 1; /* Set fixed height for scrollable behavior */
+    max-height: calc(100vh - 80px - 80px);
     overflow-y: auto; /* Enable vertical scrolling */
     border: 1px solid #7a0385;
     border-radius: 8px;

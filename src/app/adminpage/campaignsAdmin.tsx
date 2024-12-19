@@ -1,11 +1,17 @@
-"use server"
-import React from "react";
+"use client"
+import React, { useRef, useState } from "react";
 import Link from "next/link"; // Import Link from Next.js
 import styles from "./campaignsAdmin.module.css";
 import { Campaign } from "@/models/Campaign";
 import { CampaignManager } from "@/models/CampaignManager";
 import { User } from "@/models/User";
 import CampaignManagerAction from "./campaignManagerAction";
+
+import { IActionResultNotification } from "../components/actionsNotifications/IActionResultNotification";
+import { ActionDisplay } from "../components/actionsNotifications/actionDisplay/ActionDisplay";
+import { ActionResultNotificationError } from "../components/actionsNotifications/ActionResultNotificationError";
+import { ActionResultNotificationSuccess } from "../components/actionsNotifications/ActionResultNotificationSuccess";
+
 interface CampaignsAdminProps {
   campaigns: Campaign[]; // Pre-filtered and sorted campaigns
   campaignManagers: CampaignManager[]; // List of campaign managers
@@ -16,6 +22,10 @@ const campaignStatus = ["In Analysis", "Approved", "Active", "Reproved", "Closed
 const campaignManagerTypes = ["Autonomous", "Institution"];
 
 const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignManagers }) => {
+
+  const [campaignManagersState,setCampaignManagersState] = useState<CampaignManager[]>(campaignManagers);
+  const [actions,setActions] = useState<IActionResultNotification[]>([]);
+
   return (
     <div className={styles.container}>
       {/* Campaigns Section */}
@@ -45,23 +55,43 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
       <div className={styles.rightContainer}>
         <h2 className={styles.title}>Campaign Managers</h2>
         <div className={styles.list}>
-          {campaignManagers.map((manager) => (
+          {campaignManagersState.map((manager) => (
             <div key={manager.id} className={styles.managerCard}>
               <h3>Manager ID: {manager.id}</h3>
               {/* Access user by index */}
-              <p>Manager Name: {(manager.user.value as User).first_name}</p>
+              <p>Manager Name: {(manager.user.value as User).first_name} {(manager.user.value as User).middle_names ? (manager.user.value as User).middle_names : "" } {(manager.user.value as User).last_name ? (manager.user.value as User).last_name : "" }</p>
               <p>Description: {manager.description || "No description provided"}</p>
               <p>Email: {manager.contact_email || "No email provided"}</p>
               <p>Verified: {manager.verified ? "Yes" : "No"}</p>
               <p>Type: {campaignManagerTypes[manager.type]}</p>
               {/* Accept and Deny buttons for unverified managers */}
               {manager.verified == false && (
-                <CampaignManagerAction managerId={(manager.id!)} />
+                <CampaignManagerAction managerId={(manager.id!)} 
+                  onAccept={(managerId)=>{
+                    console.log("called");
+                    manager.verified=true; 
+                    const array:CampaignManager[]= []
+                    campaignManagersState.forEach( (a:CampaignManager)=> {if(a.id != managerId)array.push(a);}  ) 
+                    setCampaignManagersState(array as CampaignManager[]);
+                    setActions([new ActionResultNotificationSuccess(`${managerId} accepted.`,1000)]);
+                    setTimeout( ()=> {setActions([]) , 1050});
+                  }} 
+                  onDenied={(managerId)=>{
+                    manager.verified=false;
+                    setActions([new ActionResultNotificationSuccess(`${managerId} denied.`,1000)]);
+                    setTimeout( ()=> {setActions([]) , 1050});
+                  }}/>
               )}
             </div>
           ))}
         </div>
       </div>
+      { 
+        actions.length > 0 &&
+        (
+            <ActionDisplay actions={actions} />
+        )
+      }
     </div>
   );
 };

@@ -1,5 +1,3 @@
-"use server";
-
 import { Services } from "@/services/Services";
 import { IUserProvider } from "@/services/session/userProvider/IUserProvider";
 import { UserRoleTypes } from "@/models/types/UserRoleTypes";
@@ -44,10 +42,10 @@ export default async function Admin() {
   (campaign)=>[new IncludeNavigation(campaign.files,0)],
   [],0,0
 )
-const managersArray: CampaignManager[]=[];
-UnverifiedManagers.forEach((manager) =>{
-  managersArray.push(entityConverter.toPlainObject(manager) as CampaignManager);
-});
+// const managersArray: CampaignManager[]=[];
+// UnverifiedManagers.forEach((manager) =>{
+//   managersArray.push(entityConverter.toPlainObject(manager) as CampaignManager);
+// });
 
 
 
@@ -55,7 +53,7 @@ UnverifiedManagers.forEach((manager) =>{
     <MainLayout passUser={user}>
       {user === null && <NotLoggedIn />}
       {!authorized && <NotAuthorized />}
-      {authorized && <AdminPanel campaigns={CampaignList} campaignManagers={managersArray as CampaignManager[]}/>}
+      {authorized && <AdminPanel campaigns={CampaignList} campaignManagers={UnverifiedManagers}/>}
     </MainLayout>
   );
 }

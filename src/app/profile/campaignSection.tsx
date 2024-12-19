@@ -24,7 +24,7 @@ const CampaignsSection: React.FC<CampaignProps> = ({
   return (
     <div className={styles.MyCampaigns}>
       <div className={styles.CampaignsHeader}>
-        <h2>My Campaigns</h2>
+        <h2>My Donations</h2>
         <span className={styles.TotalCampaigns}>
           Number of Campaigns: {totalCampaigns}
         </span>
@@ -34,13 +34,15 @@ const CampaignsSection: React.FC<CampaignProps> = ({
         {currentCampaigns && currentCampaigns.length > 0 ? (
           currentCampaigns.map((campaign, index) => (
             <div key={index} className={styles.CampaignItem}>
-              <Image
-                src={campaign.imagePath}
-                alt={campaign.name || "Campaign"}
-                className={styles.CampaignImage}
-                width={100}
-                height={100}
-              />
+              <a href={`/campaigns/view/${campaign.id}`}>
+                <Image
+                  src={campaign.imagePath}
+                  alt={campaign.name || "Campaign"}
+                  className={styles.CampaignImage}
+                  width={100}
+                  height={100}
+                />
+              </a>
               <div className={styles.CampaignDetails}>
                 <h3>{campaign.name}</h3>
                 

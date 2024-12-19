@@ -14,6 +14,8 @@ import {FileTypes} from "@/models/types/FileTypes";
 import {FileManager} from "@/core/managers/FileManager";
 import {CampaignManagerManager} from "@/core/managers/CampaignManagerManager";
 import {IUserProvider} from "@/services/session/userProvider/IUserProvider";
+import { NotificationManager } from "@/core/managers/NotificationManager";
+import { AccountStatusChanged } from "@/models/notifications/AccountStatusChanged";
 
 const userManager = new UserManager();
 const userProvider = Services.getInstance().get<IUserProvider>("IUserProvider");
@@ -185,7 +187,7 @@ export async function PATCH(request: NextRequest, context: any) {
 }
 
 export async function DELETE(request: Request, context: any) {
-    const {params} = context;
+    const params = await context.params;;
 
     if (!params?.id) {
         return Responses.createNotFoundResponse();
@@ -205,12 +207,26 @@ export async function DELETE(request: Request, context: any) {
 }
 
 
+const postVerifiedFormSchema = yup.object().shape({
+    denied: yup.boolean().notRequired().nonNullable(),
+});
+const postVerifiedFormValidator = new FormValidator(postVerifiedFormSchema);
+
 export async function POST(request: NextRequest, context: any) {
-    const {params} = await context;
+    const params = await context.params;
+
+    const bodyData = await request.formData();
+    const validatorResult = await postVerifiedFormValidator.validate(Object.fromEntries(bodyData.entries()));
+    
+    if (!validatorResult.isOK)
+        return Responses.createValidationErrorResponse(validatorResult.errors);
+
+    const formData = validatorResult.value!;
 
     if (!await authorizationService.hasRole(UserRoleTypes.Admin))
         return Responses.createForbiddenResponse("Only admin can change verified State")
 
+    const notificationManager = new NotificationManager();
     if (!params?.id)
         return Responses.createBadRequestResponse();
 
@@ -219,10 +235,22 @@ export async function POST(request: NextRequest, context: any) {
     if (!manager)
         return Responses.createNotFoundResponse("Manager not fount " + params.id);
 
-    manager.verified = true;
+    if(formData.denied != undefined && formData.denied)
+        manager.verified = false;
+    else
+        manager.verified = true;
 
     if (await managersManager.updateField(manager, ["verified"]))
-        return Responses.createSuccessResponse(`Manager ${manager.id} is now verified.`);
+    {
+        notificationManager.hubConnection.addAfterConnectionHandler(
+            ()=>
+            {
+                notificationManager.sendNotification(new AccountStatusChanged(manager.id!,manager.verified as boolean));
+            }
+        )
+        return Responses.createSuccessResponse(`Manager ${manager.id} is now ${manager.verified ? "verified": "denied"}.`);
+    }
+    
 
     return Responses.createServerErrorResponse(`Could't change ${manager.id} verified state.`)
 }
