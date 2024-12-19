@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
             return Responses.createServerErrorResponse();
         }
 
-        const campaignManager = setCampaignManagerInfo(managerFormData, user);
+        const campaignManager = setCampaignManagerInfo(managerFormData, user, fileResult.value!.id!);
         const managerResult = await campaignManagerManager.signUp(campaignManager);
 
         if (!managerResult.isOK) {
@@ -183,7 +183,7 @@ function setDonorInfo(user: User): Donor {
     return donor;
 }
 
-function setCampaignManagerInfo(formData: PostManagerObject, user: User): CampaignManager {
+function setCampaignManagerInfo(formData: PostManagerObject, user: User, file_id:number): CampaignManager {
     const campaignManager = new CampaignManager();
 
     campaignManager.contact_email = formData.contactEmail;
@@ -191,6 +191,7 @@ function setCampaignManagerInfo(formData: PostManagerObject, user: User): Campai
     campaignManager.verified = false;
     campaignManager.type = formData.managerType;
     campaignManager.user.value = user;
+    campaignManager.identification_file_id = file_id;
 
     return campaignManager;
 }

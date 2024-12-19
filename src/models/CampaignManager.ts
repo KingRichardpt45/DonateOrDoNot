@@ -27,7 +27,7 @@ export class CampaignManager extends Entity {
     }
 
     getKeys(): string[] {
-        return ["id", "description", "contact_email", "verified", "type"];
+        return ["id", "description", "contact_email", "verified", "type" ,"identification_file_id"];
     }
 
     getNavigationKeys(): string[] {
