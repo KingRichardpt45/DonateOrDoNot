@@ -9,6 +9,6 @@ export class AccountStatusChanged extends Notification
         super();
         this.user_id = target
         this.type = NotificationTypes.account_status_changed
-        this.message = `Your Account Status as changed to ${accepted ? "Accepted": "Denied"}`;
+        this.message = `Your Account Status has changed to ${accepted ? "Accepted": "Denied"}`;
     }
 }

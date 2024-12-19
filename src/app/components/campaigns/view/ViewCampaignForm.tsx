@@ -19,6 +19,7 @@ import { IHubEvent } from "@/services/hubs/IHubEvent";
 import { IActionResultNotification } from "../../actionsNotifications/IActionResultNotification";
 import { ActionResultNotificationSuccess } from "../../actionsNotifications/ActionResultNotificationSuccess";
 import { ActionDisplay } from "../../actionsNotifications/actionDisplay/ActionDisplay";
+import { NewCampaignStatus } from "@/services/hubs/events/NewCampaignStatus";
 
 
 interface AddedFile
@@ -148,7 +149,13 @@ const ViewCampaignForm :React.FC<{campaign:Campaign, topDonors: Donor[], donorId
         setCurrentAmount((event.data as Campaign).current_donation_value)
         setActions([new ActionResultNotificationSuccess(`Someone donated ${campaign.current_donation_value!-beforeTotalAmount!}€`,5000)]);
         setTimeout(()=> {setActions([])}, 5050);
-      });            
+      });  
+      
+      hubConnection.current!.addEventListener(NewCampaignStatus.name, (event: IHubEvent<unknown>) => {
+        campaign.status = (event as NewCampaignStatus).data.newStatusNumber;
+        setActions([new ActionResultNotificationSuccess(`Status has changed to ${(event as NewCampaignStatus).data.newStatus}`,5000)]);
+        setTimeout(()=> {setActions([])}, 5050);
+      });  
     });
 
     firstRender.current = false;

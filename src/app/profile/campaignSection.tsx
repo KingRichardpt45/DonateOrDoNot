@@ -50,7 +50,7 @@ const CampaignsSection: React.FC<CampaignProps> = ({
             </div>
           ))
         ) : (
-          <p>No campaigns available</p>
+          <p>No donations yet</p>
         )}
       </div>
 
