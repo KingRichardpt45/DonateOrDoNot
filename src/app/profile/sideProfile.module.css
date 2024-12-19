@@ -2,7 +2,7 @@
   background-color: black;
   color: white;
   padding: 20px;
-  border-radius: 15px;
+  border-radius: 0 15px 15px 0;
   width: 350px;
   text-align: center;
   font-family: 'Arial', sans-serif;

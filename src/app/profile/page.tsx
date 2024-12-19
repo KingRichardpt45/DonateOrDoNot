@@ -62,7 +62,8 @@ const ProfilePage = async ({searchParams}: { searchParams: SearchParams }) => {
     const donacoins = donorData?.donacoins || 0;
 
     // Buscar campanhas associadas às doações
-    const campaigns = await Promise.all(
+
+    const campaigns = donations.value ? await Promise.all(
         donations.value!.map(async (donation) => {
             const [campaignImage] = await filesManager.getByCondition([
                 new Constraint("campaign_id", Operator.EQUALS, donation.campaign_id),
@@ -81,7 +82,7 @@ const ProfilePage = async ({searchParams}: { searchParams: SearchParams }) => {
                     : "/default_campaign.jpg",
             };
         })
-    );
+    ) : [];
 
     const profileImageId = Array.isArray(user.profileImage?.value)
         ? user.profileImage?.value[0]?.id ?? null
