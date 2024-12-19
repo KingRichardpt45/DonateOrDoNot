@@ -23,10 +23,11 @@ const updateFormSchema = yup.object().shape({
 });
 const updateFormValidator = new FormValidator(updateFormSchema);
 
-export async function PATCH(request: NextRequest, context: any) {
-    const {params} = context;
+export async function PATCH(request: NextRequest,  context: { params: Promise<{ id: number }>}) {
+    
+    const {id} = await context.params;
 
-    if (!params?.id) {
+    if (!id) {
         return Responses.createNotFoundResponse();
     }
 
@@ -45,7 +46,7 @@ export async function PATCH(request: NextRequest, context: any) {
         return Responses.createBadRequestResponse();
     }
 
-    const campaign = await donationCampaignManager.getById(params.id);
+    const campaign = await donationCampaignManager.getById(id);
     if (campaign == null) {
         return Responses.createNotFoundResponse();
     }
@@ -79,14 +80,15 @@ export async function PATCH(request: NextRequest, context: any) {
     return Responses.createSuccessResponse({}, "Campaign Updated.");
 }
 
-export async function GET(request: Request, context: any) {
-    const {params} = context;
+export async function GET(request: Request,  context: { params: Promise<{ id: number }>} ) {
+    
+    const {id} = await context.params;
 
-    if (!params?.id) {
+    if (!id) {
         return Responses.createNotFoundResponse();
     }
 
-    const result = await donationCampaignManager.getById(params.id);
+    const result = await donationCampaignManager.getById(id);
     if (result == null) {
         return Responses.createNotFoundResponse();
     }

@@ -9,9 +9,11 @@ import {YupUtils} from "@/core/utils/YupUtils";
 import {Constraint} from "@/core/repository/Constraint";
 import {Operator} from "@/core/repository/Operator";
 import {FormError} from "@/core/utils/operation_result/FormError";
+import { CampaignManagerManager } from "@/core/managers/CampaignManagerManager";
 
 const donationCampaignManager = new DonationCampaignManager();
 const bankManager = new BankAccountManager();
+const managersManager = new CampaignManagerManager()
 
 const putFormSchema = yup.object().shape({
     title: yup.string().trim().required().nonNullable().min(1).max(200),
@@ -35,8 +37,12 @@ export async function PUT(request: NextRequest) {
     if (!validatorResult.isOK) {
         return Responses.createValidationErrorResponse(validatorResult.errors);
     }
-
+    
     const formData = validatorResult.value!;
+    const campaignManager = await managersManager.getById(formData.campaign_manager_id);
+    if (!campaignManager || !campaignManager.verified)
+        return Responses.createForbiddenResponse("Campaign Manager is not verified yet.","Campaign Manager is not verified yet.");
+        
     const campaigns = await donationCampaignManager.getByCondition([new Constraint("campaign_manager_id", Operator.EQUALS, formData.campaign_manager_id), new Constraint("status", Operator.IN, [CampaignStatus.Active, CampaignStatus.Approved, CampaignStatus.InAnalysis])], () => [], [], 6, 0);
 
     if (campaigns.length > 5) {

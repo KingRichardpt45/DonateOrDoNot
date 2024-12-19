@@ -3,30 +3,29 @@ import { useState } from "react";
 import styles from "./campaignsAdmin.module.css";
 
 interface CampaignManagerActionProps {
-  managerId: number; // The manager ID passed to the action buttons
+  managerId: number,// The manager ID passed to the action buttons
+  onDenied:(managerId:number)=>void
+  onAccept:(managerId:number)=>void
 }
 
-async function PatchCampaignManager(managerId: number) {
+async function PatchCampaignManager(managerId: number,denied:boolean) {
     if (!managerId) {
       throw new Error("Manager ID is required.");
     }
     console.log(managerId);
     // Make the POST request to verify the campaign manager
+    const formData  = new FormData();
+    formData.set("denied", denied ? "1":"0");
+
     const response = await fetch(`/api/account/${managerId}`, {
       method: "POST",
+      body:formData
     });
-  
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(
-        `Failed to verify campaign manager. Server responded with: ${errorData.message || response.statusText}`
-      );
-    }
   
     return response;
   }
 
-const CampaignManagerAction: React.FC<CampaignManagerActionProps> = ({ managerId }) => {
+const CampaignManagerAction: React.FC<CampaignManagerActionProps> = ({ managerId ,onDenied ,onAccept}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,11 +34,11 @@ const CampaignManagerAction: React.FC<CampaignManagerActionProps> = ({ managerId
     setError(null);
 
     try {
-      const response = await PatchCampaignManager(managerId);
-      if (action === "accept") {
-        // Handle acceptance logic here (e.g., update UI state)
-      } else if (action === "deny") {
-        // Handle denial logic here
+      const response = await PatchCampaignManager(managerId,action=="deny");
+      if (response.ok && action === "accept") {
+        onAccept(managerId);
+      } else if (response.ok && action === "deny") {
+        onDenied(managerId);
       }
     } catch (err: any) {
       setError(`Error: ${err.message}`);

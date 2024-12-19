@@ -73,6 +73,7 @@ const ProfilePage = async ({searchParams}: { searchParams: SearchParams }) => {
             ]);
 
             return {
+                id:donatedCampaign?.id,
                 name: donatedCampaign?.title || "Unknown Campaign",
                 description: donatedCampaign?.description || "No description available",
                 imagePath: campaignImage?.original_name

@@ -279,6 +279,11 @@ const CreateCampaignForm: React.FC<{managerId:number}> = ({managerId}) =>
         }
         setActions(actionErrors)
         break;
+      case 403:
+        setActions(
+          [ new ActionResultNotificationError( response.status.toString(),[response.statusText],2000)
+          ]
+        )
       default:
         setActions(
           [ new ActionResultNotificationError( response.status.toString(),[response.statusText],2000),
