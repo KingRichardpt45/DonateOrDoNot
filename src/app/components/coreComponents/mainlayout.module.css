@@ -1,0 +1,22 @@
+.MainContainer
+{
+    width: 100vw;
+    height: 100vh; 
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: #11001f;
+}
+
+.PageContentContainer
+{
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-image: url('/images/backgroundSigns.png'); 
+    background-size: cover;
+    background-position: center;
+    height: fit-content;
+    flex-grow: 1;
+}

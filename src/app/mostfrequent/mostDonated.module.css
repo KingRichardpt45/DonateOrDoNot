@@ -1,0 +1,20 @@
+.page{
+    display: flex;
+    flex-direction: column;
+    background-size: cover;
+    background-position: center;
+    flex-grow: 1;
+}
+
+.main{
+    color: white;
+    flex-grow: 1;
+}
+
+.topDonorsList{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+}

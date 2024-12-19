@@ -1,68 +1,43 @@
-import { IEntity } from "@/core/Repository/IEntity";
+import {Entity} from "@/core/repository/Entity";
 
-export class Addresse implements IEntity
-{
-    [key: string]: any;
+export class Address extends Entity {
+    [key: string]: unknown;
 
-    id: number | null; 
-    postal_code: string; 
-    city: string;
-    address: string;
+    id: number | null = null;
+    postal_code: string | null = null;
+    city: string | null = null;
+    address: string | null = null;
+    specification: string | null = null;
 
-    constructor(jsonObject?: { [key: string]: any }, alias : string = "") {
-
-        this.id = null;
-        this.postal_code = "";
-        this.city = "";
-        this.address = "";
-        
-        if(alias !== "" )
-            alias = alias + "."
-
-        if (jsonObject) {
-            this.id = jsonObject[`${alias}id`] ?? null;
-            this.postal_code = jsonObject[`${alias}postal_code`] ?? "";
-            this.city = jsonObject[`${alias}city`] ?? "";
-            this.address = jsonObject[`${alias}address`] ?? "";
-        }
-    }
-  
-    getClassName(): string 
-    {
-        return "Addresse";
-    }
-
-    isCreated()
-    {
-        return this.id !== null;
-    }
-
-    getPrimaryKeyParts(): string[] 
-    {
+    getPrimaryKeyParts(): string[] {
         return ["id"];
     }
 
-    getKeys(): string[] 
-    {
-        return [
-            "id",
-            "postal_code",
-            "city",
-            "address"
-        ]; 
+    getKeys(): string[] {
+        return ["id", "postal_code", "city", "address", "specification"];
     }
 
-    getNavigationKeys() : string[]
-    {
-        return []
+    getNavigationKeys(): string[] {
+        return [];
     }
 
-    public equals ( object : any)
-    {
-        if (!(object instanceof Addresse)) return false;
+    getTableName(): string {
+        return Address.getTableName();
+    }
 
-        if(object === this) return true
+    getEntityName(): string {
+        return Address.getEntityName();
+    }
 
-        return this.id === object.id ;
+    static getTableName(): string {
+        return "Addresses";
+    }
+
+    static getEntityName(): string {
+        return "Address";
+    }
+
+    equals(object: unknown): boolean {
+        return object instanceof Address && this.id === object.id;
     }
 }

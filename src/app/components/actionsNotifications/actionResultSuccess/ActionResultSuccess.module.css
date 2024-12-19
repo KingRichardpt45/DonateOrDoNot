@@ -1,0 +1,109 @@
+.mainContainer{
+    background-color: #160027;
+    border: solid 1px #350066;
+    min-height: fit-content;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    animation: slideInFromRight 0.5s ease-in-out forwards;
+}
+
+.SlideOut {
+    animation: slideOutToRight 0.5s ease-in-out forwards !important;
+}
+
+.container
+{
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+
+}
+
+.successIcon
+{
+    color: green;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    max-width: 30px;
+    font-size: 24px;
+    font-weight: 700px;
+    padding-top: 3px;
+    border-radius: 25px;
+}
+
+.errorField
+{
+    color: rgb(0, 255, 55) !important;
+    margin-bottom: 5px;
+    
+}
+
+.messageContainer 
+{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-grow: 1;
+    padding-left: 30px;
+    padding-right: 5px;
+    color: rgb(255, 255, 255);
+}
+
+.closeButton{
+
+    background-color: transparent;
+    border: none;
+}
+
+.closeButton:hover
+{
+    color: gray;
+    cursor: pointer;
+}
+
+.timeBar
+{
+    background-color: rgb(60, 255, 0);
+    height: 5px;
+    animation: shrinkBar var(--barDuration, 5s) linear forwards;
+}
+
+.notDisplay
+{
+    display: none;
+}
+
+/*animation*/
+@keyframes slideInFromRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOutToRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes shrinkBar {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0%;
+    }
+  }
