@@ -82,3 +82,9 @@
     gap: 10px;
   }
   
+  .pdfDownload{
+    color: #007bff;
+  }
+  .pdfDownload:hover{
+    color: #0400ff;
+  }

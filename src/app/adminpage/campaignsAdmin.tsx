@@ -64,6 +64,7 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
               <p>Email: {manager.contact_email || "No email provided"}</p>
               <p>Verified: {manager.verified ? "Yes" : "No"}</p>
               <p>Type: {campaignManagerTypes[manager.type]}</p>
+              <p>Identification File: {<a className={styles.pdfDownload} href={`/api/file/${manager.identification_file_id}`}>|download|</a>}</p>
               {/* Accept and Deny buttons for unverified managers */}
               {manager.verified == false && (
                 <CampaignManagerAction managerId={(manager.id!)} 
