@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Crowdfunding Platform
 
-## Getting Started
+This project is a Next.js application developed as part of a group project to design and build a persuasive crowdfunding platform. The platform leverages modern design principles, gamification, and scalable architecture to encourage user engagement and secure donations for charitable causes.
 
-First, run the development server:
+## Features
+
+- **Campaign Management**: 
+  - Verified users can create, edit, and manage campaigns.
+  - Support for multimedia uploads (images, videos) to enhance campaign appeal.
+
+- **Progress Visualization**: 
+  - Dynamic progress bars showcasing fundraising achievements.
+  - Segmented milestones with visual updates to track goals effectively.
+
+- **Persuasive Elements**: 
+  - Real-time donation updates and live donor acknowledgments.
+  - Integration of testimonials from beneficiaries to build trust.
+
+- **Gamification**: 
+  - Earn badges and maintain donation streaks for consistent engagement.
+  - Leaderboards to showcase top donors and competitive contributions.
+
+- **Social Sharing**: 
+  - Seamless integration with platforms like Facebook, Twitter, and Instagram.
+  - Pre-generated shareable content to maximize campaign reach.
+
+- **Analytics Dashboard**: 
+  - Detailed insights into campaign performance, donor trends, and engagement metrics.
+  - Visual reports to inform and optimize fundraising strategies.
+
+- **WebSocket Support**: 
+  - Real-time interaction and updates for seamless user experience.
+
+## Prerequisites
+
+Ensure the following are installed on your system:
+
+- Node.js (16.x or newer)
+- npm (8.x or newer)
+
+## Environment Variables
+
+Create a `.env` file in the root of the project directory. Add the required environment variables:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+COOKIE_SECRET=your_password_for_encryption_of_cookies
+PW_ENCRYPTION_KEY=password_encryption (32 characters)
+SOCKET_IO_HOST=socket_hostname
+SOCKET_IO_PORT=socket_port
+URL="http://localhost:3000"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Replace placeholders with your actual configuration.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/KingRichardpt45/DonateOrDoNot.git
+   cd DonateOrDoNot
+   ```
 
-## Learn More
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. Compile the `SocketServer.ts` file:
+   ```bash
+   npx tsc src/SocketServer.ts --downlevelIteration
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Running the Application
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Start the development server:
+   ```bash
+   npm run dev2
+   ```
 
-## Deploy on Vercel
+2. In a separate console, run the additional server process:
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Access the app at `http://localhost:3000`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts
+
+- `npm run dev`: Starts the main server.
+- `npm run dev2`: Starts the sokcetIo main server.
+
+## Project Structure
+
+- `.next/`: Build outputs and Next.js cache.
+- `.vscode/`: Configuration files for Visual Studio Code.
+- `src/`: Contains the core application source code:
+  - `app/`: Next.js app directory for page routing.
+  - `core/`: Core utilities and shared functionality.
+  - `db/`: Database configuration and migration files.
+    - `DonateOrDoNotdev_DB.sqlite3`: SQLite database file.
+    - `KnexConnection.ts`: Knex.js connection setup.
+  - `models/`: Database models and ORM logic.
+  - `services/`: Service layer containing application logic:
+    - `SocketServer.ts`: Main WebSocket server file.
+  - `migrations/`: Database migration scripts.
+- `public/`: Static assets like images and other files.
+- `.env`: Environment variable file **not committed to version control**.
+
+## Environment variables
