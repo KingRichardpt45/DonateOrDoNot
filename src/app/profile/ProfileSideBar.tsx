@@ -117,12 +117,6 @@ const ProfileSideBar = (params: EditProfileParams) => {
                 Save Changes
             </button>
         </form>
-        <form action="/api/delete-account" method="POST" className={styles.Form}>
-            <input type="hidden" name="userId" value={params.userId ?? 0}/>
-            <button type="submit" className={styles.DeleteButton}>
-                Delete Account
-            </button>
-        </form>
     </div>);
 };
 

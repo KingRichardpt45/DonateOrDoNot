@@ -22,11 +22,13 @@ const CampaignsList :React.FC<{campaigns:Campaign[]}> = ({campaigns}) =>{
       <div className={styles.container}>
         <div><Carousel onActualIdChange={(v)=>{}}/></div>
               <div className={styles.campaignContainer}>
+                {randomCampaignId!=undefined && (
                 <div className={styles.buttoncontainer}>
                   <a href={`/campaigns/view/${randomCampaignId}`}>
                 <button className={styles.donateNowButton}> Random Donate</button>
                   </a>
                 </div>
+                )}
                 <h2 className={styles.heading}>Other Campaigns</h2>
                 {/* List of campaigns rendered dynamically from defaultCampaigns */}
                 <SearchCampaigns route="view" pageSize={5} managerId={null} exceptStatusList={[CampaignStatus.InAnalysis,CampaignStatus.Reproved] }mainSearch={true}></SearchCampaigns>
