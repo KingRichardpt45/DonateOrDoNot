@@ -105,5 +105,3 @@ Replace placeholders with your actual configuration.
   - `migrations/`: Database migration scripts.
 - `public/`: Static assets like images and other files.
 - `.env`: Environment variable file **not committed to version control**.
-
-## Environment variables
