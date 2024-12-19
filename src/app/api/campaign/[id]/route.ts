@@ -7,6 +7,12 @@ import {Services} from "@/services/Services";
 import {UserRoleTypes} from "@/models/types/UserRoleTypes";
 import {CampaignStatus} from "@/models/types/CampaignStatus";
 import {IAuthorizationService} from "@/services/session/authorizationService/IAuthorizationService";
+import { NotificationManager } from "@/core/managers/NotificationManager";
+import { AccountStatusChanged } from "@/models/notifications/AccountStatusChanged";
+import { CampaignStatusNotification } from "@/models/notifications/CampaignStatusNotification";
+import { NewCampaignStatus } from "@/services/hubs/events/NewCampaignStatus";
+import { RetransmissionEvent } from "@/services/hubs/events/RetransmissionEvent";
+import { RoomIdGenerator } from "@/services/hubs/notificationHub/RoomIdGenerator";
 
 const donationCampaignManager = new DonationCampaignManager();
 const authorizationService = Services.getInstance().get<IAuthorizationService>("IAuthorizationService");
@@ -76,6 +82,21 @@ export async function PATCH(request: NextRequest,  context: { params: Promise<{ 
     if (!result) {
         return Responses.createServerErrorResponse();
     }
+
+    const notificationManager = new NotificationManager();
+    notificationManager.hubConnection.addAfterConnectionHandler(
+        ()=>{
+            notificationManager.sendNotification( new CampaignStatusNotification(campaign.campaign_manager_id!,campaign.title!,formData.status!));
+
+            notificationManager.hubConnection.emitEvent(
+                new RetransmissionEvent( { 
+                    toConnection:null,
+                    toRom:RoomIdGenerator.generateCampaignRoom(campaign.id!),
+                    originalEvent:new NewCampaignStatus(campaign)
+                })
+            )
+        }
+    )
 
     return Responses.createSuccessResponse({}, "Campaign Updated.");
 }
