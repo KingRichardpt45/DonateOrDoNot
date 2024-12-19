@@ -137,7 +137,6 @@ const SearchCampaigns : React.FC<{ route:string, pageSize:number, managerId:numb
                             {
                                 if(index < campaignStatusEntries.length/2 && !exceptStatusList?.includes(Number(key)))
                                 {        
-                                    console.log(key,value)
                                     return <option key={`optionSearch_${index}`} value={key}>{value}</option>
                                 }
                             }

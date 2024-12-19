@@ -12,7 +12,6 @@ async function PatchCampaignManager(managerId: number,denied:boolean) {
     if (!managerId) {
       throw new Error("Manager ID is required.");
     }
-    console.log(managerId);
     // Make the POST request to verify the campaign manager
     const formData  = new FormData();
     formData.set("denied", denied ? "1":"0");

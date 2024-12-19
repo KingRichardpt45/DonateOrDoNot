@@ -69,7 +69,6 @@ const CampaignsAdmin: React.FC<CampaignsAdminProps> = ({ campaigns, campaignMana
               {manager.verified == false && (
                 <CampaignManagerAction managerId={(manager.id!)} 
                   onAccept={(managerId)=>{
-                    console.log("called");
                     manager.verified=true; 
                     const array:CampaignManager[]= []
                     campaignManagersState.forEach( (a:CampaignManager)=> {if(a.id != managerId)array.push(a);}  ) 

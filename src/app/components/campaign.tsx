@@ -16,7 +16,9 @@ const  HomeContent:React.FC<{isAuthorized:boolean}> = ({isAuthorized}) => {
 
   function onClickDonate()
   {
-    window.location.href = `/campaigns/view/${actualId.current}`; 
+    if(actualId.current!=0){
+      window.location.href = `/campaigns/view/${actualId.current}`; 
+    }
   }
 
   function onClickSignUp()
